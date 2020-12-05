@@ -20,8 +20,10 @@ CH558提供丰富的接口资源，包括内置类485数据收发器、LED控制
 #### 关键特性
 
 * 5K DataFlash
+* 5V->3.3V LDO
 * USB全速设备模式
-* SPI + UART x 2 (类485数据收发器/16C550)
+* SPI + UART x 2 (FIFO/modem/16C550/iRS485)
+* 8通道 1MSPS 10/11bit ADC
 * 封装(LQFP48/SSOP20)
 
 ### [资源收录](https://github.com/SoCXin)
@@ -32,6 +34,6 @@ CH558提供丰富的接口资源，包括内置类485数据收发器、LED控制
 
 ### [选型建议](https://github.com/SoCXin)
 
-[CH558](https://github.com/SoCXin/CH558)配置接近[CH559](https://github.com/SoCXin/CH559)，主要特点在于数据存储和串口收发通信
+[CH558](https://github.com/SoCXin/CH558)配置接近[CH559](https://github.com/SoCXin/CH559)，主要特点在于数据存储DataFlash，同时类RS485的串口通信和LDO
 
 ###  [SoC芯平台](http://www.SoC.Xin)
