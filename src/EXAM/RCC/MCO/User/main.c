@@ -17,15 +17,16 @@
 #include "debug.h"
 
 
-/*******************************************************************************
-* Function Name  : main
-* Description    : Main program.
-* Input          : None
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      main
+ *
+ * @brief   Main program.
+ *
+ * @return  none
+ */
 int main(void)
 {
-  GPIO_InitTypeDef  GPIO_InitStructure;
+  GPIO_InitTypeDef  GPIO_InitStructure={0};
 
 	NVIC_PriorityGroupConfig(NVIC_PriorityGroup_4);
 	USART_Printf_Init(115200);

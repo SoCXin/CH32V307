@@ -19,12 +19,16 @@
 
 /* Global Variable */
 
-
-
-/* LED1通过直接调用底层驱动 */
+/*********************************************************************
+ * @fn      LED1_BLINK_INIT
+ *
+ * @brief   LED1通过直接调用底层驱动
+ *
+ * @return  none
+ */
 void LED1_BLINK_INIT(void)
 {
-    GPIO_InitTypeDef GPIO_InitStructure;
+    GPIO_InitTypeDef GPIO_InitStructure={0};
     RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA, ENABLE);
     GPIO_InitStructure.GPIO_Pin = GPIO_Pin_0;
     GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
@@ -32,12 +36,15 @@ void LED1_BLINK_INIT(void)
     GPIO_Init(GPIOA, &GPIO_InitStructure);
 }
 
-
-/* main只是一个线程之一，除此之外还有tshell,idle
-   *    本main只是一个LED闪烁，main线程的注册在rtthread_startup
-   *   中，tshell使用了串口接收中断，中断栈和线程栈使用分开，注意进中断时候
- * 16caller寄存器需要压入线程栈中
- * */
+/*********************************************************************
+ * @fn      main
+ *
+ * @brief   main只是一个线程之一，除此之外还有tshell,idle
+ *          本main只是一个LED闪烁，main线程的注册在rtthread_startup中，tshell使用了串口
+ *          接收中断，中断栈和线程栈使用分开，注意进中断时候16caller寄存器需要压入线程栈中
+ *
+ * @return  none
+ */
 int main(void)
 {
     rt_kprintf("\r\n MCU: CH32V307\r\n");
@@ -55,8 +62,13 @@ int main(void)
 	}
 }
 
-
-/* 测试使用驱动接口操作I/O口  */
+/*********************************************************************
+ * @fn      led
+ *
+ * @brief   测试使用驱动接口操作I/O口
+ *
+ * @return  none
+ */
 int led(void)
 {
     rt_uint8_t count;
@@ -75,6 +87,7 @@ int led(void)
     }
     return 0;
 }
+
 MSH_CMD_EXPORT(led,  led sample by using I/O drivers);
 
 

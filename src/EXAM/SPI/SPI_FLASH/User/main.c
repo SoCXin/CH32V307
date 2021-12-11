@@ -58,12 +58,15 @@ u8 SPI_FLASH_BUF[4096];
 const u8 TEXT_Buf[]={"CH32F103 SPI FLASH W25Qxx"};
 #define SIZE sizeof(TEXT_Buf)
 
-/*******************************************************************************
-* Function Name  : SPI1_ReadWriteByte
-* Description    : SPI1 read or write one byte.
-* Input          : TxData: write one byte data.
-* Return         : Read one byte data.
-*******************************************************************************/
+/*********************************************************************
+ * @fn      SPI1_ReadWriteByte
+ *
+ * @brief   SPI1 read or write one byte.
+ *
+ * @param   TxData - write one byte data.
+ *
+ * @return  Read one byte data.
+ */
 u8 SPI1_ReadWriteByte(u8 TxData)
 {
 	u8 i=0;
@@ -86,16 +89,17 @@ u8 SPI1_ReadWriteByte(u8 TxData)
 	return SPI_I2S_ReceiveData(SPI1);
 }
 
-/*******************************************************************************
-* Function Name  : SPI_Flash_Init
-* Description    : Configuring the SPI for operation flash.
-* Input          : None
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      SPI_Flash_Init
+ *
+ * @brief   Configuring the SPI for operation flash.
+ *
+ * @return  none
+ */
 void SPI_Flash_Init(void)
 {
-	GPIO_InitTypeDef GPIO_InitStructure;
-	SPI_InitTypeDef  SPI_InitStructure;
+	GPIO_InitTypeDef GPIO_InitStructure={0};
+	SPI_InitTypeDef  SPI_InitStructure={0};
 
 	RCC_APB2PeriphClockCmd(	RCC_APB2Periph_GPIOA|RCC_APB2Periph_SPI1, ENABLE );
 
@@ -133,14 +137,15 @@ void SPI_Flash_Init(void)
 	SPI_Cmd(SPI1, ENABLE);
 }
 
-/*******************************************************************************
-* Function Name  : SPI_Flash_ReadSR
-* Description    : Read W25Qxx status register.
-*       ！！BIT7  6   5   4   3   2   1   0
-*       ！！SPR   RV  TB  BP2 BP1 BP0 WEL BUSY
-* Input          : None
-* Return         : byte: status register value.
-*******************************************************************************/
+/*********************************************************************
+ * @fn      SPI_Flash_ReadSR
+ *
+ * @brief   Read W25Qxx status register.
+ *        ！！BIT7  6   5   4   3   2   1   0
+ *        ！！SPR   RV  TB  BP2 BP1 BP0 WEL BUSY
+ *
+ * @return  byte - status register value.
+ */
 u8 SPI_Flash_ReadSR(void)
 {
 	u8 byte=0;
@@ -153,12 +158,15 @@ u8 SPI_Flash_ReadSR(void)
 	return byte;
 }
 
-/*******************************************************************************
-* Function Name  : SPI_FLASH_Write_SR
-* Description    : Write W25Qxx status register.
-* Input          : sr:status register value.
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      SPI_FLASH_Write_SR
+ *
+ * @brief   Write W25Qxx status register.
+ *
+ * @param   sr - status register value.
+ *
+ * @return  none
+ */
 void SPI_FLASH_Write_SR(u8 sr)
 {
 	GPIO_WriteBit(GPIOA, GPIO_Pin_2, 0);
@@ -167,23 +175,25 @@ void SPI_FLASH_Write_SR(u8 sr)
 	GPIO_WriteBit(GPIOA, GPIO_Pin_2, 1);
 }
 
-/*******************************************************************************
-* Function Name  : SPI_Flash_Wait_Busy
-* Description    : Wait flash free.
-* Input          : None
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      SPI_Flash_Wait_Busy
+ *
+ * @brief   Wait flash free.
+ *
+ * @return  none
+ */
 void SPI_Flash_Wait_Busy(void)
 {
 	while((SPI_Flash_ReadSR()&0x01)==0x01);
 }
 
-/*******************************************************************************
-* Function Name  : SPI_FLASH_Write_Enable
-* Description    : Enable flash write.
-* Input          : None
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      SPI_FLASH_Write_Enable
+ *
+ * @brief   Enable flash write.
+ *
+ * @return  none
+ */
 void SPI_FLASH_Write_Enable(void)
 {
 	GPIO_WriteBit(GPIOA, GPIO_Pin_2, 0);
@@ -191,12 +201,13 @@ void SPI_FLASH_Write_Enable(void)
 	GPIO_WriteBit(GPIOA, GPIO_Pin_2, 1);
 }
 
-/*******************************************************************************
-* Function Name  : SPI_FLASH_Write_Disable
-* Description    : Disable flash write.
-* Input          : None
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      SPI_FLASH_Write_Disable
+ *
+ * @brief   Disable flash write.
+ *
+ * @return  none
+ */
 void SPI_FLASH_Write_Disable(void)
 {
 	GPIO_WriteBit(GPIOA, GPIO_Pin_2, 0);
@@ -204,12 +215,13 @@ void SPI_FLASH_Write_Disable(void)
   GPIO_WriteBit(GPIOA, GPIO_Pin_2, 1);
 }
 
-/*******************************************************************************
-* Function Name  : SPI_Flash_ReadID
-* Description    : Read flash ID.
-* Input          : None
-* Return         : Temp: FLASH ID.
-*******************************************************************************/
+/*********************************************************************
+ * @fn      SPI_Flash_ReadID
+ *
+ * @brief   Read flash ID.
+ *
+ * @return  Temp - FLASH ID.
+ */
 u16 SPI_Flash_ReadID(void)
 {
 	u16 Temp = 0;
@@ -226,12 +238,15 @@ u16 SPI_Flash_ReadID(void)
 	return Temp;
 }
 
-/*******************************************************************************
-* Function Name  : SPI_Flash_Erase_Sector
-* Description    : Erase one sector(4Kbyte).
-* Input          : Dst_Addr:  0 ！！ 2047
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      SPI_Flash_Erase_Sector
+ *
+ * @brief   Erase one sector(4Kbyte).
+ *
+ * @param   Dst_Addr - 0 ！！ 2047
+ *
+ * @return  none
+ */
 void SPI_Flash_Erase_Sector(u32 Dst_Addr)
 {
 	Dst_Addr*=4096;
@@ -246,14 +261,17 @@ void SPI_Flash_Erase_Sector(u32 Dst_Addr)
   SPI_Flash_Wait_Busy();
 }
 
-/*******************************************************************************
-* Function Name  : SPI_Flash_Read
-* Description    : Read data from flash.
-* Input          : pBuffer:
-*                  ReadAddr:Initial address(24bit).
-*                  size: Data length.
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      SPI_Flash_Read
+ *
+ * @brief   Read data from flash.
+ *
+ * @param   pBuffer -
+ *          ReadAddr -Initial address(24bit).
+ *          size - Data length.
+ *
+ * @return  none
+ */
 void SPI_Flash_Read(u8* pBuffer,u32 ReadAddr,u16 size)
 {
  	u16 i;
@@ -272,14 +290,17 @@ void SPI_Flash_Read(u8* pBuffer,u32 ReadAddr,u16 size)
 	GPIO_WriteBit(GPIOA, GPIO_Pin_2, 1);
 }
 
-/*******************************************************************************
-* Function Name  : SPI_Flash_Write_Page
-* Description    : Write data by one page.
-* Input          : pBuffer:
-*                  WriteAddr:Initial address(24bit).
-*                  size:Data length.
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      SPI_Flash_Write_Page
+ *
+ * @brief   Write data by one page.
+ *
+ * @param   pBuffer -
+ *          WriteAddr - Initial address(24bit).
+ *          size - Data length.
+ *
+ * @return  none
+ */
 void SPI_Flash_Write_Page(u8* pBuffer,u32 WriteAddr,u16 size)
 {
  	u16 i;
@@ -300,15 +321,18 @@ void SPI_Flash_Write_Page(u8* pBuffer,u32 WriteAddr,u16 size)
 	SPI_Flash_Wait_Busy();
 }
 
-/*******************************************************************************
-* Function Name  : SPI_Flash_Write_NoCheck
-* Description    : Write data to flash.(need Erase)
-*                  All data in address rang is 0xFF.
-* Input          : pBuffer:
-*                  WriteAddr: Initial address(24bit).
-*                  size: Data length.
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      SPI_Flash_Write_NoCheck
+ *
+ * @brief   Write data to flash.(need Erase)
+ *          All data in address rang is 0xFF.
+ *
+ * @param   pBuffer -
+ *          WriteAddr - Initial address(24bit).
+ *          size - Data length.
+ *
+ * @return  none
+ */
 void SPI_Flash_Write_NoCheck(u8* pBuffer,u32 WriteAddr,u16 size)
 {
 	u16 pageremain;
@@ -337,14 +361,17 @@ void SPI_Flash_Write_NoCheck(u8* pBuffer,u32 WriteAddr,u16 size)
 	}
 }
 
-/*******************************************************************************
-* Function Name  : SPI_Flash_Write
-* Description    : Write data to flash.(no need Erase)
-* Input          : pBuffer:
-*                  WriteAddr: Initial address(24bit).
-*                  size: Data length.
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      SPI_Flash_Write
+ *
+ * @brief   Write data to flash.(no need Erase)
+ *
+ * @param   pBuffer -
+ *          WriteAddr - Initial address(24bit).
+ *          size - Data length.
+ *
+ * @return  none
+ */
 void SPI_Flash_Write(u8* pBuffer,u32 WriteAddr,u16 size)
 {
 	u32 secpos;
@@ -407,12 +434,13 @@ void SPI_Flash_Write(u8* pBuffer,u32 WriteAddr,u16 size)
 	}
 }
 
-/*******************************************************************************
-* Function Name  : SPI_Flash_Erase_Chip
-* Description    : Erase all FLASH pages.
-* Input          : None
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      SPI_Flash_Erase_Chip
+ *
+ * @brief   Erase all FLASH pages.
+ *
+ * @return  none
+ */
 void SPI_Flash_Erase_Chip(void)
 {
   SPI_FLASH_Write_Enable();
@@ -423,12 +451,13 @@ void SPI_Flash_Erase_Chip(void)
 	SPI_Flash_Wait_Busy();
 }
 
-/*******************************************************************************
-* Function Name  : SPI_Flash_PowerDown
-* Description    : Enter power down mode.
-* Input          : None
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      SPI_Flash_PowerDown
+ *
+ * @brief   Enter power down mode.
+ *
+ * @return  none
+ */
 void SPI_Flash_PowerDown(void)
 {
   GPIO_WriteBit(GPIOA, GPIO_Pin_2, 0);
@@ -437,12 +466,13 @@ void SPI_Flash_PowerDown(void)
   Delay_Us(3);
 }
 
-/*******************************************************************************
-* Function Name  : SPI_Flash_WAKEUP
-* Description    : Power down wake up.
-* Input          : None
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      SPI_Flash_WAKEUP
+ *
+ * @brief   Power down wake up.
+ *
+ * @return  none
+ */
 void SPI_Flash_WAKEUP(void)
 {
   GPIO_WriteBit(GPIOA, GPIO_Pin_2, 0);
@@ -451,12 +481,13 @@ void SPI_Flash_WAKEUP(void)
 	Delay_Us(3);
 }
 
-/*******************************************************************************
-* Function Name  : main
-* Description    : Main program.
-* Input          : None
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      main
+ *
+ * @brief   Main program.
+ *
+ * @return  none
+ */
 int main(void)
 {
 	u8 datap[SIZE];

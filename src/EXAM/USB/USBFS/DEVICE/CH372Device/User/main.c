@@ -18,12 +18,13 @@
 #include "debug.h"
 #include "ch32v30x_usbotg_device.h"
 
-/*******************************************************************************
-* Function Name  : main
-* Description    : Main program.
-* Input          : None
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      main
+ *
+ * @brief   Main program.
+ *
+ * @return  none
+ */
 int main(void)
 {
 	Delay_Init();

@@ -10,7 +10,6 @@
 
 #include "debug.h"
 #include "string.h"
-
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -404,51 +403,75 @@ typedef struct __PACKED _UDISK_BOC_CSW {/* status of BulkOnly USB-FlashDisk */
 #define USBHS_FORCE_RST     (1<<2)
 #define USBHS_INT_BUSY_EN   (1<<3)
 #define USBHS_DEV_PU_EN     (1<<4)
-
-#define USBHS_HOST_MODE     (1<<7)
-
 #define USBHS_SPEED_MASK    (3<<5)
 #define USBHS_FULL_SPEED    (0<<5)
 #define USBHS_HIGH_SPEED    (1<<5)
 #define USBHS_LOW_SPEED     (2<<5)
+#define USBHS_HOST_MODE     (1<<7)
 
-// USB SUSPENED
-#define DEV_REMOTE_WAKEUP   (1<<17)
-
-// UHOST
+// USB HOST_CTRL
 #define USBHS_HOST_TX_EN          (1<<3)
 #define USBHS_HOST_RX_EN          (1<<18)
 
-#define USBHS_SEND_BUS_RESET      ((UINT32)(1<<8))
-#define USBHS_SEND_BUS_SUSPEND    ((UINT32)(1<<9))
-#define USBHS_SEND_BUS_RESUME     ((UINT32)(1<<10))
-#define USBHS_REMOTE_WAKE         ((UINT32)(1<<11))
-#define USBHS_SUSPENDM            ((UINT32)(1<<12))
-#define USBHS_LINK_READY          ((UINT32)(1<<14))
-#define USBHS_SEND_SOF_EN         (((UINT32)(1<<15)))
-// INT_EN
-#define USBHS_DETECT_EN           (1<<16)
-#define USBHS_ACT_EN              (1<<17)
-#define USBHS_SUSP_EN             (1<<18)
-#define USBHS_SOF_EN              (1<<19)
-#define USBHS_OVER_EN             (1<<20)
-#define USBHS_SETUP_EN            (1<<21)
-#define USBHS_ISO_EN              (1<<22)
-#define USBHS_NAK_EN              (1<<23)
+#define USBHS_SEND_BUS_RESET      ((UINT32)(1<<0))
+#define USBHS_SEND_BUS_SUSPEND    ((UINT32)(1<<1))
+#define USBHS_SEND_BUS_RESUME     ((UINT32)(1<<2))
+#define USBHS_REMOTE_WAKE         ((UINT32)(1<<3))
+#define USBHS_SUSPENDM            ((UINT32)(1<<4))
+#define USBHS_LINK_READY          ((UINT32)(1<<6))
+#define USBHS_SEND_SOF_EN         ((UINT32)(1<<7))
 
-#define USBHS_USB2_ATTACH         (1<<9)
+// USB_INT_EN
+#define USBHS_BUS_RST_EN          (1<<0)
+#define USBHS_DETECT_EN           (1<<0)
+#define USBHS_TRANSFER_EN         (1<<1)
+#define USBHS_SUSPEND_EN          (1<<2)
+#define USBHS_SOF_ACT_EN          (1<<3)
+#define USBHS_FIFO_OV_EN          (1<<4)
+#define USBHS_SETUP_ACT_EN        (1<<5)
+#define USBHS_ISO_ACT_EN          (1<<6)
+#define USBHS_DEV_NAK_EN          (1<<7)
+
+// USB DEV AD
+
+// USB FRAME_NO
+
+// USB SUSPEND
+#define USBHS_DEV_REMOTE_WAKEUP   (1<<2)
+#define USBHS_LINESTATE_MASK      (2<<4)          /* Read Only */
+
+// RESERVED0
+
+// USB SPEED TYPE
+
+// USB_MIS_ST
+#define USBHS_SPLIT_CAN           (1<<0)
+#define USBHS_ATTACH              (1<<1)
+#define USBHS_SUSPEND             (1<<2)
+#define USBHS_BUS_RESET           (1<<3)
+#define USBHS_R_FIFO_RDY          (1<<4)
+#define USBHS_SIE_FREE            (1<<5)
+#define USBHS_SOF_ACT             (1<<6)
+#define USBHS_SOF_PRES            (1<<7)
+
 // INT_FLAG
-#define USBHS_DETECT_FLAG         (1<<16)
-#define USBHS_ACT_FLAG            (1<<17)
-#define USBHS_SUSP_FLAG           (1<<18)
-#define USBHS_SOF_FLAG            (1<<19)
-#define USBHS_OVER_FLAG           (1<<20)
-#define USBHS_SETUP_FLAG          (1<<21)
-#define USBHS_ISO_FLAG            (1<<22)
+#define USBHS_BUS_RST_FLAG        (1<<0)
+#define USBHS_DETECT_FLAG         (1<<0)
+#define USBHS_TRANSFER_FLAG       (1<<1)
+#define USBHS_SUSPEND_FLAG        (1<<2)
+#define USBHS_HST_SOF_FLAG        (1<<3)
+#define USBHS_FIFO_OV_FLAG        (1<<4)
+#define USBHS_SETUP_FLAG          (1<<5)
+#define USBHS_ISO_ACT_FLAG        (1<<6)
 
 // INT_ST
-#define USBHS_DEV_UIS_IS_NAK      (1<<31)
-#define USBHS_DEV_UIS_TOG_OK      (1<<30)
+#define USBHS_DEV_UIS_IS_NAK      (1<<7)
+#define USBHS_DEV_UIS_TOG_OK      (1<<6)
+#define MASK_UIS_TOKEN            (3<<4)
+#define MASK_UIS_ENDP             (0x0F)
+#define MASK_UIS_H_RES            (0x0F)
+
+//USB_RX_LEN
 
 //UEP_CONFIG
 #define USBHS_EP0_T_EN          (1<<0)
@@ -604,38 +627,41 @@ typedef struct __PACKED _UDISK_BOC_CSW {/* status of BulkOnly USB-FlashDisk */
 //      1               0               1            bUEPn_RX_TOG[0]=0,使用缓冲区UEPn_RX_DMA，bUEPn_RX_TOG[0]=1,使用缓冲区UEPn_TX_DMA
 //      0               1               0            发送(IN)缓冲区首地址为UEPn_TX_DMA。
 //      0               1               1            bUEPn_TX_TOG[0]=0,使用缓冲区UEPn_TX_DMA，bUEPn_TX_TOG[0]=1,使用缓冲区UEPn_RX_DMA
-/* UEPn_TX_CTRL & UEPn_RX_CTRL & UEPn_T_LEN */
-#define USBHS_EP_T_LEN_MASK       (0xFFFF)
 
-#define USBHS_EP_T_RES_MASK       (3<<16)
-    #define USBHS_EP_T_RES_ACK        (0<<16)
-    #define USBHS_EP_T_RES_NYET       (1<<16)
-    #define USBHS_EP_T_RES_NAK        (2<<16)
-    #define USBHS_EP_T_RES_STALL      (3<<16)
+// UEPn_T_LEN
+#define USBHS_EP_T_LEN_MASK       (0x7FF)
 
-#define USBHS_EP_T_TOG_MASK       (3<<19)
-    #define USBHS_EP_T_TOG_0          (0<<19)
-    #define USBHS_EP_T_TOG_1          (1<<19)
-    #define USBHS_EP_T_TOG_2          (2<<19)
-    #define USBHS_EP_T_TOG_M          (3<<19)
+//UEPn_TX_CTRL
+#define USBHS_EP_T_RES_MASK       (3<<0)
+    #define USBHS_EP_T_RES_ACK        (0<<0)
+    #define USBHS_EP_T_RES_NYET       (1<<0)
+    #define USBHS_EP_T_RES_NAK        (2<<0)
+    #define USBHS_EP_T_RES_STALL      (3<<0)
 
-#define USBHS_EP_T_AUTOTOG       (1<<21)
+#define USBHS_EP_T_TOG_MASK       (3<<3)
+    #define USBHS_EP_T_TOG_0          (0<<3)
+    #define USBHS_EP_T_TOG_1          (1<<3)
+    #define USBHS_EP_T_TOG_2          (2<<3)
+    #define USBHS_EP_T_TOG_M          (3<<3)
 
-#define USBHS_EP_R_RES_MASK       (3<<24)
-    #define USBHS_EP_R_RES_ACK        (0<<24)
-    #define USBHS_EP_R_RES_NYET       (1<<24)
-    #define USBHS_EP_R_RES_NAK        (2<<24)
-    #define USBHS_EP_R_RES_STALL      (3<<24)
+#define USBHS_EP_T_AUTOTOG        (1<<5)
 
-#define USBHS_EP_R_TOG_MASK       (3<<27)
-    #define USBHS_EP_R_TOG_0          (0<<27)
-    #define USBHS_EP_R_TOG_1          (1<<27)
-    #define USBHS_EP_R_TOG_2          (2<<27)
-    #define USBHS_EP_R_TOG_M          (3<<27)
+//UEPn_RX_CTRL
+#define USBHS_EP_R_RES_MASK       (3<<0)
+    #define USBHS_EP_R_RES_ACK        (0<<0)
+    #define USBHS_EP_R_RES_NYET       (1<<0)
+    #define USBHS_EP_R_RES_NAK        (2<<0)
+    #define USBHS_EP_R_RES_STALL      (3<<0)
 
-#define USBHS_EP_R_AUTOTOG       (1<<29)
+#define USBHS_EP_R_TOG_MASK       (3<<3)
+    #define USBHS_EP_R_TOG_0          (0<<3)
+    #define USBHS_EP_R_TOG_1          (1<<3)
+    #define USBHS_EP_R_TOG_2          (2<<3)
+    #define USBHS_EP_R_TOG_M          (3<<3)
 
-#define USBHS_TOG_MATCH           ((UINT32)(1<<30))
+#define USBHS_EP_R_AUTOTOG       (1<<5)
+
+#define USBHS_TOG_MATCH               (1<<6)
 
 // 00: OUT, 01:SOF, 10:IN, 11:SETUP
 #define PID_OUT             0
@@ -643,8 +669,7 @@ typedef struct __PACKED _UDISK_BOC_CSW {/* status of BulkOnly USB-FlashDisk */
 #define PID_IN              2
 #define PID_SETUP           3
 
-#define USBHS              ((USBHS_TypeDef *) USBHS_BASE)
-
+#define USBHSD              ((USBHSD_TypeDef *) USBHS_BASE)
 /******************************************************************************/
 /* USBHS PHY Clock Config (RCC_CFGR2) */
 #define USB_48M_CLK_SRC_MASK   (1<<31)
@@ -684,7 +709,7 @@ typedef struct __PACKED _UDISK_BOC_CSW {/* status of BulkOnly USB-FlashDisk */
 
 /******************************************************************************/
 /* USB设备描述符，设备序列号（bcdDevice） */
-#define DEF_IC_PRG_VER             0x01
+#define DEF_IC_PRG_VER             0x11
 #define DEF_IC_PRG_VER2            0x00
 /******************************************************************************/
 /* 变量外扩 */
@@ -720,7 +745,7 @@ extern void USBHS_Device_Init ( FunctionalState sta );                          
 extern void USBHS_Device_SetAddress( UINT32 address );                          /* USB2.0高速设备设置设备地址 */
 extern void USBHS_IRQHandler( void );                                           /* USB2.0高速设备中断服务程序 */
 extern void USBHS_Sleep_WakeUp_Cfg( void );                                     /* USB2.0高速设备睡眠唤醒配置 */
-extern void Ep1_Tx( PUINT8 data, UINT8 len );                                   /* USB2.0EP1端点上传 */
+extern void Ep1_Tx( PUINT8 data, UINT8 len );                                   /* USB2.0高速设备端点0 上传处理 */
 
 #ifdef __cplusplus
 }

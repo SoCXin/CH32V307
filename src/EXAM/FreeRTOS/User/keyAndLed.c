@@ -1,25 +1,20 @@
 /********************************** (C) COPYRIGHT *******************************
-* File Name          : main.c
+* File Name          : keyAndLed.c
 * Author             : WCH
 * Version            : V1.0.0
-* Date               : 2020/12/1
+* Date               : 2021/06/06
 * Description        : Main program body.
 *******************************************************************************/
-
-
-
 #include "debug.h"
 #include "Config.h"
 
-
-
-
-/*******************************************************************************
-* Function Name  : init_keyAndLed
-* Description    : key led≥ı ºªØ
-* Input          : None
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      init_keyAndLed
+ *
+ * @brief   Initializes the key and led
+ *
+ * @return  none
+ */
 void init_keyAndLed(void)
 {
     GPIO_InitTypeDef  GPIO_InitStructure;

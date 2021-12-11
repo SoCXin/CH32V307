@@ -12,12 +12,14 @@
 #include "Config.h"
 
 #define TICK_PER_SECOND 500
-/*******************************************************************************
-* Function Name  : init_timer
-* Description    : timer≥ı ºªØ
-* Input          : None
-* Return         : None
-*******************************************************************************/
+
+/*********************************************************************
+ * @fn      init_timer
+ *
+ * @brief   Initializes the systick
+ *
+ * @return  none
+ */
 void init_timer(void)
 {
     NVIC_SetPriority(SysTicK_IRQn,0xff);

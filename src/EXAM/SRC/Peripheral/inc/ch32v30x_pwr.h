@@ -48,10 +48,10 @@ void PWR_EnterSTOPMode(uint32_t PWR_Regulator, uint8_t PWR_STOPEntry);
 void PWR_EnterSTANDBYMode(void);
 FlagStatus PWR_GetFlagStatus(uint32_t PWR_FLAG);
 void PWR_ClearFlag(uint32_t PWR_FLAG);
-void PWR_EnterSTOPMode_RAM(uint32_t PWR_Regulator, uint8_t PWR_STOPEntry);
-void PWR_EnterSTOPMode_RAM_LV(uint32_t PWR_Regulator, uint8_t PWR_STOPEntry);
 void PWR_EnterSTANDBYMode_RAM(void);
 void PWR_EnterSTANDBYMode_RAM_LV(void);
+void PWR_EnterSTANDBYMode_RAM_VBAT_EN(void);
+void PWR_EnterSTANDBYMode_RAM_LV_VBAT_EN(void);
 
 
 #ifdef __cplusplus

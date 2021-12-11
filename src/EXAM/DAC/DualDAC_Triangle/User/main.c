@@ -20,18 +20,17 @@
 
 /* Global Variable */ 
 
-
-
-/*******************************************************************************
-* Function Name  : Dual_Dac_Init
-* Description    : Initializes DAC collection.
-* Input          : None
-* Return         : None
-*******************************************************************************/ 
+/*********************************************************************
+ * @fn      Dual_Dac_Init
+ *
+ * @brief   Initializes DAC collection.
+ *
+ * @return  none
+ */
 void Dual_Dac_Init(void)
 {
-	GPIO_InitTypeDef GPIO_InitStructure;
-	DAC_InitTypeDef DAC_InitType;
+	GPIO_InitTypeDef GPIO_InitStructure={0};
+	DAC_InitTypeDef DAC_InitType={0};
 	
 	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA, ENABLE );
 	RCC_APB1PeriphClockCmd(RCC_APB1Periph_DAC, ENABLE );
@@ -56,15 +55,16 @@ void Dual_Dac_Init(void)
     DAC_SetDualChannelData(DAC_Align_12b_R, 0,0);
 }
 
-/*******************************************************************************
-* Function Name  : Timer4_Init
-* Description    : Initializes TIM4.
-* Input          : None
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      Timer4_Init
+ *
+ * @brief   Initializes TIM4.
+ *
+ * @return  none
+ */
 void Timer4_Init(void)
 {
-    TIM_TimeBaseInitTypeDef  TIM_TimeBaseStructure;
+    TIM_TimeBaseInitTypeDef  TIM_TimeBaseStructure={0};
     RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM4, ENABLE);
 
     TIM_TimeBaseStructInit(&TIM_TimeBaseStructure);
@@ -78,12 +78,13 @@ void Timer4_Init(void)
     TIM_Cmd(TIM4, ENABLE);
 }
 
-/*******************************************************************************
-* Function Name  : main
-* Description    : Main program.
-* Input          : None
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      main
+ *
+ * @brief   Main program.
+ *
+ * @return  none
+ */
 int main(void)
 {
     Delay_Init();

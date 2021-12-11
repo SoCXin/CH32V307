@@ -22,17 +22,18 @@
 /* Global Variable */
 
 
-/*******************************************************************************
-* Function Name  : EXTI0_INT_INIT
-* Description    : Initializes EXTI0 collection.
-* Input          : None
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      EXTI0_INT_INIT
+ *
+ * @brief   Initializes EXTI0 collection.
+ *
+ * @return  none
+ */
 void EXTI0_INT_INIT(void)
 {
-  GPIO_InitTypeDef  GPIO_InitStructure;
- 	EXTI_InitTypeDef EXTI_InitStructure;
- 	NVIC_InitTypeDef NVIC_InitStructure;
+  GPIO_InitTypeDef  GPIO_InitStructure={0};
+ 	EXTI_InitTypeDef EXTI_InitStructure={0};
+ 	NVIC_InitTypeDef NVIC_InitStructure={0};
 
   RCC_APB2PeriphClockCmd(RCC_APB2Periph_AFIO|RCC_APB2Periph_GPIOA,ENABLE);
 
@@ -55,13 +56,13 @@ void EXTI0_INT_INIT(void)
   NVIC_Init(&NVIC_InitStructure);
 }
 
-
-/*******************************************************************************
-* Function Name  : main
-* Description    : Main program.
-* Input          : None
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      main
+ *
+ * @brief   Main program.
+ *
+ * @return  none
+ */
 int main(void)
 {
 	NVIC_PriorityGroupConfig(NVIC_PriorityGroup_2);

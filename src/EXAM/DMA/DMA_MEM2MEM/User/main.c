@@ -30,15 +30,19 @@ u32  SRC_BUF[Buf_Size]={     0x01020304,0x05060708,0x090A0B0C,0x0D0E0F10,
 
 u32 DST_BUF[Buf_Size]={0};
 u8 Flag=0;
-/*******************************************************************************
-* Function Name  : BufCmp
-* Description    : Compare the  buf
-* Input          : buf1:pointer of buf1
-*                  buf2:pointer of buf1
-*                  buflength: length of buf
-* Return         : 1:Two arrays are identical
-*                  0:Two arrays are inconsistent
-*******************************************************************************/
+
+/*********************************************************************
+ * @fn      BufCmp
+ *
+ * @brief   Compare the  buf
+ *
+ * @param   buf1 - pointer of buf1
+ *          buf2 - pointer of buf1
+ *          buflength - length of buf
+ *
+ * @return  1 - Two arrays are identical
+ *          0 - Two arrays are inconsistent
+ */
 u8 BufCmp( u32* buf1,u32* buf2,u16 buflength)
 {
   while(buflength--)
@@ -53,16 +57,16 @@ u8 BufCmp( u32* buf1,u32* buf2,u16 buflength)
 	return 1;
 }
 
-
-/*******************************************************************************
-* Function Name  : DMA1_CH3_Init
-* Description    : Initializes Channel3 of DMA1 collection.
-* Input          : None
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      DMA1_CH3_Init
+ *
+ * @brief   Initializes Channel3 of DMA1 collection.
+ *
+ * @return  none
+ */
 void DMA1_CH3_Init(void)
 {
-  DMA_InitTypeDef DMA_InitStructure;
+  DMA_InitTypeDef DMA_InitStructure={0};
   RCC_AHBPeriphClockCmd(RCC_AHBPeriph_DMA1, ENABLE);
 
   DMA_StructInit( &DMA_InitStructure);
@@ -83,13 +87,13 @@ void DMA1_CH3_Init(void)
   DMA_Cmd(DMA1_Channel3, ENABLE);
 }
 
-
-/*******************************************************************************
-* Function Name  : main
-* Description    : Main program.
-* Input          : None
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      main
+ *
+ * @brief   Main program.
+ *
+ * @return  none
+ */
 int main(void)
 {
 	u8 i=0;

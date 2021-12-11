@@ -11,24 +11,28 @@
 static uint8_t  p_us=0;
 static uint16_t p_ms=0;
 
-/*******************************************************************************
-* Function Name  : Delay_Init
-* Description    : Initializes Delay Funcation.
-* Input          : None
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      Delay_Init
+ *
+ * @brief   Initializes Delay Funcation.
+ *
+ * @return  none
+ */
 void Delay_Init(void)
 {
 	p_us=SystemCoreClock/8000000;
 	p_ms=(uint16_t)p_us*1000;
 }
 
-/*******************************************************************************
-* Function Name  : Delay_Us
-* Description    : Microsecond Delay Time.
-* Input          : n£ºMicrosecond number.
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      Delay_Us
+ *
+ * @brief   Microsecond Delay Time.
+ *
+ * @param   n - Microsecond number.
+ *
+ * @return  None
+ */
 void Delay_Us(uint32_t n)
 {
     uint32_t i;
@@ -43,12 +47,15 @@ void Delay_Us(uint32_t n)
     SysTick->SR &= ~(1<<0);
 }
 
-/*******************************************************************************
-* Function Name  : Delay_Ms
-* Description    : Millisecond Delay Time.
-* Input          : n£ºMillisecond number.
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      Delay_Ms
+ *
+ * @brief   Millisecond Delay Time.
+ *
+ * @param   n - Millisecond number.
+ *
+ * @return  None
+ */
 void Delay_Ms(uint32_t n)
 {
     uint32_t i;
@@ -63,12 +70,15 @@ void Delay_Ms(uint32_t n)
     SysTick->SR &= ~(1<<0);
 }
 
-/*******************************************************************************
-* Function Name  : USART_Printf_Init
-* Description    : Initializes the USARTx peripheral.
-* Input          : baudrate: USART communication baud rate.
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      USART_Printf_Init
+ *
+ * @brief   Initializes the USARTx peripheral.
+ *
+ * @param   baudrate - USART communication baud rate.
+ *
+ * @return  None
+ */
 void USART_Printf_Init(uint32_t baudrate)
 {
   GPIO_InitTypeDef GPIO_InitStructure;
@@ -124,13 +134,16 @@ void USART_Printf_Init(uint32_t baudrate)
 #endif
 }
 
-/*******************************************************************************
-* Function Name  : _write
-* Description    : Support Printf Function
-* Input          : *buf: UART send Data.
-*                  size: Data length
-* Return         : size: Data length
-*******************************************************************************/
+/*********************************************************************
+ * @fn      _write
+ *
+ * @brief   Support Printf Function
+ *
+ * @param   *buf - UART send Data.
+ *          size - Data length
+ *
+ * @return  size: Data length
+ */
 int _write(int fd, char *buf, int size)
 {
   int i;

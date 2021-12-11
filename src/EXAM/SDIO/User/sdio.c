@@ -38,12 +38,14 @@ void SDIO_IRQHandler(void) __attribute__((interrupt("WCH-Interrupt-fast")));
 
 __attribute__ ((aligned(4))) u8 SDIO_DATA_BUFFER[512];
  
-/*******************************************************************************
-* Function Name  : SD_Init
-* Description    : Init SDIO.
-* Input          : None
-* Return         : errorstatus: Err code
-*******************************************************************************/
+
+/*********************************************************************
+ * @fn      SD_Init
+ *
+ * @brief   Init SDIO.
+ *
+ * @return  errorstatus - Err code
+ */
 SD_Error SD_Init(void)
 {
     NVIC_InitTypeDef NVIC_InitStructure;
@@ -104,12 +106,15 @@ SD_Error SD_Init(void)
     return errorstatus;
 }
 
-/*******************************************************************************
-* Function Name  : SDIO_Clock_Set
-* Description    : Seet SDIO clock
-* Input          : clkdiv: Clock divide factor
-* Return         : errorstatus: Err code
-*******************************************************************************/
+/*********************************************************************
+ * @fn      SDIO_Clock_Set
+ *
+ * @brief   Seet SDIO clock
+ *
+ * @param   clkdiv - Clock divide factor
+ *
+ * @return  errorstatus - Err code
+ */
 void SDIO_Clock_Set(u8 clkdiv)
 {
     u32 tmpreg=SDIO->CLKCR;
@@ -119,12 +124,13 @@ void SDIO_Clock_Set(u8 clkdiv)
     SDIO->CLKCR=tmpreg;
 } 
 
-/*******************************************************************************
-* Function Name  : SD_PowerON
-* Description    : SD care Power on
-* Input          : None
-* Return         : SD_Error: ERR code
-*******************************************************************************/
+/*********************************************************************
+ * @fn      SD_PowerON
+ *
+ * @brief   SD care Power on
+ *
+ * @return  SD_Error - ERR code
+ */
 SD_Error SD_PowerON(void)
 {
     u8 i=0;
@@ -244,24 +250,26 @@ SD_Error SD_PowerON(void)
     return(errorstatus);
 }
 
-/*******************************************************************************
-* Function Name  : SD_PowerOFF
-* Description    : SD care Power off
-* Input          : None
-* Return         : SD_Error: ERR code
-*******************************************************************************/
+/*********************************************************************
+ * @fn      SD_PowerOFF
+ *
+ * @brief   SD care Power off
+ *
+ * @return  SD_Error - ERR code
+ */
 SD_Error SD_PowerOFF(void)
 {
   SDIO_SetPowerState(SDIO_PowerState_OFF);
   return SD_OK;
 }   
 
-/*******************************************************************************
-* Function Name  : SD_InitializeCards
-* Description    : Init SD care
-* Input          : None
-* Return         : SD_Error: ERR code
-*******************************************************************************/
+/*********************************************************************
+ * @fn      SD_InitializeCards
+ *
+ * @brief   Init SD care
+ *
+ * @return  SD_Error - ERR code
+ */
 SD_Error SD_InitializeCards(void)
 {
     SD_Error errorstatus=SD_OK;
@@ -327,12 +335,13 @@ SD_Error SD_InitializeCards(void)
     return SD_OK;
 } 
 
-/*******************************************************************************
-* Function Name  : SD_GetCardInfo
-* Description    : Get SD information
-* Input          : None
-* Return         : SD_Error: ERR code
-*******************************************************************************/
+/*********************************************************************
+ * @fn      SD_GetCardInfo
+ *
+ * @brief   Get SD information
+ *
+ * @return  SD_Error - ERR code
+ */
 SD_Error SD_GetCardInfo(SD_CardInfo *cardinfo)
 {
     SD_Error errorstatus=SD_OK;
@@ -453,15 +462,18 @@ SD_Error SD_GetCardInfo(SD_CardInfo *cardinfo)
     return errorstatus;
 }
 
-/*******************************************************************************
-* Function Name  : SD_EnableWideBusOperation
-* Description    : Enable SDIO Wide bus
-* Input          : wmode:
-*                    0-1bit
-*                    1-4bit
-*                    2-8bit
-* Return         : SD_Error: ERR code
-*******************************************************************************/
+/*********************************************************************
+ * @fn      SD_EnableWideBusOperation
+ *
+ * @brief   Enable SDIO Wide bus
+ *
+ * @param   wmode -
+ *            0-1bit
+ *            1-4bit
+ *            2-8bit
+ *
+ * @return  SD_Error - ERR code
+ */
 SD_Error SD_EnableWideBusOperation(u32 wmode)
 {
     SD_Error errorstatus=SD_OK;
@@ -484,12 +496,15 @@ SD_Error SD_EnableWideBusOperation(u32 wmode)
     return errorstatus;
 }
 
-/*******************************************************************************
-* Function Name  : SD_EnableWideBusOperation
-* Description    : Enable SD care work mode
-* Input          : Mode: work mode
-* Return         : SD_Error: ERR code
-*******************************************************************************/
+/*********************************************************************
+ * @fn      SD_EnableWideBusOperation
+ *
+ * @brief   Enable SD care work mode
+ *
+ * @param   Mode - work mode
+ *
+ * @return  SD_Error - ERR code
+ */
 SD_Error SD_SetDeviceMode(u32 Mode)
 {
     SD_Error errorstatus = SD_OK;
@@ -498,12 +513,15 @@ SD_Error SD_SetDeviceMode(u32 Mode)
     return errorstatus;
 }
 
-/*******************************************************************************
-* Function Name  : SD_SelectDeselect
-* Description    : Select deselect
-* Input          : addr: RCA address
-* Return         : SD_Error: ERR code
-*******************************************************************************/
+/*********************************************************************
+ * @fn      SD_SelectDeselect
+ *
+ * @brief   Select deselect
+ *
+ * @param   addr - RCA address
+ *
+ * @return  SD_Error - ERR code
+ */
 SD_Error SD_SelectDeselect(u32 addr)
 {
     SDIO_CmdInitStructure.SDIO_Argument =  addr;
@@ -516,14 +534,17 @@ SD_Error SD_SelectDeselect(u32 addr)
     return CmdResp1Error(SD_CMD_SEL_DESEL_CARD);
 }
  
-/*******************************************************************************
-* Function Name  : SD_ReadBlock
-* Description    : Read block
-* Input          : *buf: data
-*                  addr: RCA address
-*                  blksize: block size
-* Return         : SD_Error: ERR code
-*******************************************************************************/
+/*********************************************************************
+ * @fn      SD_ReadBlock
+ *
+ * @brief   Read block
+ *
+ * @param   *buf - data
+ *          addr -RCA address
+ *          blksize - block size
+ *
+ * @return  SD_Error - ERR code
+ */
 SD_Error SD_ReadBlock(u8 *buf,long long addr,u16 blksize)
 {
     SD_Error errorstatus=SD_OK;
@@ -637,15 +658,18 @@ SD_Error SD_ReadBlock(u8 *buf,long long addr,u16 blksize)
 }
 
 __attribute__ ((aligned(4))) u32 *tempbuff;
-/*******************************************************************************
-* Function Name  : SD_ReadMultiBlocks
-* Description    : Read multiple block
-* Input          : *buf: data
-*                  addr: RCA address
-*                  blksize: block size
-*                  nblks: block number
-* Return         : SD_Error: ERR code
-*******************************************************************************/
+/*********************************************************************
+ * @fn      SD_ReadMultiBlocks
+ *
+ * @brief   Read multiple block
+ *
+ * @param   *buf - data
+ *          addr - RCA address
+ *          blksize - block size
+ *          nblks - block number
+ *
+ * @return  SD_Error - ERR code
+ */
 SD_Error SD_ReadMultiBlocks(u8 *buf,long long addr,u16 blksize,u32 nblks)
 {
     SD_Error errorstatus=SD_OK;
@@ -779,14 +803,17 @@ SD_Error SD_ReadMultiBlocks(u8 *buf,long long addr,u16 blksize,u32 nblks)
     return errorstatus;
 }
 
-/*******************************************************************************
-* Function Name  : SD_WriteBlock
-* Description    : Write block
-* Input          : *buf: data
-*                  addr: RCA address
-*                  blksize: block size
-* Return         : SD_Error: ERR code
-*******************************************************************************/
+/*********************************************************************
+ * @fn      SD_WriteBlock
+ *
+ * @brief   Write block
+ *
+ * @param   *buf - data
+ *          addr - RCA address
+ *          blksize - block size
+ *
+ * @return  SD_Error - ERR code
+ */
 SD_Error SD_WriteBlock(u8 *buf,long long addr,  u16 blksize)
 {
     SD_Error errorstatus = SD_OK;
@@ -958,15 +985,18 @@ SD_Error SD_WriteBlock(u8 *buf,long long addr,  u16 blksize)
     return errorstatus;
 }
 
-/*******************************************************************************
-* Function Name  : SD_WriteBlock
-* Description    : Write multiple block
-* Input          : *buf: data
-*                  addr: RCA address
-*                  blksize: block size
-*                  nblks: block number
-* Return         : SD_Error: ERR code
-*******************************************************************************/
+/*********************************************************************
+ * @fn      SD_WriteBlock
+ *
+ * @brief   Write multiple block
+ *
+ * @param   buf - data
+ *          addr - RCA address
+ *          blksize - block size
+ *          nblks - block number
+ *
+ * @return  SD_Error - ERR code
+ */
 SD_Error SD_WriteMultiBlocks(u8 *buf,long long addr,u16 blksize,u32 nblks)
 {
     SD_Error errorstatus = SD_OK;
@@ -1150,23 +1180,25 @@ SD_Error SD_WriteMultiBlocks(u8 *buf,long long addr,u16 blksize,u32 nblks)
     return errorstatus;
 }
 
-/*******************************************************************************
-* Function Name  : SDIO_IRQHandler
-* Description    : This function handles SDIO exception.
-* Input          : None
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      SDIO_IRQHandler
+ *
+ * @brief   This function handles SDIO exception.
+ *
+ * @return  none
+ */
 void SDIO_IRQHandler(void) 
 {
     SD_ProcessIRQSrc();
 }
 
-/*******************************************************************************
-* Function Name  : SD_ProcessIRQSrc
-* Description    : IRQ deal function
-* Input          : None
-* Return         : SD_Error: ERR code
-*******************************************************************************/
+/*********************************************************************
+ * @fn      SD_ProcessIRQSrc
+ *
+ * @brief   IRQ deal function
+ *
+ * @return  SD_Error - ERR code
+ */
 SD_Error SD_ProcessIRQSrc(void)
 {
     if(SDIO->STA&(1<<8))
@@ -1225,12 +1257,13 @@ SD_Error SD_ProcessIRQSrc(void)
     return(SD_OK);
 }
   
-/*******************************************************************************
-* Function Name  : CmdError
-* Description    : Errer commend
-* Input          : None
-* Return         : SD_Error: ERR code
-*******************************************************************************/
+/*********************************************************************
+ * @fn      CmdError
+ *
+ * @brief   Errer commend
+ *
+ * @return  SD_Error - ERR code
+ */
 SD_Error CmdError(void)
 {
     SD_Error errorstatus = SD_OK;
@@ -1244,12 +1277,13 @@ SD_Error CmdError(void)
     return errorstatus;
 }
 
-/*******************************************************************************
-* Function Name  : CmdResp7Error
-* Description    : R7 Errer commend
-* Input          : None
-* Return         : SD_Error: ERR code
-*******************************************************************************/
+/*********************************************************************
+ * @fn      CmdResp7Error
+ *
+ * @brief   R7 Errer commend
+ *
+ * @return  SD_Error - ERR code
+ */
 SD_Error CmdResp7Error(void)
 {
     SD_Error errorstatus=SD_OK;
@@ -1274,12 +1308,13 @@ SD_Error CmdResp7Error(void)
     return errorstatus;
 }
 
-/*******************************************************************************
-* Function Name  : CmdResp7Error
-* Description    : R1 Errer commend
-* Input          : None
-* Return         : SD_Error: ERR code
-*******************************************************************************/
+/*********************************************************************
+ * @fn      CmdResp7Error
+ *
+ * @brief   R1 Errer commend
+ *
+ * @return  SD_Error - ERR code
+ */
 SD_Error CmdResp1Error(u8 cmd)
 {
     u32 status;
@@ -1303,12 +1338,13 @@ SD_Error CmdResp1Error(u8 cmd)
     return (SD_Error)(SDIO->RESP1&SD_OCR_ERRORBITS);
 }
 
-/*******************************************************************************
-* Function Name  : CmdResp3Error
-* Description    : R3 Errer commend
-* Input          : None
-* Return         : SD_Error: ERR code
-*******************************************************************************/
+/*********************************************************************
+ * @fn      CmdResp3Error
+ *
+ * @brief   R3 Errer commend
+ *
+ * @return  SD_Error - ERR code
+ */
 SD_Error CmdResp3Error(void)
 {
     u32 status;
@@ -1326,12 +1362,13 @@ SD_Error CmdResp3Error(void)
     return SD_OK;
 }
 
-/*******************************************************************************
-* Function Name  : CmdResp2Error
-* Description    : R2 Errer commend
-* Input          : None
-* Return         : SD_Error: ERR code
-*******************************************************************************/
+/*********************************************************************
+ * @fn      CmdResp2Error
+ *
+ * @brief   R2 Errer commend
+ *
+ * @return  SD_Error - ERR code
+ */
 SD_Error CmdResp2Error(void)
 {
     SD_Error errorstatus=SD_OK;
@@ -1357,13 +1394,16 @@ SD_Error CmdResp2Error(void)
     return errorstatus;
 } 
 
-/*******************************************************************************
-* Function Name  : CmdResp6Error
-* Description    : R6 Errer commend
-* Input          : cmd: Send commend
-*                  *prca: RCA address
-* Return         : SD_Error: ERR code
-*******************************************************************************/
+/*********************************************************************
+ * @fn      CmdResp6Error
+ *
+ * @brief   R6 Errer commend
+ *
+ * @param   cmd - Send commend
+ *          *prca - RCA address
+ *
+ * @return  SD_Error - ERR code
+ */
 SD_Error CmdResp6Error(u8 cmd,u16*prca)
 {
     SD_Error errorstatus=SD_OK;
@@ -1402,12 +1442,15 @@ SD_Error CmdResp6Error(u8 cmd,u16*prca)
     return errorstatus;
 }
 
-/*******************************************************************************
-* Function Name  : SDEnWideBus
-* Description    : Enable bus width
-* Input          : enx: 0-disable 1-enable
-* Return         : SD_Error: ERR code
-*******************************************************************************/
+/*********************************************************************
+ * @fn      SDEnWideBus
+ *
+ * @brief   Enable bus width
+ *
+ * @param   enx - 0-disable 1-enable
+ *
+ * @return  SD_Error - ERR code
+ */
 SD_Error SDEnWideBus(u8 enx)
 {
     SD_Error errorstatus = SD_OK;
@@ -1443,12 +1486,15 @@ SD_Error SDEnWideBus(u8 enx)
     }else return SD_REQUEST_NOT_APPLICABLE;
 }
 
-/*******************************************************************************
-* Function Name  : IsCardProgramming
-* Description    : Check SD card write statue
-* Input          : pstatus: Current status
-* Return         : SD_Error: ERR code
-*******************************************************************************/
+/*********************************************************************
+ * @fn      IsCardProgramming
+ *
+ * @brief   Check SD card write statue
+ *
+ * @param   pstatus - Current status
+ *
+ * @return  SD_Error - ERR code
+ */
 SD_Error IsCardProgramming(u8 *pstatus)
 {
     vu32 respR1 = 0, status = 0;
@@ -1484,12 +1530,15 @@ SD_Error IsCardProgramming(u8 *pstatus)
     return SD_OK;
 }
 
-/*******************************************************************************
-* Function Name  : SD_SendStatus
-* Description    : Read SD card write statue
-* Input          : pcardstatus: Current status
-* Return         : SD_Error: ERR code
-*******************************************************************************/
+/*********************************************************************
+ * @fn      SD_SendStatus
+ *
+ * @brief   Read SD card write statue
+ *
+ * @param   pcardstatus - Current status
+ *
+ * @return  SD_Error - ERR code
+ */
 SD_Error SD_SendStatus(uint32_t *pcardstatus)
 {
     SD_Error errorstatus = SD_OK;
@@ -1512,12 +1561,13 @@ SD_Error SD_SendStatus(uint32_t *pcardstatus)
     return errorstatus;
 } 
 
-/*******************************************************************************
-* Function Name  : SD_GetState
-* Description    : Get SD card write statue
-* Input          : None
-* Return         : SD_Error: ERR code
-*******************************************************************************/
+/*********************************************************************
+ * @fn      SD_GetState
+ *
+ * @brief   Get SD card write statue
+ *
+ * @return  SD_Error - ERR code
+ */
 SDCardState SD_GetState(void)
 {
     u32 resp1=0;
@@ -1525,12 +1575,13 @@ SDCardState SD_GetState(void)
     else return (SDCardState)((resp1>>9) & 0x0F);
 }
 
-/*******************************************************************************
-* Function Name  : FindSCR
-* Description    : Find SD card SCR
-* Input          : None
-* Return         : SD_Error: ERR code
-*******************************************************************************/
+/*********************************************************************
+ * @fn      FindSCR
+ *
+ * @brief   Find SD card SCR
+ *
+ * @return  SD_Error - ERR code
+ */
 SD_Error FindSCR(u16 rca,u32 *pscr)
 { 
     u32 index = 0;
@@ -1611,12 +1662,15 @@ SD_Error FindSCR(u16 rca,u32 *pscr)
     return errorstatus;
 }
 
-/*******************************************************************************
-* Function Name  : convert_from_bytes_to_power_of_two
-* Description    : Get NumberOfBytes value
-* Input          : NumberOfBytes: byte number
-* Return         : SD_Error: ERR code
-*******************************************************************************/
+/*********************************************************************
+ * @fn      convert_from_bytes_to_power_of_two
+ *
+ * @brief   Get NumberOfBytes value
+ *
+ * @param   NumberOfBytes - byte number
+ *
+ * @return  SD_Error - ERR code
+ */
 u8 convert_from_bytes_to_power_of_two(u16 NumberOfBytes)
 {
     u8 count=0;
@@ -1628,13 +1682,16 @@ u8 convert_from_bytes_to_power_of_two(u16 NumberOfBytes)
     return count;
 }
 
-/*******************************************************************************
-* Function Name  : SD_DMA_Config
-* Description    : configure DMA
-* Input          : mbuf: Storage address
-*                  bufsize: data size
-* Return         : SD_Error: ERR code
-*******************************************************************************/
+/*********************************************************************
+ * @fn      SD_DMA_Config
+ *
+ * @brief   configure DMA
+ *
+ * @param   mbuf - Storage address
+ *          bufsize - data size
+ *
+ * @return  SD_Error - ERR code
+ */
 void SD_DMA_Config(u32*mbuf,u32 bufsize,u32 DMA_DIR)
 {
     DMA_InitTypeDef DMA_InitStructure;
@@ -1660,14 +1717,17 @@ void SD_DMA_Config(u32*mbuf,u32 bufsize,u32 DMA_DIR)
     DMA_Cmd(DMA2_Channel4, DISABLE );
 }   
 
-/*******************************************************************************
-* Function Name  : SD_ReadDisk
-* Description    : Read SD care
-* Input          : buf: data
-*                  sector: sector addr
-*                  cnt: sector number
-* Return         : SD_Error: ERR code
-*******************************************************************************/
+/*********************************************************************
+ * @fn      SD_ReadDisk
+ *
+ * @brief   Read SD care
+ *
+ * @param   buf - data
+ *          sector - sector addr
+ *          cnt - sector number
+ *
+ * @return  SD_Error - ERR code
+ */
 u8 SD_ReadDisk(u8*buf,u32 sector,u8 cnt)
 {
     u8 sta=SD_OK;
@@ -1690,14 +1750,17 @@ u8 SD_ReadDisk(u8*buf,u32 sector,u8 cnt)
     return sta;
 }
 
-/*******************************************************************************
-* Function Name  : SD_WriteDisk
-* Description    : Write SD care
-* Input          : buf: data
-*                  sector: sector addr
-*                  cnt: sector number
-* Return         : SD_Error: ERR code
-*******************************************************************************/
+/*********************************************************************
+ * @fn      SD_WriteDisk
+ *
+ * @brief   Write SD care
+ *
+ * @param   buf - data
+ *          sector - sector addr
+ *          cnt - sector number
+ *
+ * @return  SD_Error - ERR code
+ */
 u8 SD_WriteDisk(u8*buf,u32 sector,u8 cnt)
 {
     u8 sta=SD_OK;

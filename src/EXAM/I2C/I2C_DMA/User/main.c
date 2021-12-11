@@ -39,16 +39,17 @@
 u8 TxData[Size] = { 0x01, 0x02, 0x03, 0x04, 0x05, 0x06 };
 u8 RxData[Size];
 
-/*******************************************************************************
-* Function Name  : IIC_Init
-* Description    : Initializes the IIC peripheral.
-* Input          : None
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      IIC_Init
+ *
+ * @brief   Initializes the IIC peripheral.
+ *
+ * @return  none
+ */
 void IIC_Init( u32 bound, u16 address )
 {
-	GPIO_InitTypeDef GPIO_InitStructure;
-	I2C_InitTypeDef I2C_InitTSturcture;
+	GPIO_InitTypeDef GPIO_InitStructure={0};
+	I2C_InitTypeDef I2C_InitTSturcture={0};
 
 	RCC_APB2PeriphClockCmd( RCC_APB2Periph_GPIOB | RCC_APB2Periph_AFIO, ENABLE );
 	GPIO_PinRemapConfig(GPIO_Remap_I2C1, ENABLE);	
@@ -82,19 +83,17 @@ void IIC_Init( u32 bound, u16 address )
 #endif
 }
 
-/*******************************************************************************
-* Function Name  : DMA_Tx_Init
-* Description    : Initializes the SPI1 DMAy Channelx configuration.
-* Input          : DMA_CHx:
-*                  ppadr: Peripheral base address.
-*                  memadr: Memory base address.
-*                  bufsize: DMA channel buffer size.
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      main
+ *
+ * @brief   Main program.
+ *
+ * @return  none
+ */
 void DMA_Tx_Init( DMA_Channel_TypeDef* DMA_CHx, u32 ppadr, u32 memadr, u16 bufsize)
 {
-	DMA_InitTypeDef DMA_InitStructure;
-	NVIC_InitTypeDef NVIC_InitStructure;
+	DMA_InitTypeDef DMA_InitStructure={0};
+	NVIC_InitTypeDef NVIC_InitStructure={0};
 
 	RCC_AHBPeriphClockCmd( RCC_AHBPeriph_DMA1, ENABLE );
 
@@ -122,18 +121,21 @@ void DMA_Tx_Init( DMA_Channel_TypeDef* DMA_CHx, u32 ppadr, u32 memadr, u16 bufsi
 	DMA_ITConfig( DMA1_Channel6, DMA_IT_TC, ENABLE );
 }
 
-/*******************************************************************************
-* Function Name  : DMA_Tx_Init
-* Description    : Initializes the SPI1 DMAy Channelx configuration.
-* Input          : DMA_CHx:
-*                  ppadr: Peripheral base address.
-*                  memadr: Memory base address.
-*                  bufsize: DMA channel buffer size.
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      DMA_Tx_Init
+ *
+ * @brief   Initializes the SPI1 DMAy Channelx configuration.
+ *
+ * @param   DMA_CHx -
+ *          ppadr - Peripheral base address.
+ *          memadr - Memory base address.
+ *          bufsize - DMA channel buffer size.
+ *
+ * @return  none
+ */
 void DMA_Rx_Init( DMA_Channel_TypeDef* DMA_CHx, u32 ppadr, u32 memadr, u16 bufsize )
 {
-	DMA_InitTypeDef DMA_InitStructure;
+	DMA_InitTypeDef DMA_InitStructure={0};
 
 	RCC_AHBPeriphClockCmd( RCC_AHBPeriph_DMA1, ENABLE );
 
@@ -153,12 +155,13 @@ void DMA_Rx_Init( DMA_Channel_TypeDef* DMA_CHx, u32 ppadr, u32 memadr, u16 bufsi
 	DMA_Init( DMA_CHx, &DMA_InitStructure );
 }
 
-/*******************************************************************************
-* Function Name  : main
-* Description    : Main program.
-* Input          : None
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      main
+ *
+ * @brief   Main program.
+ *
+ * @return  none
+ */
 int main(void)
 {
 	u8 i=0;

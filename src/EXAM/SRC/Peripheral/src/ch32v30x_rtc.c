@@ -11,15 +11,19 @@
 #define RTC_LSB_MASK     ((uint32_t)0x0000FFFF)  /* RTC LSB Mask */
 #define PRLH_MSB_MASK    ((uint32_t)0x000F0000)  /* RTC Prescaler MSB Mask */
 
-/********************************************************************************
-* Function Name  : RTC_ITConfig
-* Description    : Enables or disables the specified RTC interrupts.
-* Input          : RTC_IT: specifies the RTC interrupts sources to be enabled or disabled.
-*                     RTC_IT_OW: Overflow interrupt
-*                     RTC_IT_ALR: Alarm interrupt
-*                     RTC_IT_SEC: Second interrupt
-* Return         : NewState: new state of the specified RTC interrupts(ENABLE or DISABLE).
-*********************************************************************************/		
+
+/*********************************************************************
+ * @fn      RTC_ITConfig
+ *
+ * @brief   Enables or disables the specified RTC interrupts.
+ *
+ * @param   RTC_IT - specifies the RTC interrupts sources to be enabled or disabled.
+ *            RTC_IT_OW - Overflow interrupt
+ *            RTC_IT_ALR - Alarm interrupt
+ *            RTC_IT_SEC - Second interrupt
+ *
+ * @return  NewState - new state of the specified RTC interrupts(ENABLE or DISABLE).
+ */
 void RTC_ITConfig(uint16_t RTC_IT, FunctionalState NewState)
 {  
   if (NewState != DISABLE)
@@ -32,34 +36,37 @@ void RTC_ITConfig(uint16_t RTC_IT, FunctionalState NewState)
   }
 }
 
-/********************************************************************************
-* Function Name  : RTC_EnterConfigMode
-* Description    : Enters the RTC configuration mode.
-* Input          : None
-* Return         : None
-*********************************************************************************/	
+/*********************************************************************
+ * @fn      RTC_EnterConfigMode
+ *
+ * @brief   Enters the RTC configuration mode.
+ *
+ * @return  none
+ */
 void RTC_EnterConfigMode(void)
 {
   RTC->CTLRL |= RTC_CTLRL_CNF;
 }
 
-/********************************************************************************
-* Function Name  : RTC_ExitConfigMode
-* Description    : Exits from the RTC configuration mode.
-* Input          : None
-* Return         : None
-*********************************************************************************/	
+/*********************************************************************
+ * @fn      RTC_ExitConfigMode
+ *
+ * @brief   Exits from the RTC configuration mode.
+ *
+ * @return  none
+ */
 void RTC_ExitConfigMode(void)
 {
   RTC->CTLRL &= (uint16_t)~((uint16_t)RTC_CTLRL_CNF); 
 }
 
-/********************************************************************************
-* Function Name  : RTC_GetCounter
-* Description    : Gets the RTC counter value
-* Input          : None
-* Return         : RTC counter value
-*********************************************************************************/	
+/*********************************************************************
+ * @fn      RTC_GetCounter
+ *
+ * @brief   Gets the RTC counter value
+ *
+ * @return  RTC counter value
+ */
 uint32_t RTC_GetCounter(void)
 {
   uint16_t high1 = 0, high2 = 0, low = 0;
@@ -78,12 +85,15 @@ uint32_t RTC_GetCounter(void)
   }
 }
 
-/********************************************************************************
-* Function Name  : RTC_SetCounter
-* Description    : Sets the RTC counter value.
-* Input          : CounterValue: RTC counter new value.
-* Return         : None
-*********************************************************************************/	
+/*********************************************************************
+ * @fn      RTC_SetCounter
+ *
+ * @brief   Sets the RTC counter value.
+ *
+ * @param   CounterValue - RTC counter new value.
+ *
+ * @return  RTC counter value
+ */
 void RTC_SetCounter(uint32_t CounterValue)
 { 
   RTC_EnterConfigMode();
@@ -92,12 +102,15 @@ void RTC_SetCounter(uint32_t CounterValue)
   RTC_ExitConfigMode();
 }
 
-/********************************************************************************
-* Function Name  : RTC_SetPrescaler
-* Description    : Sets the RTC prescaler value
-* Input          : PrescalerValue: RTC prescaler new value
-* Return         : None
-*********************************************************************************/	
+/*********************************************************************
+ * @fn      RTC_SetPrescaler
+ *
+ * @brief   Sets the RTC prescaler value
+ *
+ * @param   PrescalerValue - RTC prescaler new value
+ *
+ * @return  none
+ */
 void RTC_SetPrescaler(uint32_t PrescalerValue)
 {
   RTC_EnterConfigMode();
@@ -106,12 +119,15 @@ void RTC_SetPrescaler(uint32_t PrescalerValue)
   RTC_ExitConfigMode();
 }
 
-/********************************************************************************
-* Function Name  : RTC_SetAlarm
-* Description    : Sets the RTC alarm value
-* Input          : AlarmValue: RTC alarm new value
-* Return         : None
-*********************************************************************************/	
+/*********************************************************************
+ * @fn      RTC_SetAlarm
+ *
+ * @brief   Sets the RTC alarm value
+ *
+ * @param   AlarmValue - RTC alarm new value
+ *
+ * @return  none
+ */
 void RTC_SetAlarm(uint32_t AlarmValue)
 {  
   RTC_EnterConfigMode();
@@ -120,12 +136,13 @@ void RTC_SetAlarm(uint32_t AlarmValue)
   RTC_ExitConfigMode();
 }
 
-/********************************************************************************
-* Function Name  : RTC_GetDivider
-* Description    : Gets the RTC divider value
-* Input          : None
-* Return         : RTC Divider value
-*********************************************************************************/	
+/*********************************************************************
+ * @fn      RTC_GetDivider
+ *
+ * @brief   Gets the RTC divider value
+ *
+ * @return  RTC Divider value
+ */
 uint32_t RTC_GetDivider(void)
 {
   uint32_t tmp = 0x00;
@@ -134,12 +151,13 @@ uint32_t RTC_GetDivider(void)
   return tmp;
 }
 
-/********************************************************************************
-* Function Name  : RTC_WaitForLastTask
-* Description    : Waits until last write operation on RTC registers has finished
-* Input          : None
-* Return         : None
-*********************************************************************************/	
+/*********************************************************************
+ * @fn      RTC_WaitForLastTask
+ *
+ * @brief   Waits until last write operation on RTC registers has finished
+ *
+ * @return  none
+ */
 void RTC_WaitForLastTask(void)
 {
   while ((RTC->CTLRL & RTC_FLAG_RTOFF) == (uint16_t)RESET)
@@ -147,13 +165,13 @@ void RTC_WaitForLastTask(void)
   }
 }
 
-/********************************************************************************
-* Function Name  : RTC_WaitForSynchro
-* Description    : Waits until the RTC registers 
-*                  are synchronized with RTC APB clock
-* Input          : None
-* Return         : None
-*********************************************************************************/	
+/*********************************************************************
+ * @fn      RTC_WaitForSynchro
+ *
+ * @brief   Waits until the RTC registers are synchronized with RTC APB clock
+ *
+ * @return  none
+ */
 void RTC_WaitForSynchro(void)
 {
   RTC->CTLRL &= (uint16_t)~RTC_FLAG_RSF;
@@ -162,17 +180,20 @@ void RTC_WaitForSynchro(void)
   }
 }
 
-/********************************************************************************
-* Function Name  : RTC_GetFlagStatus
-* Description    : Checks whether the specified RTC flag is set or not
-* Input          : RTC_FLAG: specifies the flag to check
-*                    RTC_FLAG_RTOFF: RTC Operation OFF flag
-*                    RTC_FLAG_RSF: Registers Synchronized flag
-*                    RTC_FLAG_OW: Overflow flag
-*                    RTC_FLAG_ALR: Alarm flag
-*                    RTC_FLAG_SEC: Second flag
-* Return         : The new state of RTC_FLAG (SET or RESET)
-*********************************************************************************/
+/*********************************************************************
+ * @fn      RTC_GetFlagStatus
+ *
+ * @brief   Checks whether the specified RTC flag is set or not
+ *
+ * @param   RTC_FLAG- specifies the flag to check
+ *            RTC_FLAG_RTOFF - RTC Operation OFF flag
+ *            RTC_FLAG_RSF - Registers Synchronized flag
+ *            RTC_FLAG_OW - Overflow flag
+ *            RTC_FLAG_ALR - Alarm flag
+ *            RTC_FLAG_SEC - Second flag
+ *
+ * @return  none
+ */
 FlagStatus RTC_GetFlagStatus(uint16_t RTC_FLAG)
 {
   FlagStatus bitstatus = RESET;  
@@ -187,31 +208,36 @@ FlagStatus RTC_GetFlagStatus(uint16_t RTC_FLAG)
   return bitstatus;
 }
 
-/********************************************************************************
-* Function Name  : RTC_ClearFlag
-* Description    : Clears the RTC's pending flags
-* Input          : RTC_FLAG: specifies the flag to clear
-*                    RTC_FLAG_RSF: Registers Synchronized flag
-*                    RTC_FLAG_OW: Overflow flag
-*                    RTC_FLAG_ALR: Alarm flag
-*                    RTC_FLAG_SEC: Second flag
-* Return         : None
-*********************************************************************************/
+/*********************************************************************
+ * @fn      RTC_ClearFlag
+ *
+ * @brief   Clears the RTC's pending flags
+ *
+ * @param   RTC_FLAG - specifies the flag to clear
+ *            RTC_FLAG_RSF - Registers Synchronized flag
+ *            RTC_FLAG_OW - Overflow flag
+ *            RTC_FLAG_ALR - Alarm flag
+ *            RTC_FLAG_SEC - Second flag
+ *
+ * @return  none
+ */
 void RTC_ClearFlag(uint16_t RTC_FLAG)
 {
   RTC->CTLRL &= (uint16_t)~RTC_FLAG;
 }
 
-
-/********************************************************************************
-* Function Name  : RTC_GetITStatus
-* Description    : Checks whether the specified RTC interrupt has occurred or not
-* Input          : RTC_IT: specifies the RTC interrupts sources to check
-*                    RTC_FLAG_OW: Overflow interrupt
-*                    RTC_FLAG_ALR: Alarm interrupt
-*                    RTC_FLAG_SEC: Second interrupt
-* Return         : The new state of the RTC_IT (SET or RESET)
-*********************************************************************************/
+/*********************************************************************
+ * @fn      RTC_GetITStatus
+ *
+ * @brief   Checks whether the specified RTC interrupt has occurred or not
+ *
+ * @param   RTC_IT - specifies the RTC interrupts sources to check
+ *            RTC_FLAG_OW - Overflow interrupt
+ *            RTC_FLAG_ALR - Alarm interrupt
+ *            RTC_FLAG_SEC - Second interrupt
+ *
+ * @return  The new state of the RTC_IT (SET or RESET)
+ */
 ITStatus RTC_GetITStatus(uint16_t RTC_IT)
 {
   ITStatus bitstatus = RESET;
@@ -228,15 +254,18 @@ ITStatus RTC_GetITStatus(uint16_t RTC_IT)
   return bitstatus;
 }
 
-/********************************************************************************
-* Function Name  : RTC_ClearITPendingBit
-* Description    : Clears the RTC's interrupt pending bits
-* Input          : RTC_IT: specifies the interrupt pending bit to clear
-*                    RTC_FLAG_OW: Overflow interrupt
-*                    RTC_FLAG_ALR: Alarm interrupt
-*                    RTC_FLAG_SEC: Second interrupt
-* Return         : None
-*********************************************************************************/
+/*********************************************************************
+ * @fn      RTC_ClearITPendingBit
+ *
+ * @brief   Clears the RTC's interrupt pending bits
+ *
+ * @param   RTC_IT - specifies the interrupt pending bit to clear
+ *            RTC_FLAG_OW - Overflow interrupt
+ *            RTC_FLAG_ALR - Alarm interrupt
+ *            RTC_FLAG_SEC - Second interrupt
+ *
+ * @return  none
+ */
 void RTC_ClearITPendingBit(uint16_t RTC_IT)
 {
   RTC->CTLRL &= (uint16_t)~RTC_IT;

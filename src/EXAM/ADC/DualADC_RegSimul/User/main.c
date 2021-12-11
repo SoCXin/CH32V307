@@ -22,16 +22,17 @@ s16 Calibrattion_Val2 = 0;
 
 void DMA1_Channel1_IRQHandler(void)   __attribute__((interrupt("WCH-Interrupt-fast")));
 
-/*******************************************************************************
-* Function Name  : ADC_Function_Init
-* Description    : Initializes ADC collection.
-* Input          : None
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      ADC_Function_Init
+ *
+ * @brief   Initializes ADC collection.
+ *
+ * @return  none
+ */
 void  ADC_Function_Init(void)
 {
-    ADC_InitTypeDef ADC_InitStructure;
-    GPIO_InitTypeDef GPIO_InitStructure;
+    ADC_InitTypeDef ADC_InitStructure={0};
+    GPIO_InitTypeDef GPIO_InitStructure={0};
 
     RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA , ENABLE );
     RCC_APB2PeriphClockCmd(RCC_APB2Periph_ADC1  , ENABLE );
@@ -86,20 +87,22 @@ void  ADC_Function_Init(void)
 }
 
 
-/*******************************************************************************
-* Function Name  : DMA_Tx_Init
-* Description    : Initializes the DMAy Channelx configuration.
-* Input          : DMA_CHx:
-*                    x can be 1 to 7.
-*                  ppadr: Peripheral base address.
-*                  memadr: Memory base address.
-*                  bufsize: DMA channel buffer size.
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      DMA_Tx_Init
+ *
+ * @brief   Initializes the DMAy Channelx configuration.
+ *
+ * @param   DMA_CHx - x can be 1 to 7.
+ *          ppadr - Peripheral base address.
+ *          memadr - Memory base address.
+ *          bufsize - DMA channel buffer size.
+ *
+ * @return  none
+ */
 void DMA_Tx_Init( DMA_Channel_TypeDef* DMA_CHx, u32 ppadr, u32 memadr, u16 bufsize)
 {
-	DMA_InitTypeDef DMA_InitStructure;
-	NVIC_InitTypeDef NVIC_InitStructure;
+	DMA_InitTypeDef DMA_InitStructure={0};
+	NVIC_InitTypeDef NVIC_InitStructure={0};
 
 	RCC_AHBPeriphClockCmd( RCC_AHBPeriph_DMA1, ENABLE );
 
@@ -126,12 +129,45 @@ void DMA_Tx_Init( DMA_Channel_TypeDef* DMA_CHx, u32 ppadr, u32 memadr, u16 bufsi
     DMA_ITConfig( DMA1_Channel1, DMA_IT_TC | DMA_IT_HT | DMA_IT_TE, ENABLE );
 }
 
-/*******************************************************************************
-* Function Name  : main
-* Description    : Main program.
-* Input          : None
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      Get_ConversionVal1
+ *
+ * @brief   Get Conversion Value.
+ *
+ * @param   val - Sampling value
+ *
+ * @return  val+Calibrattion_Val - Conversion Value.
+ */
+u16 Get_ConversionVal1(s16 val)
+{
+	if((val+Calibrattion_Val1)<0) return 0;
+	if((Calibrattion_Val1+val)>4095) return 4095;
+	return (val+Calibrattion_Val1);
+}
+
+/*********************************************************************
+ * @fn      Get_ConversionVal2
+ *
+ * @brief   Get Conversion Value.
+ *
+ * @param   val - Sampling value
+ *
+ * @return  val+Calibrattion_Val - Conversion Value.
+ */
+u16 Get_ConversionVal2(s16 val)
+{
+    if((val+Calibrattion_Val2)<0) return 0;
+    if((Calibrattion_Val2+val)>4095) return 4095;
+    return (val+Calibrattion_Val2);
+}
+
+/*********************************************************************
+ * @fn      main
+ *
+ * @brief   Main program.
+ *
+ * @return  none
+ */
 int main(void)
 {
     USART_Printf_Init(115200);
@@ -152,12 +188,13 @@ int main(void)
 	}
 }
 
-/*******************************************************************************
-* Function Name  : DMA1_Channel1_IRQHandler
-* Description    : DMA1_Channel1_IRQHandler Interrupt Service Function.
-* Input          : None
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      DMA1_Channel1_IRQHandler
+ *
+ * @brief   DMA1_Channel1_IRQHandler Interrupt Service Function.
+ *
+ * @return  none
+ */
 void DMA1_Channel1_IRQHandler()
 {
     if(DMA_GetITStatus(DMA1_IT_TC1)==SET ){
@@ -165,8 +202,10 @@ void DMA1_Channel1_IRQHandler()
 
         Adc_Val[0]=TxBuf[0]&0xffff;
         Adc_Val[1]=(TxBuf[0]>>16)&0xffff;
-        printf("ADC1 ch2=%d\r\n",Adc_Val[0]+Calibrattion_Val1);
-        printf("ADC2 ch3=%d\r\n",Adc_Val[1]+Calibrattion_Val2);
+#if 0
+        printf("ADC1 ch2=%d\r\n",Get_ConversionVal1(Adc_Val[0]+Calibrattion_Val1));
+        printf("ADC2 ch3=%d\r\n",Get_ConversionVal2(Adc_Val[1]+Calibrattion_Val2));
+#endif
     }
 }
 

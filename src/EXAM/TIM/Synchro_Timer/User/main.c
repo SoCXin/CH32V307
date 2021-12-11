@@ -17,12 +17,13 @@
 #include "debug.h"
 
 
-/*******************************************************************************
-* Function Name  : TIM_TimSynchroMode1_Init
-* Description    : Using TIM2 as prescaler for TIM1.
-* Input          : None
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      TIM_TimSynchroMode1_Init
+ *
+ * @brief   Using TIM2 as prescaler for TIM1.
+ *
+ * @return  none
+ */
 void TIM_TimSynchroMode1_Init(void)
 {
 	RCC_APB2PeriphClockCmd( RCC_APB2Periph_TIM1, ENABLE );
@@ -40,15 +41,16 @@ void TIM_TimSynchroMode1_Init(void)
 	TIM_Cmd( TIM2, ENABLE );
 }
 
-/*******************************************************************************
-* Function Name  : TIM_TimSynchroMode2_Init
-* Description    : Using TIM2 to use TIM1.
-* Input          : None
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      TIM_TimSynchroMode2_Init
+ *
+ * @brief   Using TIM2 to use TIM1.
+ *
+ * @return  none
+ */
 void TIM_TimSynchroMode2_Init(void)
 {
-	TIM_OCInitTypeDef TIM_OCInitStructure;
+	TIM_OCInitTypeDef TIM_OCInitStructure={0};
 
 	RCC_APB2PeriphClockCmd( RCC_APB2Periph_TIM1, ENABLE );
 	RCC_APB1PeriphClockCmd( RCC_APB1Periph_TIM2, ENABLE );
@@ -72,12 +74,13 @@ void TIM_TimSynchroMode2_Init(void)
 	TIM_Cmd( TIM1, ENABLE );
 }
 
-/*******************************************************************************
-* Function Name  : TIM_TimSynchroMode3_Init
-* Description    : Using TIM2 to start TIM1.
-* Input          : None
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      TIM_TimSynchroMode3_Init
+ *
+ * @brief   Using TIM2 to start TIM1.
+ *
+ * @return  none
+ */
 void TIM_TimSynchroMode3_Init(void)
 {
 	RCC_APB2PeriphClockCmd( RCC_APB2Periph_TIM1, ENABLE );
@@ -93,16 +96,17 @@ void TIM_TimSynchroMode3_Init(void)
 	TIM_Cmd( TIM1, ENABLE );
 }
 
-/*******************************************************************************
-* Function Name  : TIM_TimSynchroMode4_Init
-* Description    : Starting TIM1 and TIM2 synchronously in response to an external trigger.
-* Input          : None
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      TIM_TimSynchroMode4_Init
+ *
+ * @brief   Starting TIM1 and TIM2 synchronously in response to an external trigger.
+ *
+ * @return  none
+ */
 void TIM_TimSynchroMode4_Init(void)
 {
-	GPIO_InitTypeDef GPIO_InitStructure;
-	TIM_ICInitTypeDef TIM_ICInitStructure;
+	GPIO_InitTypeDef GPIO_InitStructure={0};
+	TIM_ICInitTypeDef TIM_ICInitStructure={0};
 
 	RCC_APB2PeriphClockCmd( RCC_APB2Periph_GPIOA | RCC_APB2Periph_TIM1, ENABLE );
 	RCC_APB1PeriphClockCmd( RCC_APB1Periph_TIM2, ENABLE );
@@ -132,12 +136,13 @@ void TIM_TimSynchroMode4_Init(void)
 	TIM_SelectSlaveMode( TIM2, TIM_SlaveMode_Trigger );
 }
 
-/*******************************************************************************
-* Function Name  : main
-* Description    : Main program.
-* Input          : None
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      main
+ *
+ * @brief   Main program.
+ *
+ * @return  none
+ */
 int main(void)
 {
 	USART_Printf_Init(115200);

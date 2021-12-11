@@ -30,16 +30,17 @@
 /* Global Variable */
 
 
-/*******************************************************************************
-* Function Name  : USARTx_CFG
-* Description    : Initializes the USART2 & USART3 peripheral.
-* Input          : None
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      USARTx_CFG
+ *
+ * @brief   Initializes the USART2 & USART3 peripheral.
+ *
+ * @return  none
+ */
 void USARTx_CFG(void)
 {
-  GPIO_InitTypeDef  GPIO_InitStructure;
-	USART_InitTypeDef USART_InitStructure;
+  GPIO_InitTypeDef  GPIO_InitStructure={0};
+	USART_InitTypeDef USART_InitStructure={0};
 
 	RCC_APB1PeriphClockCmd(RCC_APB1Periph_USART2|RCC_APB1Periph_USART3, ENABLE);
 	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA |RCC_APB2Periph_GPIOB , ENABLE);
@@ -79,12 +80,13 @@ void USARTx_CFG(void)
 	USART_ReceiverWakeUpCmd(USART3,ENABLE);                       /* USART3 Into Silence */
 }
 
-/*******************************************************************************
-* Function Name  : main
-* Description    : Main program.
-* Input          : None
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      main
+ *
+ * @brief   Main program.
+ *
+ * @return  none
+ */
 int main(void)
 {
 	NVIC_PriorityGroupConfig(NVIC_PriorityGroup_2);

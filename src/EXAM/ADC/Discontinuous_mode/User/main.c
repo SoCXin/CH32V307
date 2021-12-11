@@ -17,16 +17,17 @@
 #include "debug.h"
 s16 Calibrattion_Val = 0;
 
-/*******************************************************************************
-* Function Name  : ADC_Function_Init
-* Description    : Initializes ADC collection.
-* Input          : None
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      ADC_Function_Init
+ *
+ * @brief   Initializes ADC collection.
+ *
+ * @return  none
+ */
 void ADC_Function_Init(void)
 {
-	ADC_InitTypeDef ADC_InitStructure;
-	GPIO_InitTypeDef GPIO_InitStructure;
+	ADC_InitTypeDef ADC_InitStructure={0};
+	GPIO_InitTypeDef GPIO_InitStructure={0};
 
 	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA, ENABLE );
   RCC_APB2PeriphClockCmd(RCC_APB2Periph_ADC1, ENABLE );
@@ -73,19 +74,22 @@ void ADC_Function_Init(void)
     ADC_BufferCmd(ADC1, ENABLE);   //enable buffer
 }
 
-/*******************************************************************************
-* Function Name  : TIM1_PWM_In
-* Description    : Initializes TIM1 PWM output.
-* Input          : arr: the period value.
-*                  psc: the prescaler value.
-*									 ccp: the pulse value.
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      TIM1_PWM_In
+ *
+ * @brief   Initializes TIM1 PWM output.
+ *
+ * @param   arr - the period value.
+ *          psc - the prescaler value.
+ *          ccp - the pulse value.
+ *
+ * @return  none
+ */
 void TIM1_PWM_In( u16 arr, u16 psc, u16 ccp )
 {
-	GPIO_InitTypeDef GPIO_InitStructure;
-	TIM_OCInitTypeDef TIM_OCInitStructure;
-	TIM_TimeBaseInitTypeDef TIM_TimeBaseInitStructure;
+	GPIO_InitTypeDef GPIO_InitStructure={0};
+	TIM_OCInitTypeDef TIM_OCInitStructure={0};
+	TIM_TimeBaseInitTypeDef TIM_TimeBaseInitStructure={0};
 
 	RCC_APB2PeriphClockCmd( RCC_APB2Periph_GPIOA | RCC_APB2Periph_TIM1, ENABLE );
 
@@ -113,12 +117,29 @@ void TIM1_PWM_In( u16 arr, u16 psc, u16 ccp )
 	TIM_Cmd( TIM1, ENABLE );
 }
 
-/*******************************************************************************
-* Function Name  : main
-* Description    : Main program.
-* Input          : None
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      Get_ConversionVal
+ *
+ * @brief   Get Conversion Value.
+ *
+ * @param   val - Sampling value
+ *
+ * @return  val+Calibrattion_Val - Conversion Value.
+ */
+u16 Get_ConversionVal(s16 val)
+{
+	if((val+Calibrattion_Val)<0) return 0;
+	if((Calibrattion_Val+val)>4095) return 4095;
+	return (val+Calibrattion_Val);
+}
+
+/*********************************************************************
+ * @fn      main
+ *
+ * @brief   Main program.
+ *
+ * @return  none
+ */
 int main(void)
 {
 	USART_Printf_Init(115200);
@@ -136,9 +157,9 @@ int main(void)
 		ADC_ClearFlag( ADC1, ADC_FLAG_JEOC);
 
 		printf("ADC Discontinuous injected group conversion...\r\n");
-		printf( "%04d\r\n", ADC1->IDATAR1 );
-		printf( "%04d\r\n", ADC1->IDATAR2 );
-		printf( "%04d\r\n", ADC1->IDATAR3 );
-		printf( "%04d\r\n", ADC1->IDATAR4 );
+		printf( "%04d\r\n", Get_ConversionVal(ADC1->IDATAR1) );
+		printf( "%04d\r\n", Get_ConversionVal(ADC1->IDATAR2) );
+		printf( "%04d\r\n", Get_ConversionVal(ADC1->IDATAR3) );
+		printf( "%04d\r\n", Get_ConversionVal(ADC1->IDATAR4) );
 	}
 }

@@ -14,11 +14,11 @@
 void USBHS_IRQHandler(void) __attribute__((interrupt("WCH-Interrupt-fast")));
 
 /* USB缓冲区定义 */
-__attribute__ ((aligned(16))) UINT8 EP0_Databuf[ USBHS_UEP0_SIZE ]          __attribute__((section(".DMADATA"))); /* 端点0数据收发缓冲区 */
-__attribute__ ((aligned(16))) UINT8 EP1_Rx_Databuf[ USBHS_MAX_PACK_SIZE ]   __attribute__((section(".DMADATA"))); /* 端点1数据接收缓冲区 */
-__attribute__ ((aligned(16))) UINT8 EP1_Tx_Databuf[ USBHS_MAX_PACK_SIZE ]   __attribute__((section(".DMADATA"))); /* 端点1数据发送缓冲区 */
-__attribute__ ((aligned(16))) UINT8 EP2_Rx_Databuf[ USBHS_MAX_PACK_SIZE ]   __attribute__((section(".DMADATA"))); /* 端点2数据接收缓冲区 */
-__attribute__ ((aligned(16))) UINT8 EP2_Tx_Databuf[ USBHS_MAX_PACK_SIZE ]   __attribute__((section(".DMADATA"))); /* 端点2数据发送缓冲区 */
+__attribute__ ((aligned(4))) UINT8 EP0_Databuf[ USBHS_UEP0_SIZE ]; /* 端点0数据收发缓冲区 */
+__attribute__ ((aligned(4))) UINT8 EP1_Rx_Databuf[ USBHS_MAX_PACK_SIZE ]; /* 端点1数据接收缓冲区 */
+__attribute__ ((aligned(4))) UINT8 EP1_Tx_Databuf[ USBHS_MAX_PACK_SIZE ]; /* 端点1数据发送缓冲区 */
+__attribute__ ((aligned(4))) UINT8 EP2_Rx_Databuf[ USBHS_MAX_PACK_SIZE ]; /* 端点2数据接收缓冲区 */
+__attribute__ ((aligned(4))) UINT8 EP2_Tx_Databuf[ USBHS_MAX_PACK_SIZE ]; /* 端点2数据发送缓冲区 */
 
 #define pMySetupReqPak        ((PUSB_SETUP_REQ)EP0_Databuf)
 const UINT8 *pDescr;
@@ -31,10 +31,13 @@ volatile UINT8  USBHS_Dev_SleepStatus = 0x00;                                   
 volatile UINT8  USBHS_Dev_EnumStatus = 0x00;                                    /* USB2.0高速设备枚举状态 */
 volatile UINT8  USBHS_Dev_Endp0_Tog = 0x01;                                     /* USB2.0高速设备端点0同步标志 */
 volatile UINT8  USBHS_Dev_Speed = 0x01;                                         /* USB2.0高速设备速度 */
+volatile UINT8  USBHS_Int_Flag  = 0x00;                                         /* USB2.0高速设备中断标志 */
 
 volatile UINT16 USBHS_Endp1_Up_Flag = 0x00;                                     /* USB2.0高速设备端点1数据上传状态: 0:空闲; 1:正在上传; */
 volatile UINT8  USBHS_Endp1_Down_Flag = 0x00;                                   /* USB2.0高速设备端点1下传成功标志 */
 volatile UINT8  USBHS_Endp1_Down_Len = 0x00;                                    /* USB2.0高速设备端点1下传长度 */
+volatile UINT8  USBHS_Endp1_T_Tog = 0x00;
+volatile UINT8  USBHS_Endp1_R_Tog = 0x00;
 
 volatile UINT16 USBHS_Endp2_Up_Flag = 0x00;                                     /* USB2.0高速设备端点2数据上传状态: 0:空闲; 1:正在上传; */
 volatile UINT16 USBHS_Endp2_Up_LoadPtr = 0x00;                                  /* USB2.0高速设备端点2数据上传装载偏移 */
@@ -74,28 +77,34 @@ const UINT8  MyCfgDescr_HS[ ] =
 /* USB语言字符串描述符 */
 const UINT8  MyLangDescr[ ] =
 {
-    0x04,0x03,0x09,0x04
+    0x04, 0x03, 0x09, 0x04
 };
 
 /* USB产商字符串描述符 */
 const UINT8  MyManuInfo[ ] =
 {
     /* wch.cn */
-    14,03,119,0,99,0,104,0,46,0,99,0,110,0
+    0x0E, 0x03,
+    'w',0x00, 'c',0x00, 'h',0x00, '.',0x00, 'c',0x00, 'n',0x00
 };
 
 /* USB产品字符串描述符 */
 const UINT8  MyProdInfo[ ] =
 {
     /* WCH USB2.0 DEVICE */
-    38,03,87,0,67,0,72,0,32,0,85,0,83,0,66,0,50,0,46,0,48,0,32,0,68,0,69,0,86,0,73,0,67,0,69,0,32,0
+    0x26, 0x03,
+    'W',0x00, 'C',0x00, 'H',0x00, ' ',0x00, 'U',0x00, 'S',0x00,
+    'B',0x00, '2',0x00, '.',0x00, '0',0x00, ' ',0x00, 'D',0x00,
+    'E',0x00, 'V',0x00, 'I',0x00, 'C',0x00, 'E',0x00, ' ',0x00
 };
 
 /* USB序列号字符串描述符 */
 const UINT8  MySerNumInfo[ ] =
 {
     /* 0123456789 */
-    22,03,48,0,49,0,50,0,51,0,52,0,53,0,54,0,55,0,56,0,57,0
+    0x16, 0x03,
+    '0',0x00, '1',0x00, '2',0x00, '3',0x00, '4',0x00, '5',0x00,
+    '6',0x00, '7',0x00, '8',0x00, '9',0x00,
 };
 
 /* USB设备限定描述符 */
@@ -105,9 +114,9 @@ const UINT8 MyUSBQUADesc[ ] =
 };
 const UINT8 MyBOSDesc[ ] =
 {
-    0x05,0x0f,0x16,0x00,0x02,
-    0x07,0x10,0x02,0x02,0x00,0x00,0x00,
-    0x0a,0x10,0x03,0x00,0x0e,0x00,0x01,0x0a,0xff,0x07,
+    0x05, 0x0f, 0x16, 0x00, 0x02,
+    0x07, 0x10, 0x02, 0x02, 0x00, 0x00, 0x00,
+    0x0a, 0x10, 0x03, 0x00, 0x0e, 0x00, 0x01, 0x0a, 0xff, 0x07,
 };
 /* USB全速模式,其他速度配置描述符 */
 UINT8 TAB_USB_FS_OSC_DESC[ sizeof( MyCfgDescr_HS ) ] =
@@ -121,12 +130,13 @@ UINT8 TAB_USB_HS_OSC_DESC[ sizeof( MyCfgDescr_FS ) ] =
     0x09, 0x07,                                                                 /* 其他部分通过程序复制 */
 };
 
-/*******************************************************************************
-* Function Name  : USBHS_RCC_Init
-* Description    : USB2.0高速设备RCC初始化
-* Input          : None
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      USBHS_RCC_Init
+ *
+ * @brief   Initializes the clock for USB2.0 High speed device.
+ *
+ * @return  none
+ */
 void USBHS_RCC_Init( void )
 {
     RCC->CFGR2 = USBHS_PLL_SRC_HSE | USBHS_PLL_SRC_PRE_DIV2 | USBHS_PLL_CKREF_4M; /* PLL REF = HSE/2 = 4MHz */
@@ -135,115 +145,175 @@ void USBHS_RCC_Init( void )
     Delay_Us( 200 );
 }
 
-/*******************************************************************************
-* Function Name  : USBHS_Device_Endp_Init
-* Description    : USB2.0高速设备端点初始化
-* Input          : None
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      USBHS_Device_Endp_Init
+ *
+ * @brief   USB2.0高速设备端点初始化
+ *
+ * @return  none
+ */
 void USBHS_Device_Endp_Init ( void )
 {
     /* 使能端点1、端点2发送和接收  */
-    USBHS->ENDP_CONFIG = USBHS_EP0_T_EN | USBHS_EP0_R_EN | USBHS_EP1_T_EN | USBHS_EP2_T_EN | USBHS_EP1_R_EN | USBHS_EP2_R_EN;
+    USBHSD->ENDP_CONFIG = USBHS_EP0_T_EN | USBHS_EP0_R_EN | USBHS_EP1_T_EN | USBHS_EP2_T_EN | USBHS_EP1_R_EN | USBHS_EP2_R_EN;
 
     /* 端点非同步端点 */
-    USBHS->ENDP_TYPE = 0x00;
+    USBHSD->ENDP_TYPE = 0x00;
 
     /* 端点缓冲区模式，非双缓冲区，ISO传输BUF模式需要指定0  */
-    USBHS->BUF_MODE = 0x00;
+    USBHSD->BUF_MODE = 0x00;
 
     /* 端点最大长度包配置 */
-    USBHS->UEP0_MAX_LEN = 64;
-    USBHS->UEP1_MAX_LEN = 512;
-    USBHS->UEP2_MAX_LEN = 512;
-    USBHS->UEP3_MAX_LEN = 512;
-    USBHS->UEP4_MAX_LEN = 512;
-    USBHS->UEP5_MAX_LEN = 512;
-    USBHS->UEP6_MAX_LEN = 512;
-    USBHS->UEP7_MAX_LEN = 512;
-    USBHS->UEP8_MAX_LEN = 512;
-    USBHS->UEP9_MAX_LEN = 512;
-    USBHS->UEP10_MAX_LEN = 512;
-    USBHS->UEP11_MAX_LEN = 512;
-    USBHS->UEP12_MAX_LEN = 512;
-    USBHS->UEP13_MAX_LEN = 512;
-    USBHS->UEP14_MAX_LEN = 512;
-    USBHS->UEP15_MAX_LEN = 512;
+    USBHSD->UEP0_MAX_LEN = 64;
+    USBHSD->UEP1_MAX_LEN = 512;
+    USBHSD->UEP2_MAX_LEN = 512;
+    USBHSD->UEP3_MAX_LEN = 512;
+    USBHSD->UEP4_MAX_LEN = 512;
+    USBHSD->UEP5_MAX_LEN = 512;
+    USBHSD->UEP6_MAX_LEN = 512;
+    USBHSD->UEP7_MAX_LEN = 512;
+    USBHSD->UEP8_MAX_LEN = 512;
+    USBHSD->UEP9_MAX_LEN = 512;
+    USBHSD->UEP10_MAX_LEN = 512;
+    USBHSD->UEP11_MAX_LEN = 512;
+    USBHSD->UEP12_MAX_LEN = 512;
+    USBHSD->UEP13_MAX_LEN = 512;
+    USBHSD->UEP14_MAX_LEN = 512;
+    USBHSD->UEP15_MAX_LEN = 512;
 
     /* 端点DMA地址配置 */
-    USBHS->UEP0_DMA    = (UINT32)(UINT8 *)EP0_Databuf;
-    USBHS->UEP1_TX_DMA = (UINT32)(UINT8 *)EP1_Tx_Databuf;
-    USBHS->UEP1_RX_DMA = (UINT32)(UINT8 *)EP1_Rx_Databuf;
-    USBHS->UEP2_TX_DMA = (UINT32)(UINT8 *)EP2_Tx_Databuf;
-    USBHS->UEP2_RX_DMA = (UINT32)(UINT8 *)EP2_Rx_Databuf;
+    USBHSD->UEP0_DMA    = (UINT32)(UINT8 *)EP0_Databuf;
+    USBHSD->UEP1_TX_DMA = (UINT32)(UINT8 *)EP1_Tx_Databuf;
+    USBHSD->UEP1_RX_DMA = (UINT32)(UINT8 *)EP1_Rx_Databuf;
+    USBHSD->UEP2_TX_DMA = (UINT32)(UINT8 *)EP2_Tx_Databuf;
+    USBHSD->UEP2_RX_DMA = (UINT32)(UINT8 *)EP2_Rx_Databuf;
 
     /* 端点控制寄存器配置 */
-    USBHS->UEP0_CTRL  = USBHS_EP_R_RES_ACK | USBHS_EP_T_RES_NAK;
-    USBHS->UEP1_CTRL  = USBHS_EP_R_AUTOTOG | USBHS_EP_R_RES_ACK | USBHS_EP_R_TOG_0 | USBHS_EP_T_AUTOTOG | USBHS_EP_T_RES_NAK | USBHS_EP_T_TOG_0 | 0;
-    USBHS->UEP2_CTRL  = USBHS_EP_R_AUTOTOG | USBHS_EP_R_RES_ACK | USBHS_EP_R_TOG_0 | USBHS_EP_T_AUTOTOG | USBHS_EP_T_RES_NAK | USBHS_EP_T_TOG_0 | 0;
-    USBHS->UEP3_CTRL  = USBHS_EP_R_AUTOTOG | USBHS_EP_R_RES_ACK | USBHS_EP_R_TOG_0 | USBHS_EP_T_AUTOTOG | USBHS_EP_T_RES_NAK | USBHS_EP_T_TOG_0 | 0;
-    USBHS->UEP4_CTRL  = USBHS_EP_R_AUTOTOG | USBHS_EP_R_RES_ACK | USBHS_EP_R_TOG_0 | USBHS_EP_T_AUTOTOG | USBHS_EP_T_RES_NAK | USBHS_EP_T_TOG_0 | 0;
-    USBHS->UEP5_CTRL  = USBHS_EP_R_AUTOTOG | USBHS_EP_R_RES_ACK | USBHS_EP_R_TOG_0 | USBHS_EP_T_AUTOTOG | USBHS_EP_T_RES_NAK | USBHS_EP_T_TOG_0 | 0;
-    USBHS->UEP6_CTRL  = USBHS_EP_R_AUTOTOG | USBHS_EP_R_RES_ACK | USBHS_EP_R_TOG_0 | USBHS_EP_T_AUTOTOG | USBHS_EP_T_RES_NAK | USBHS_EP_T_TOG_0 | 0;
-    USBHS->UEP7_CTRL  = USBHS_EP_R_AUTOTOG | USBHS_EP_R_RES_ACK | USBHS_EP_R_TOG_0 | USBHS_EP_T_AUTOTOG | USBHS_EP_T_RES_NAK | USBHS_EP_T_TOG_0 | 0;
-    USBHS->UEP8_CTRL  = USBHS_EP_R_AUTOTOG | USBHS_EP_R_RES_ACK | USBHS_EP_R_TOG_0 | USBHS_EP_T_AUTOTOG | USBHS_EP_T_RES_NAK | USBHS_EP_T_TOG_0 | 0;
-    USBHS->UEP9_CTRL  = USBHS_EP_R_AUTOTOG | USBHS_EP_R_RES_ACK | USBHS_EP_R_TOG_0 | USBHS_EP_T_AUTOTOG | USBHS_EP_T_RES_NAK | USBHS_EP_T_TOG_0 | 0;
-    USBHS->UEP10_CTRL = USBHS_EP_R_AUTOTOG | USBHS_EP_R_RES_ACK | USBHS_EP_R_TOG_0 | USBHS_EP_T_AUTOTOG | USBHS_EP_T_RES_NAK | USBHS_EP_T_TOG_0 | 0;
-    USBHS->UEP11_CTRL = USBHS_EP_R_AUTOTOG | USBHS_EP_R_RES_ACK | USBHS_EP_R_TOG_0 | USBHS_EP_T_AUTOTOG | USBHS_EP_T_RES_NAK | USBHS_EP_T_TOG_0 | 0;
-    USBHS->UEP12_CTRL = USBHS_EP_R_AUTOTOG | USBHS_EP_R_RES_ACK | USBHS_EP_R_TOG_0 | USBHS_EP_T_AUTOTOG | USBHS_EP_T_RES_NAK | USBHS_EP_T_TOG_0 | 0;
-    USBHS->UEP13_CTRL = USBHS_EP_R_AUTOTOG | USBHS_EP_R_RES_ACK | USBHS_EP_R_TOG_0 | USBHS_EP_T_AUTOTOG | USBHS_EP_T_RES_NAK | USBHS_EP_T_TOG_0 | 0;
-    USBHS->UEP14_CTRL = USBHS_EP_R_AUTOTOG | USBHS_EP_R_RES_ACK | USBHS_EP_R_TOG_0 | USBHS_EP_T_AUTOTOG | USBHS_EP_T_RES_NAK | USBHS_EP_T_TOG_0 | 0;
-    USBHS->UEP15_CTRL = USBHS_EP_R_AUTOTOG | USBHS_EP_R_RES_ACK | USBHS_EP_R_TOG_0 | USBHS_EP_T_AUTOTOG | USBHS_EP_T_RES_NAK | USBHS_EP_T_TOG_0 | 0;
+    USBHSD->UEP0_TX_LEN  = 0;
+    USBHSD->UEP0_TX_CTRL = USBHS_EP_T_RES_NAK;
+    USBHSD->UEP0_RX_CTRL = USBHS_EP_R_RES_ACK;
+
+    USBHSD->UEP1_TX_LEN  = 0;
+    USBHSD->UEP1_TX_CTRL = USBHS_EP_T_AUTOTOG | USBHS_EP_T_RES_NAK;
+    USBHSD->UEP1_RX_CTRL = USBHS_EP_R_AUTOTOG | USBHS_EP_R_RES_ACK;
+
+    USBHSD->UEP2_TX_LEN  = 0;
+    USBHSD->UEP2_TX_CTRL = USBHS_EP_T_AUTOTOG | USBHS_EP_T_RES_NAK;
+    USBHSD->UEP2_RX_CTRL = USBHS_EP_R_AUTOTOG | USBHS_EP_R_RES_ACK;
+
+    USBHSD->UEP3_TX_LEN  = 0;
+    USBHSD->UEP3_TX_CTRL = USBHS_EP_T_AUTOTOG | USBHS_EP_T_RES_NAK;
+    USBHSD->UEP3_RX_CTRL = USBHS_EP_R_AUTOTOG | USBHS_EP_R_RES_ACK;
+
+    USBHSD->UEP4_TX_LEN  = 0;
+    USBHSD->UEP4_TX_CTRL = USBHS_EP_T_AUTOTOG | USBHS_EP_T_RES_NAK;
+    USBHSD->UEP4_RX_CTRL = USBHS_EP_R_AUTOTOG | USBHS_EP_R_RES_ACK;
+
+    USBHSD->UEP5_TX_LEN  = 0;
+    USBHSD->UEP5_TX_CTRL = USBHS_EP_T_AUTOTOG | USBHS_EP_T_RES_NAK;
+    USBHSD->UEP5_RX_CTRL = USBHS_EP_R_AUTOTOG | USBHS_EP_R_RES_ACK;
+
+    USBHSD->UEP6_TX_LEN  = 0;
+    USBHSD->UEP6_TX_CTRL = USBHS_EP_T_AUTOTOG | USBHS_EP_T_RES_NAK;
+    USBHSD->UEP6_RX_CTRL = USBHS_EP_R_AUTOTOG | USBHS_EP_R_RES_ACK;
+
+    USBHSD->UEP7_TX_LEN  = 0;
+    USBHSD->UEP7_TX_CTRL = USBHS_EP_T_AUTOTOG | USBHS_EP_T_RES_NAK;
+    USBHSD->UEP7_RX_CTRL = USBHS_EP_R_AUTOTOG | USBHS_EP_R_RES_ACK;
+
+    USBHSD->UEP8_TX_LEN  = 0;
+    USBHSD->UEP8_TX_CTRL = USBHS_EP_T_AUTOTOG | USBHS_EP_T_RES_NAK;
+    USBHSD->UEP8_RX_CTRL = USBHS_EP_R_AUTOTOG | USBHS_EP_R_RES_ACK;
+
+    USBHSD->UEP9_TX_LEN  = 0;
+    USBHSD->UEP9_TX_CTRL = USBHS_EP_T_AUTOTOG | USBHS_EP_T_RES_NAK;
+    USBHSD->UEP9_RX_CTRL = USBHS_EP_R_AUTOTOG | USBHS_EP_R_RES_ACK;
+
+    USBHSD->UEP10_TX_LEN  = 0;
+    USBHSD->UEP10_TX_CTRL = USBHS_EP_T_AUTOTOG | USBHS_EP_T_RES_NAK;
+    USBHSD->UEP10_RX_CTRL = USBHS_EP_R_AUTOTOG | USBHS_EP_R_RES_ACK;
+
+    USBHSD->UEP11_TX_LEN  = 0;
+    USBHSD->UEP11_TX_CTRL = USBHS_EP_T_AUTOTOG | USBHS_EP_T_RES_NAK;
+    USBHSD->UEP11_RX_CTRL = USBHS_EP_R_AUTOTOG | USBHS_EP_R_RES_ACK;
+
+    USBHSD->UEP12_TX_LEN  = 0;
+    USBHSD->UEP12_TX_CTRL = USBHS_EP_T_AUTOTOG | USBHS_EP_T_RES_NAK;
+    USBHSD->UEP12_RX_CTRL = USBHS_EP_R_AUTOTOG | USBHS_EP_R_RES_ACK;
+
+    USBHSD->UEP13_TX_LEN  = 0;
+    USBHSD->UEP13_TX_CTRL = USBHS_EP_T_AUTOTOG | USBHS_EP_T_RES_NAK;
+    USBHSD->UEP13_RX_CTRL = USBHS_EP_R_AUTOTOG | USBHS_EP_R_RES_ACK;
+
+    USBHSD->UEP14_TX_LEN  = 0;
+    USBHSD->UEP14_TX_CTRL = USBHS_EP_T_AUTOTOG | USBHS_EP_T_RES_NAK;
+    USBHSD->UEP14_RX_CTRL = USBHS_EP_R_AUTOTOG | USBHS_EP_R_RES_ACK;
+
+    USBHSD->UEP15_TX_LEN  = 0;
+    USBHSD->UEP15_TX_CTRL = USBHS_EP_T_AUTOTOG | USBHS_EP_T_RES_NAK;
+    USBHSD->UEP15_RX_CTRL = USBHS_EP_R_AUTOTOG | USBHS_EP_R_RES_ACK;
 }
 
-/*******************************************************************************
-* Function Name  : USBHS_Device_Init
-* Description    : USB2.0高速设备初始化
-* Input          : None
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      USBHS_Device_Init
+ *
+ * @brief   USB2.0高速设备初始化
+ *
+ * @return  none
+ */
 void USBHS_Device_Init ( FunctionalState sta )
 {
     if( sta )
     {
         /* 配置DMA、速度、端点使能等 */
-        USBHS->CONTROL = 0x00;
-        USBHS->CONTROL = USBHS_SUSPENDM | USBHS_INT_BUSY_EN | USBHS_DMA_EN | USBHS_HIGH_SPEED | USBHS_SETUP_EN | USBHS_ACT_EN | USBHS_DETECT_EN | USBHS_SUSP_EN;
-//        USBHS->CONTROL = USBHS_SUSPENDM | USBHS_INT_BUSY_EN | USBHS_DMA_EN | USBHS_FULL_SPEED | USBHS_SETUP_EN | USBHS_ACT_EN | USBHS_DETECT_EN | USBHS_SUSP_EN;
-//        USBHS->CONTROL = USBHS_SUSPENDM | USBHS_INT_BUSY_EN | USBHS_DMA_EN | USBHS_LOW_SPEED | USBHS_SETUP_EN | USBHS_ACT_EN | USBHS_DETECT_EN | USBHS_SUSP_EN;
-        USBHS->ENDP_CONFIG = 0xffffffff;                                        /* ALL endpoint enable */
+        USBHSD->HOST_CTRL = 0x00;
+        USBHSD->HOST_CTRL = USBHS_SUSPENDM;
+
+        USBHSD->CONTROL   = 0x00;
+        USBHSD->CONTROL   = USBHS_DMA_EN | USBHS_INT_BUSY_EN | USBHS_HIGH_SPEED;
+//        USBHSD->CONTROL   = USBHS_DMA_EN | USBHS_INT_BUSY_EN | USBHS_FULL_SPEED;
+//        USBHSD->CONTROL   = USBHS_DMA_EN | USBHS_INT_BUSY_EN | USBHS_LOW_SPEED;
+
+        USBHSD->INT_EN    = 0;
+        USBHSD->INT_EN    = USBHS_SETUP_ACT_EN | USBHS_TRANSFER_EN | USBHS_DETECT_EN | USBHS_SUSPEND_EN;
+
+        /* ALL endpoint enable */
+        USBHSD->ENDP_CONFIG = 0xffffffff;
 
         /* USB2.0高速设备端点初始化 */
         USBHS_Device_Endp_Init( );
         Delay_Us(10);
+
         /* 使能USB连接 */
-        USBHS->CONTROL |= USBHS_DEV_PU_EN;
+        USBHSD->CONTROL |= USBHS_DEV_PU_EN;
     }
     else
     {
-        USBHS->CONTROL &= ~USBHS_DEV_PU_EN;
-        USBHS->CONTROL |= USBHS_ALL_CLR | USBHS_FORCE_RST;
+        USBHSD->CONTROL &= ~USBHS_DEV_PU_EN;
+        USBHSD->CONTROL |= USBHS_ALL_CLR | USBHS_FORCE_RST;
     }
 }
 
-/*******************************************************************************
-* Function Name  : USBHS_Device_SetAddress
-* Description    : USB2.0高速设备设置设备地址
-* Input          : None
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      USBHS_Device_SetAddress
+ *
+ * @brief   USB2.0高速设备设置设备地址
+ *
+ * @return  none
+ */
 void USBHS_Device_SetAddress( UINT32 address )
 {
-    USBHS->CONTROL &= 0x00ffffff;
-    USBHS->CONTROL |= ( address << 24 );
+    USBHSD->DEV_AD = 0;
+    USBHSD->DEV_AD = address & 0xff;
 }
 
-/*******************************************************************************
-* Function Name  : USBHS_IRQHandler
-* Description    : USB2.0高速设备中断服务程序
-* Input          : None
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      USBHS_IRQHandler
+ *
+ * @brief   This function handles USBHS exception.
+ *
+ * @return  none
+ */
 void USBHS_IRQHandler( void )
 {
     UINT32 end_num;
@@ -253,21 +323,15 @@ void USBHS_IRQHandler( void )
     UINT16 i;
     UINT8  errflag = 0x00;
     UINT8  chtype;
-    UINT32 intflag;
 
-    intflag = USBHS->STATUS;
+    USBHS_Int_Flag = USBHSD->INT_FG;
 
-    if( intflag & USBHS_ACT_FLAG )
+    if( USBHS_Int_Flag & USBHS_TRANSFER_FLAG )
     {
         /* 端点传输处理 */
-        end_num =  ( ( USBHS->STATUS ) >> 24 ) & 0x0f;
-        rx_token = ( ( USBHS->STATUS ) >> 28 ) & 0x03;                      /* 00: OUT, 01:SOF, 10:IN, 11:SETUP */
-#if 0
-        if( !( USBHS->STATUS & TOG_MATCH ) )
-        {
-            DUG_PRINTF(" TOG MATCH FAIL : ENDP %x token %x \n", end_num, rx_token);
-        }
-#endif
+        end_num  = (USBHSD->INT_ST) & MASK_UIS_ENDP;
+        rx_token = ( ( (USBHSD->INT_ST) & MASK_UIS_TOKEN ) >> 4 ) & 0x03;
+        /* 00: OUT, 01:SOF, 10:IN, 11:SETUP */
         if( end_num == 0 )
         {
             /* 端点0处理 */
@@ -282,24 +346,28 @@ void USBHS_IRQHandler( void )
                         USBHS_Dev_SetupReqLen -= len;
                         pDescr += len;
                         USBHS_Dev_Endp0_Tog ^= 1;
-                        USBHS->UEP0_CTRL = USBHS_EP_T_RES_ACK | ( USBHS_Dev_Endp0_Tog ? USBHS_EP_T_TOG_0 : USBHS_EP_T_TOG_1 ) | len; // DATA stage (IN -DATA1-ACK)
+                        USBHSD->UEP0_TX_LEN  = len;
+                        USBHSD->UEP0_TX_CTRL =  USBHS_EP_T_RES_ACK | ( USBHS_Dev_Endp0_Tog ? USBHS_EP_T_TOG_0 : USBHS_EP_T_TOG_1 );
                         break;
 
                     case USB_SET_ADDRESS:
                         USBHS_Device_SetAddress( USBHS_Dev_Address );
-                        USBHS->UEP0_CTRL = 0;
+                        USBHSD->UEP0_TX_LEN = 0;
+                        USBHSD->UEP0_TX_CTRL = 0;
+                        USBHSD->UEP0_RX_CTRL = 0;
                         break;
 
                     default:
                         /* 状态阶段完成中断或者是强制上传0长度数据包结束控制传输 */
-                        USBHS->UEP0_CTRL = USBHS_EP_R_RES_ACK | USBHS_EP_R_TOG_1;
+                        USBHSD->UEP0_RX_CTRL = USBHS_EP_R_RES_ACK | USBHS_EP_R_TOG_1;
                         pDescr = NULL;
                         break;
                 }
             }
             else if( rx_token == PID_OUT )
             {
-                USBHS->UEP0_CTRL = USBHS_EP_T_RES_ACK | USBHS_EP_T_TOG_1;
+                USBHSD->UEP0_TX_LEN  = 0;
+                USBHSD->UEP0_TX_CTRL = USBHS_EP_T_RES_ACK | USBHS_EP_T_TOG_1;
             }
         }
         else if( end_num == 1 )
@@ -310,13 +378,17 @@ void USBHS_IRQHandler( void )
             }
             else if( rx_token == PID_OUT )
             {
-                rx_len = USBHS->RX_LEN;
+                rx_len = USBHSD->RX_LEN;
                 for( i=0; i<rx_len; i++)
                 {
-                    EP1_Tx_Databuf[i] = ~EP1_Rx_Databuf[i];
+                    EP1_Tx_Databuf[i] = EP1_Rx_Databuf[i];
                 }
-                USBHS->UEP1_CTRL &= 0xffff0000;
-                USBHS->UEP1_CTRL |= rx_len; // IN -DATAx-ACK( len =rx_len )
+                USBHSD->UEP1_TX_LEN  = rx_len;
+                USBHSD->UEP1_TX_CTRL &= ~USBHS_EP_T_RES_MASK;
+                USBHSD->UEP1_TX_CTRL |= USBHS_EP_T_RES_ACK;
+                USBHSD->UEP1_RX_CTRL &= ~ USBHS_EP_R_RES_MASK;
+                USBHSD->UEP1_RX_CTRL |= USBHS_EP_R_RES_ACK;
+
             }
         }
         else if( end_num == 2 )
@@ -327,18 +399,21 @@ void USBHS_IRQHandler( void )
             }
             else if( rx_token == PID_OUT )
             {
-                rx_len = USBHS->RX_LEN;
+                rx_len = USBHSD->RX_LEN;
                 for( i=0; i<rx_len; i++)
                 {
-                    EP2_Tx_Databuf[i] = ~EP2_Rx_Databuf[i];
+                    EP2_Tx_Databuf[i] = EP2_Rx_Databuf[i];
                 }
-                USBHS->UEP2_CTRL &= 0xffff0000;
-                USBHS->UEP2_CTRL |= rx_len; // IN -DATAx-ACK( len =rx_len )
+                USBHSD->UEP2_TX_LEN  = rx_len;
+                USBHSD->UEP2_TX_CTRL &= ~USBHS_EP_T_RES_MASK;
+                USBHSD->UEP2_TX_CTRL |= USBHS_EP_T_RES_ACK;
+                USBHSD->UEP2_RX_CTRL &= ~ USBHS_EP_R_RES_MASK;
+                USBHSD->UEP2_RX_CTRL |= USBHS_EP_R_RES_ACK;
             }
         }
-        USBHS->STATUS = USBHS_ACT_FLAG;
+        USBHSD->INT_FG = USBHS_TRANSFER_FLAG;
     }
-    else if( intflag & USBHS_SETUP_FLAG )
+    else if( USBHS_Int_Flag & USBHS_SETUP_FLAG )
     {
         /* SETUP包处理 */
         USBHS_Dev_SetupReqLen = pMySetupReqPak->wLength;
@@ -346,16 +421,7 @@ void USBHS_IRQHandler( void )
         chtype = pMySetupReqPak->bRequestType;
         len = 0x00;
         errflag = 0x00;
-#if 0
-        /* 打印当前Usbsetup命令  */
-        printf( "%02X ", EP0_Databuf[0] );
-        printf( "%02X ", EP0_Databuf[1] );
-        printf( "%02X ", EP0_Databuf[2] );
-        printf( "%02X ", EP0_Databuf[3] );
-        printf( "%02X ", EP0_Databuf[4] );
-        printf( "%02X ", EP0_Databuf[5] );
-        printf( "%d\n",  (UINT16)EP0_Databuf[6]+(UINT16)(EP0_Databuf[7]<<8) );
-#endif
+
         /* 判断当前是标准请求还是其他请求 */
         if( ( pMySetupReqPak->bRequestType & USB_REQ_TYP_MASK ) != USB_REQ_TYP_STANDARD )
         {
@@ -523,22 +589,24 @@ void USBHS_IRQHandler( void )
                         {
                             case 0x82:
                                 /* SET Endp2 Tx to USBHS_EP_T_RES_NAK;USBHS_EP_T_TOG_0;len = 0 */
-                                USBHS->UEP2_CTRL  = ( USBHS->UEP2_CTRL & ~(USBHS_EP_T_RES_MASK|USBHS_EP_T_TOG_MASK|USBHS_EP_T_LEN_MASK) ) | USBHS_EP_T_RES_NAK | USBHS_EP_T_TOG_0 | 0;
+                                USBHSD->UEP2_TX_LEN = 0;
+                                USBHSD->UEP2_TX_CTRL = USBHS_EP_T_RES_NAK | USBHS_EP_T_TOG_0;
                                 break;
 
                             case 0x02:
                                 /* SET Endp2 Rx to USBHS_EP_R_RES_ACK;USBHS_EP_R_TOG_0 */
-                                USBHS->UEP2_CTRL  = ( USBHS->UEP2_CTRL & ~(USBHS_EP_R_RES_MASK|USBHS_EP_R_TOG_MASK) ) | USBHS_EP_R_RES_ACK | USBHS_EP_R_TOG_0;
+                                USBHSD->UEP2_TX_CTRL = USBHS_EP_R_RES_ACK | USBHS_EP_R_TOG_0;
                                 break;
 
                             case 0x81:
                                 /* SET Endp1 Tx to USBHS_EP_T_RES_NAK;USBHS_EP_T_TOG_0;len = 0 */
-                                USBHS->UEP1_CTRL  = ( USBHS->UEP1_CTRL & ~(USBHS_EP_T_RES_MASK|USBHS_EP_T_TOG_MASK|USBHS_EP_T_LEN_MASK) ) | USBHS_EP_T_RES_NAK | USBHS_EP_T_TOG_0 | 0;
+                                USBHSD->UEP1_TX_LEN = 0;
+                                USBHSD->UEP1_TX_CTRL = USBHS_EP_T_RES_NAK | USBHS_EP_T_TOG_0;
                                 break;
 
                             case 0x01:
                                 /* SET Endp1 Rx to USBHS_EP_R_RES_NAK;USBHS_EP_R_TOG_0 */
-                                USBHS->UEP1_CTRL  = ( USBHS->UEP1_CTRL & ~(USBHS_EP_R_RES_MASK|USBHS_EP_R_TOG_MASK) ) | USBHS_EP_R_RES_ACK | USBHS_EP_R_TOG_0;
+                                USBHSD->UEP1_RX_CTRL = USBHS_EP_R_RES_ACK | USBHS_EP_R_TOG_0;
                                 break;
 
                             default:
@@ -591,22 +659,22 @@ void USBHS_IRQHandler( void )
                             {
                                 case 0x82:
                                     /* 设置端点2 IN STALL */
-                                    USBHS->UEP2_CTRL  = ( USBHS->UEP2_CTRL & ~USBHS_EP_T_RES_MASK ) | USBHS_EP_T_RES_STALL;
+                                    USBHSD->UEP2_TX_CTRL = ( USBHSD->UEP2_TX_CTRL & ~USBHS_EP_T_RES_MASK ) | USBHS_EP_T_RES_STALL;
                                     break;
 
                                 case 0x02:
                                     /* 设置端点2 OUT Stall */
-                                    USBHS->UEP2_CTRL  = ( USBHS->UEP2_CTRL & ~USBHS_EP_R_RES_MASK ) | USBHS_EP_R_RES_STALL;
+                                    USBHSD->UEP2_RX_CTRL = ( USBHSD->UEP2_RX_CTRL & ~USBHS_EP_R_RES_MASK ) | USBHS_EP_R_RES_STALL;
                                     break;
 
                                 case 0x81:
                                     /* 设置端点1 IN STALL */
-                                    USBHS->UEP1_CTRL  = ( USBHS->UEP1_CTRL & ~USBHS_EP_T_RES_MASK ) | USBHS_EP_T_RES_STALL;
+                                    USBHSD->UEP1_TX_CTRL = ( USBHSD->UEP1_TX_CTRL & ~USBHS_EP_T_RES_MASK ) | USBHS_EP_T_RES_STALL;
                                     break;
 
                                 case 0x01:
                                     /* 设置端点1 OUT STALL */
-                                    USBHS->UEP1_CTRL  = ( USBHS->UEP1_CTRL & ~USBHS_EP_R_RES_MASK ) | USBHS_EP_R_RES_STALL;
+                                    USBHSD->UEP1_RX_CTRL = ( USBHSD->UEP1_RX_CTRL & ~USBHS_EP_R_RES_MASK ) | USBHS_EP_R_RES_STALL;
                                     break;
 
                                 default:
@@ -647,28 +715,28 @@ void USBHS_IRQHandler( void )
                     EP0_Databuf[ 1 ] = 0x00;
                     if( pMySetupReqPak->wIndex == 0x81 )
                     {
-                        if( ( USBHS->UEP1_CTRL & USBHS_EP_T_RES_MASK ) == USBHS_EP_T_RES_STALL )
+                        if( ( USBHSD->UEP1_TX_CTRL & USBHS_EP_T_RES_MASK ) == USBHS_EP_T_RES_STALL )
                         {
                             EP0_Databuf[ 0 ] = 0x01;
                         }
                     }
                     else if( pMySetupReqPak->wIndex == 0x01 )
                     {
-                        if( ( USBHS->UEP1_CTRL & USBHS_EP_R_RES_MASK ) == USBHS_EP_R_RES_STALL )
+                        if( ( USBHSD->UEP1_RX_CTRL & USBHS_EP_R_RES_MASK ) == USBHS_EP_R_RES_STALL )
                         {
                             EP0_Databuf[ 0 ] = 0x01;
                         }
                     }
                     else if( pMySetupReqPak->wIndex == 0x82 )
                     {
-                        if( ( USBHS->UEP2_CTRL & USBHS_EP_T_RES_MASK ) == USBHS_EP_T_RES_STALL )
+                        if( ( USBHSD->UEP2_TX_CTRL & USBHS_EP_T_RES_MASK ) == USBHS_EP_T_RES_STALL )
                         {
                             EP0_Databuf[ 0 ] = 0x01;
                         }
                     }
                     else if( pMySetupReqPak->wIndex == 0x02 )
                     {
-                        if( ( USBHS->UEP2_CTRL & USBHS_EP_R_RES_MASK ) == USBHS_EP_R_RES_STALL )
+                        if( ( USBHSD->UEP2_RX_CTRL & USBHS_EP_R_RES_MASK ) == USBHS_EP_R_RES_STALL )
                         {
                             EP0_Databuf[ 0 ] = 0x01;
                         }
@@ -690,7 +758,9 @@ void USBHS_IRQHandler( void )
         {
             /* IN - STALL / OUT - DATA - STALL */
             USBHS_Dev_SetupReqCode = 0xFF;
-            USBHS->UEP0_CTRL = USBHS_EP_T_RES_STALL | USBHS_EP_R_RES_STALL;
+            USBHSD->UEP0_TX_LEN  = 0;
+            USBHSD->UEP0_TX_CTRL = USBHS_EP_T_RES_STALL;
+            USBHSD->UEP0_RX_CTRL = USBHS_EP_R_RES_STALL;
         }
         else
         {
@@ -704,27 +774,33 @@ void USBHS_IRQHandler( void )
             {
                 len = 0;
             }
-            USBHS->UEP0_CTRL = USBHS_EP_T_RES_ACK | USBHS_EP_T_TOG_1 |  len;
+            USBHSD->UEP0_TX_LEN  = len;
+            USBHSD->UEP0_TX_CTRL = USBHS_EP_T_RES_ACK | USBHS_EP_T_TOG_1;
         }
-        USBHS->STATUS = USBHS_SETUP_FLAG;
+        USBHSD->INT_FG = USBHS_SETUP_FLAG;
     }
-    else if( intflag & USBHS_DETECT_FLAG )
+    else if( USBHS_Int_Flag & USBHS_DETECT_FLAG )
     {
         /* USB总线复位中断 */
-        printf("Rs\n");
+#if 0
+        printf("USB ReSet!!!\n");
+#endif
         USBHS_Dev_Address = 0x00;
         USBHS_Device_Endp_Init( );                                              /* USB2.0高速设备端点初始化 */
         USBHS_Device_SetAddress( USBHS_Dev_Address );                           /* USB2.0高速设备设置设备地址 */
-        USBHS->STATUS = USBHS_DETECT_FLAG;
+        USBHSD->INT_FG = USBHS_DETECT_FLAG;
     }
-    else if( intflag & USBHS_SUSP_FLAG )
+    else if( USBHS_Int_Flag & USBHS_SUSPEND_FLAG )
     {
         /* USB总线挂起/唤醒完成中断 */
         /* 唤醒 */
-        printf("USB SUSPEND2!!!\n");
+#if 0
+        printf("USB SUSPEND!!!\n");
+
+#endif
         USBHS_Dev_SleepStatus &= ~0x02;
         USBHS_Dev_EnumStatus = 0x01;
-        USBHS->STATUS = USBHS_SUSP_FLAG;
+        USBHSD->INT_FG = USBHS_SUSPEND_FLAG;
     }
 }
 

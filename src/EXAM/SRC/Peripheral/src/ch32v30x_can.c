@@ -45,13 +45,16 @@
 static ITStatus CheckITStatus(uint32_t CAN_Reg, uint32_t It_Bit);
 
 
-/*******************************************************************************
-* Function Name  : CAN_DeInit
-* Description    : Deinitializes the CAN peripheral registers to their default
-*      reset values.
-* Input          : CANx: where x can be 1 to select the CAN peripheral.
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      CAN_DeInit
+ *
+ * @brief   Deinitializes the CAN peripheral registers to their default reset
+ *        values.
+ *
+ * @param   CANx - where x can be 1 or 2 to select the CAN peripheral.
+ *
+ * @return  none
+ */
 void CAN_DeInit(CAN_TypeDef* CANx)
 {
   if (CANx == CAN1)
@@ -66,17 +69,20 @@ void CAN_DeInit(CAN_TypeDef* CANx)
   }
 }
 
-/*******************************************************************************
-* Function Name  : CAN_Init
-* Description    : Initializes the CAN peripheral according to the specified
-*      parameters in the CAN_InitStruct.
-* Input          : CANx: where x can be 1 to select the CAN peripheral.
-*                  CAN_InitStruct: pointer to a CAN_InitTypeDef structure that
-*      contains the configuration information for the CAN peripheral.
-* Return         : InitStatus: 
-*                    CAN_InitStatus_Failed.
-*                    CAN_InitStatus_Success.
-*******************************************************************************/
+/*********************************************************************
+ * @fn      CAN_Init
+ *
+ * @brief   Initializes the CAN peripheral according to the specified
+ *        parameters in the CAN_InitStruct.
+ *
+ * @param   CANx - where x can be 1 to select the CAN peripheral.
+ *          CAN_InitStruct - pointer to a CAN_InitTypeDef structure that
+ *        contains the configuration information for the CAN peripheral.
+ *
+ * @return  InitStatus - CAN InitStatus state.
+*             CAN_InitStatus_Failed.
+*             CAN_InitStatus_Success.
+ */
 uint8_t CAN_Init(CAN_TypeDef* CANx, CAN_InitTypeDef* CAN_InitStruct)
 {
   uint8_t InitStatus = CAN_InitStatus_Failed;
@@ -176,14 +182,17 @@ uint8_t CAN_Init(CAN_TypeDef* CANx, CAN_InitTypeDef* CAN_InitStruct)
   return InitStatus;
 }
 
-/*******************************************************************************
-* Function Name  : CAN_FilterInit
-* Description    : Initializes the CAN peripheral according to the specified
-*      parameters in the CAN_FilterInitStruct.
-* Input          : CAN_FilterInitStruct: pointer to a CAN_FilterInitTypeDef
-*      structure that contains the configuration information.
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      CAN_FilterInit
+ *
+ * @brief   Initializes the CAN peripheral according to the specified
+ *        parameters in the CAN_FilterInitStruct.
+ *
+ * @param   CAN_FilterInitStruct - pointer to a CAN_FilterInitTypeDef
+ *        structure that contains the configuration information.
+ *
+ * @return  none
+ */
 void CAN_FilterInit(CAN_FilterInitTypeDef* CAN_FilterInitStruct)
 {
   uint32_t filter_number_bit_pos = 0;
@@ -245,13 +254,16 @@ void CAN_FilterInit(CAN_FilterInitTypeDef* CAN_FilterInitStruct)
   CAN1->FCTLR &= ~FCTLR_FINIT;
 }
 
-/*******************************************************************************
-* Function Name  : CAN_StructInit
-* Description    : Fills each CAN_InitStruct member with its default value.
-* Input          : CAN_InitStruct: pointer to a CAN_InitTypeDef structure which
-*      will be initialized.
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      CAN_StructInit
+ *
+ * @brief   Fills each CAN_InitStruct member with its default value.
+ *
+ * @param   CAN_InitStruct - pointer to a CAN_InitTypeDef structure which
+ *        will be initialized.
+ *
+ * @return  none
+ */
 void CAN_StructInit(CAN_InitTypeDef* CAN_InitStruct)
 {
   CAN_InitStruct->CAN_TTCM = DISABLE;
@@ -267,12 +279,15 @@ void CAN_StructInit(CAN_InitTypeDef* CAN_InitStruct)
   CAN_InitStruct->CAN_Prescaler = 1;
 }
 
-/*******************************************************************************
-* Function Name  : CAN_SlaveStartBank
-* Description    : This function applies only to CH32 Connectivity line devices.
-* Input          : CAN_BankNumber: Select the start slave bank filter from 1..27.
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      CAN_SlaveStartBank
+ *
+ * @brief   This function applies only to CH32 Connectivity line devices.
+ *
+ * @param   CAN_BankNumber - Select the start slave bank filter from 1..27.
+ *
+ * @return  none
+ */
 void CAN_SlaveStartBank(uint8_t CAN_BankNumber) 
 {
   CAN1->FCTLR |= FCTLR_FINIT;
@@ -281,13 +296,16 @@ void CAN_SlaveStartBank(uint8_t CAN_BankNumber)
   CAN1->FCTLR &= ~FCTLR_FINIT;
 }
 
-/*******************************************************************************
-* Function Name  : CAN_DBGFreeze
-* Description    : Enables or disables the DBG Freeze for CAN.
-* Input          : CANx: where x can be 1 to select the CAN peripheral.
-*                  NewState: ENABLE or DISABLE.
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      CAN_DBGFreeze
+ *
+ * @brief   Enables or disables the DBG Freeze for CAN.
+ *
+ * @param   CANx - where x can be 1 to select the CAN peripheral.
+ *          NewState - ENABLE or DISABLE.
+ *
+ * @return  none
+ */
 void CAN_DBGFreeze(CAN_TypeDef* CANx, FunctionalState NewState)
 {
   if (NewState != DISABLE)
@@ -300,13 +318,16 @@ void CAN_DBGFreeze(CAN_TypeDef* CANx, FunctionalState NewState)
   }
 }
 
-/*******************************************************************************
-* Function Name  : CAN_TTComModeCmd
-* Description    : Enables or disabes the CAN Time TriggerOperation communication mode.
-* Input          : CANx: where x can be 1 to select the CAN peripheral.
-*                  NewState: ENABLE or DISABLE.
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      CAN_TTComModeCmd
+ *
+ * @brief   Enables or disabes the CAN Time TriggerOperation communication mode.
+ *
+ * @param   CANx - where x can be 1 to select the CAN peripheral.
+ *          NewState - ENABLE or DISABLE.
+ *
+ * @return  none
+ */
 void CAN_TTComModeCmd(CAN_TypeDef* CANx, FunctionalState NewState)
 {
   if (NewState != DISABLE)
@@ -327,15 +348,18 @@ void CAN_TTComModeCmd(CAN_TypeDef* CANx, FunctionalState NewState)
   }
 }
 
-/*******************************************************************************
-* Function Name  : CAN_Transmit
-* Description    : Initiates the transmission of a message.
-* Input          : CANx: where x can be 1 to select the CAN peripheral.
-*                  TxMessage: pointer to a structure which contains CAN Id, CAN
-*      DLC and CAN data.
-* Return         : transmit_mailbox: The number of the mailbox that is used for 
-*      transmission or CAN_TxStatus_NoMailBox if there is no empty mailbox.                
-*******************************************************************************/
+/*********************************************************************
+ * @fn      CAN_Transmit
+ *
+ * @brief   Initiates the transmission of a message.
+ *
+ * @param   CANx - where x can be 1 to select the CAN peripheral.
+ *          TxMessage - pointer to a structure which contains CAN Id, CAN
+ *        DLC and CAN data.
+ *
+ * @return  transmit_mailbox - The number of the mailbox that is used for
+ *        transmission or CAN_TxStatus_NoMailBox if there is no empty mailbox.
+ */
 uint8_t CAN_Transmit(CAN_TypeDef* CANx, CanTxMsg* TxMessage)
 {
   uint8_t transmit_mailbox = 0;
@@ -390,16 +414,19 @@ uint8_t CAN_Transmit(CAN_TypeDef* CANx, CanTxMsg* TxMessage)
   return transmit_mailbox;
 }
 
-/*******************************************************************************
-* Function Name  : CAN_TransmitStatus
-* Description    : Checks the transmission of a message.
-* Input          : CANx: where x can be 1 to select the CAN peripheral.
-*                  TransmitMailbox: the number of the mailbox that is used for
-*      transmission.
-* Return         : state: 
-*                   CAN_TxStatus_Ok.
-*                   CAN_TxStatus_Failed.
-*******************************************************************************/
+/*********************************************************************
+ * @fn      CAN_TransmitStatus
+ *
+ * @brief   Checks the transmission of a message.
+ *
+ * @param   CANx - where x can be 1 to select the CAN peripheral.
+ *          TransmitMailbox - the number of the mailbox that is used for
+ *        transmission.
+ *
+ * @return  state -
+ *            CAN_TxStatus_Ok.
+ *            CAN_TxStatus_Failed.
+ */
 uint8_t CAN_TransmitStatus(CAN_TypeDef* CANx, uint8_t TransmitMailbox)
 {
   uint32_t state = 0;
@@ -461,16 +488,19 @@ uint8_t CAN_TransmitStatus(CAN_TypeDef* CANx, uint8_t TransmitMailbox)
   return (uint8_t) state;
 }
 
-/*******************************************************************************
-* Function Name  : CAN_CancelTransmit
-* Description    : Cancels a transmit request.
-* Input          : CANx: where x can be 1 to select the CAN peripheral.    
-*                  Mailbox:  Mailbox number.
-*                    CAN_TXMAILBOX_0.
-*                    CAN_TXMAILBOX_1.
-*                    CAN_TXMAILBOX_2.
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      CAN_CancelTransmit
+ *
+ * @brief   Cancels a transmit request.
+ *
+ * @param   CANx - where x can be 1 to select the CAN peripheral.
+ *          Mailbox -  Mailbox number.
+ *            CAN_TXMAILBOX_0.
+ *            CAN_TXMAILBOX_1.
+ *            CAN_TXMAILBOX_2.
+ *
+ * @return  none
+ */
 void CAN_CancelTransmit(CAN_TypeDef* CANx, uint8_t Mailbox)
 {
   switch (Mailbox)
@@ -492,17 +522,20 @@ void CAN_CancelTransmit(CAN_TypeDef* CANx, uint8_t Mailbox)
   }
 }
 
-/*******************************************************************************
-* Function Name  : CAN_Receive
-* Description    : Receives a message.
-* Input          : CANx: where x can be 1 to select the CAN peripheral.
-*                  FIFONumber: Receive FIFO number.
-*                    CAN_FIFO0.
-*                    CAN_FIFO1.
-*                  RxMessage:  pointer to a structure receive message which contains 
-*      CAN Id, CAN DLC, CAN datas and FMI number.
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      CAN_Receive
+ *
+ * @brief   Receives a message.
+ *
+ * @param   CANx - where x can be 1 to select the CAN peripheral.
+ *          FIFONumber - Receive FIFO number.
+ *            CAN_FIFO0.
+ *            CAN_FIFO1.
+ *          RxMessage -  pointer to a structure receive message which contains
+ *        CAN Id, CAN DLC, CAN datas and FMI number.
+ *
+ * @return  none
+ */
 void CAN_Receive(CAN_TypeDef* CANx, uint8_t FIFONumber, CanRxMsg* RxMessage)
 {
   RxMessage->IDE = (uint8_t)0x04 & CANx->sFIFOMailBox[FIFONumber].RXMIR;
@@ -538,15 +571,18 @@ void CAN_Receive(CAN_TypeDef* CANx, uint8_t FIFONumber, CanRxMsg* RxMessage)
   }
 }
 
-/*******************************************************************************
-* Function Name  : CAN_FIFORelease
-* Description    : Releases the specified FIFO.
-* Input          : CANx: where x can be 1 to select the CAN peripheral.
-*                  FIFONumber: FIFO to release.
-*                    CAN_FIFO0. 
-*                    CAN_FIFO1.
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      CAN_FIFORelease
+ *
+ * @brief   Releases the specified FIFO.
+ *
+ * @param   CANx - where x can be 1 to select the CAN peripheral.
+ *          FIFONumber - Receive FIFO number.
+ *            CAN_FIFO0.
+ *            CAN_FIFO1.
+ *
+ * @return  none
+ */
 void CAN_FIFORelease(CAN_TypeDef* CANx, uint8_t FIFONumber)
 {
   if (FIFONumber == CAN_FIFO0)
@@ -559,15 +595,18 @@ void CAN_FIFORelease(CAN_TypeDef* CANx, uint8_t FIFONumber)
   }
 }
 
-/*******************************************************************************
-* Function Name  : CAN_MessagePending
-* Description    : Returns the number of pending messages.
-* Input          : CANx: where x can be 1 to select the CAN peripheral.
-*                  FIFONumber: Receive FIFO number.
-*                    CAN_FIFO0. 
-*                    CAN_FIFO1.
-* Return         : message_pending: which is the number of pending message. 
-*******************************************************************************/
+/*********************************************************************
+ * @fn      CAN_MessagePending
+ *
+ * @brief   Returns the number of pending messages.
+ *
+ * @param   CANx - where x can be 1 to select the CAN peripheral.
+ *          FIFONumber - Receive FIFO number.
+ *            CAN_FIFO0.
+ *            CAN_FIFO1.
+ *
+ * @return  message_pending: which is the number of pending message.
+ */
 uint8_t CAN_MessagePending(CAN_TypeDef* CANx, uint8_t FIFONumber)
 {
   uint8_t message_pending=0;
@@ -588,18 +627,21 @@ uint8_t CAN_MessagePending(CAN_TypeDef* CANx, uint8_t FIFONumber)
   return message_pending;
 }
 
-/*******************************************************************************
-* Function Name  : CAN_OperatingModeRequest
-* Description    : Select the CAN Operation mode.
-* Input          : CANx: where x can be 1 to select the CAN peripheral.
-*                  CAN_OperatingMode : CAN Operating Mode.
-*                    CAN_OperatingMode_Initialization.
-*                    CAN_OperatingMode_Normal.
-*                    CAN_OperatingMode_Sleep.
-* Return         : status: 
-*                    CAN_ModeStatus_Failed: CAN failed entering the specific mode. 
-*                    CAN_ModeStatus_Success: CAN Succeed entering the specific mode. 
-*******************************************************************************/
+/*********************************************************************
+ * @fn      CAN_OperatingModeRequest
+ *
+ * @brief   Select the CAN Operation mode.
+ *
+ * @param   CANx - where x can be 1 to select the CAN peripheral.
+ *          CAN_OperatingMode - CAN Operating Mode.
+ *            CAN_OperatingMode_Initialization.
+ *            CAN_OperatingMode_Normal.
+ *            CAN_OperatingMode_Sleep.
+ *
+ * @return  status -
+ *          CAN_ModeStatus_Failed - CAN failed entering the specific mode.
+ *          CAN_ModeStatus_Success - CAN Succeed entering the specific mode.
+ */
 uint8_t CAN_OperatingModeRequest(CAN_TypeDef* CANx, uint8_t CAN_OperatingMode)
 {
   uint8_t status = CAN_ModeStatus_Failed;
@@ -664,14 +706,17 @@ uint8_t CAN_OperatingModeRequest(CAN_TypeDef* CANx, uint8_t CAN_OperatingMode)
   return  (uint8_t) status;
 }
 
-/*******************************************************************************
-* Function Name  : CAN_Sleep
-* Description    : Enters the low power mode.
-* Input          : CANx: where x can be 1 to select the CAN peripheral.
-* Return         : sleepstatus: 
-*                    CAN_Sleep_Ok.
-*                    CAN_Sleep_Failed.
-*******************************************************************************/
+/*********************************************************************
+ * @fn      CAN_Sleep
+ *
+ * @brief   Enters the low power mode.
+ *
+ * @param   CANx - where x can be 1 to select the CAN peripheral.
+ *
+ * @return  sleepstatus -
+ *            CAN_Sleep_Ok.
+ *            CAN_Sleep_Failed.
+ */
 uint8_t CAN_Sleep(CAN_TypeDef* CANx)
 {
   uint8_t sleepstatus = CAN_Sleep_Failed;
@@ -686,14 +731,17 @@ uint8_t CAN_Sleep(CAN_TypeDef* CANx)
   return (uint8_t)sleepstatus;
 }
 
-/*******************************************************************************
-* Function Name  : CAN_WakeUp
-* Description    : Wakes the CAN up.
-* Input          : CANx: where x can be 1 to select the CAN peripheral.
-* Return         : wakeupstatus: 
-*                    CAN_WakeUp_Ok.
-*                    CAN_WakeUp_Failed.
-*******************************************************************************/
+/*********************************************************************
+ * @fn      CAN_WakeUp
+ *
+ * @brief   Wakes the CAN up.
+ *
+ * @param   CANx - where x can be 1 to select the CAN peripheral.
+ *
+ * @return  wakeupstatus -
+ *            CAN_WakeUp_Ok.
+ *            CAN_WakeUp_Failed.
+ */
 uint8_t CAN_WakeUp(CAN_TypeDef* CANx)
 {
   uint32_t wait_slak = SLAK_TIMEOUT;
@@ -713,20 +761,23 @@ uint8_t CAN_WakeUp(CAN_TypeDef* CANx)
   return (uint8_t)wakeupstatus;
 }
 
-/*******************************************************************************
-* Function Name  : CAN_GetLastErrorCode
-* Description    : Returns the CANx's last error code (LEC).
-* Input          : CANx: where x can be 1 to select the CAN peripheral.   
-* Return         : errorcode: specifies the Error code.  
-*                    CAN_ErrorCode_NoErr: No Error.
-*                    CAN_ErrorCode_StuffErr: Stuff Error.
-*                    CAN_ErrorCode_FormErr: Form Error.
-*                    CAN_ErrorCode_ACKErr: Acknowledgment Error.
-*                    CAN_ErrorCode_BitRecessiveErr: Bit Recessive Error.
-*                    CAN_ErrorCode_BitDominantErr: Bit Dominant Error.
-*                    CAN_ErrorCode_CRCErr: CRC Error.
-*                    CAN_ErrorCode_SoftwareSetErr: Software Set Error.
-*******************************************************************************/ 
+/*********************************************************************
+ * @fn      CAN_GetLastErrorCode
+ *
+ * @brief   Returns the CANx's last error code (LEC).
+ *
+ * @param   CANx - where x can be 1 to select the CAN peripheral.
+ *
+ * @return  errorcode - specifies the Error code.
+ *            CAN_ErrorCode_NoErr - No Error.
+ *            CAN_ErrorCode_StuffErr - Stuff Error.
+ *            CAN_ErrorCode_FormErr - Form Error.
+ *            CAN_ErrorCode_ACKErr - Acknowledgment Error.
+ *            CAN_ErrorCode_BitRecessiveErr - Bit Recessive Error.
+ *            CAN_ErrorCode_BitDominantErr - Bit Dominant Error.
+ *            CAN_ErrorCode_CRCErr - CRC Error.
+ *            CAN_ErrorCode_SoftwareSetErr - Software Set Error.
+ */
 uint8_t CAN_GetLastErrorCode(CAN_TypeDef* CANx)
 {
   uint8_t errorcode=0;
@@ -736,12 +787,15 @@ uint8_t CAN_GetLastErrorCode(CAN_TypeDef* CANx)
   return errorcode;
 }
 
-/*******************************************************************************
-* Function Name  : CAN_GetReceiveErrorCounter
-* Description    : Returns the CANx Receive Error Counter (REC).
-* Input          : CANx: where x can be 1 to select the CAN peripheral.   
-* Return         : counter: CAN Receive Error Counter.  
-*******************************************************************************/ 
+/*********************************************************************
+ * @fn      CAN_GetReceiveErrorCounter
+ *
+ * @brief   Returns the CANx Receive Error Counter (REC).
+ *
+ * @param   CANx - where x can be 1 to select the CAN peripheral.
+ *
+ * @return  counter - CAN Receive Error Counter.
+ */
 uint8_t CAN_GetReceiveErrorCounter(CAN_TypeDef* CANx)
 {
   uint8_t counter=0;
@@ -751,12 +805,15 @@ uint8_t CAN_GetReceiveErrorCounter(CAN_TypeDef* CANx)
   return counter;
 }
 
-/*******************************************************************************
-* Function Name  : CAN_GetLSBTransmitErrorCounter
-* Description    : Returns the LSB of the 9-bit CANx Transmit Error Counter(TEC).
-* Input          : CANx: where x can be 1 to select the CAN peripheral.   
-* Return         : counter: LSB of the 9-bit CAN Transmit Error Counter.  
-*******************************************************************************/ 
+/*********************************************************************
+ * @fn      CAN_GetLSBTransmitErrorCounter
+ *
+ * @brief   Returns the LSB of the 9-bit CANx Transmit Error Counter(TEC).
+ *
+ * @param   CANx - where x can be 1 to select the CAN peripheral.
+ *
+ * @return  counter - LSB of the 9-bit CAN Transmit Error Counter.
+ */
 uint8_t CAN_GetLSBTransmitErrorCounter(CAN_TypeDef* CANx)
 {
   uint8_t counter=0;
@@ -766,27 +823,30 @@ uint8_t CAN_GetLSBTransmitErrorCounter(CAN_TypeDef* CANx)
   return counter;
 }
 
-/*******************************************************************************
-* Function Name  : CAN_ITConfig
-* Description    : Enables or disables the specified CANx interrupts.
-* Input          : CANx: where x can be 1 to select the CAN peripheral.
-*                  CAN_IT: specifies the CAN interrupt sources to be enabled or disabled.
-*                    CAN_IT_TME.
-*                    CAN_IT_FMP0. 
-*                    CAN_IT_FF0.
-*                    CAN_IT_FOV0. 
-*                    CAN_IT_FMP1.
-*                    CAN_IT_FF1.
-*                    CAN_IT_FOV1. 
-*                    CAN_IT_EWG. 
-*                    CAN_IT_EPV.
-*                    CAN_IT_LEC. 
-*                    CAN_IT_ERR. 
-*                    CAN_IT_WKU.
-*                    CAN_IT_SLK.   
-*                  NewState: ENABLE or DISABLE.
-* Return         : None  
-*******************************************************************************/ 
+/*********************************************************************
+ * @fn      CAN_ITConfig
+ *
+ * @brief   Enables or disables the specified CANx interrupts.
+ *
+ * @param   CANx - where x can be 1 to select the CAN peripheral.
+ *          CAN_IT - specifies the CAN interrupt sources to be enabled or disabled.
+ *            CAN_IT_TME.
+ *            CAN_IT_FMP0.
+ *            CAN_IT_FF0.
+ *            CAN_IT_FOV0.
+ *            CAN_IT_FMP1.
+ *            CAN_IT_FF1.
+ *            CAN_IT_FOV1.
+ *            CAN_IT_EWG.
+ *            CAN_IT_EPV.
+ *            CAN_IT_LEC.
+ *            CAN_IT_ERR.
+ *            CAN_IT_WKU.
+ *            CAN_IT_SLK.
+ *          NewState - ENABLE or DISABLE.
+ *
+ * @return  counter - LSB of the 9-bit CAN Transmit Error Counter.
+ */
 void CAN_ITConfig(CAN_TypeDef* CANx, uint32_t CAN_IT, FunctionalState NewState)
 {
   if (NewState != DISABLE)
@@ -799,28 +859,32 @@ void CAN_ITConfig(CAN_TypeDef* CANx, uint32_t CAN_IT, FunctionalState NewState)
   }
 }
 
-/*******************************************************************************
-* Function Name  : CAN_GetFlagStatus
-* Description    : Checks whether the specified CAN flag is set or not.
-* Input          : CANx: where x can be 1 to select the CAN peripheral.
-*                  CAN_FLAG: specifies the flag to check.
-*                    CAN_FLAG_EWG.
-*                    CAN_FLAG_EPV. 
-*                    CAN_FLAG_BOF.
-*                    CAN_FLAG_RQCP0.
-*                    CAN_FLAG_RQCP1.
-*                    CAN_FLAG_RQCP2.
-*                    CAN_FLAG_FMP1.   
-*                    CAN_FLAG_FF1.       
-*                    CAN_FLAG_FOV1.   
-*                    CAN_FLAG_FMP0.   
-*                    CAN_FLAG_FF0.       
-*                    CAN_FLAG_FOV0.   
-*                    CAN_FLAG_WKU. 
-*                    CAN_FLAG_SLAK.  
-*                    CAN_FLAG_LEC. 
-* Return         : FlagStatus: SET or RESET.  
-*******************************************************************************/
+/*********************************************************************
+ * @fn      CAN_GetFlagStatus
+ *
+ * @brief   Checks whether the specified CAN flag is set or not.
+ *
+ * @param   CANx - where x can be 1 to select the CAN peripheral.
+ *          CAN_FLAG - specifies the flag to check.
+ *            CAN_FLAG_EWG.
+ *            CAN_FLAG_EPV.
+ *            CAN_FLAG_BOF.
+ *            CAN_FLAG_RQCP0.
+ *            CAN_FLAG_RQCP1.
+ *            CAN_FLAG_RQCP2.
+ *            CAN_FLAG_FMP1.
+ *            CAN_FLAG_FF1.
+ *            CAN_FLAG_FOV1.
+ *            CAN_FLAG_FMP0.
+ *            CAN_FLAG_FF0.
+ *            CAN_FLAG_FOV0.
+ *            CAN_FLAG_WKU.
+ *            CAN_FLAG_SLAK.
+ *            CAN_FLAG_LEC.
+ *          NewState - ENABLE or DISABLE.
+ *
+ * @return  FlagStatus - SET or RESET.
+ */
 FlagStatus CAN_GetFlagStatus(CAN_TypeDef* CANx, uint32_t CAN_FLAG)
 {
   FlagStatus bitstatus = RESET;
@@ -884,23 +948,26 @@ FlagStatus CAN_GetFlagStatus(CAN_TypeDef* CANx, uint32_t CAN_FLAG)
   return  bitstatus;
 }
 
-/*******************************************************************************
-* Function Name  : CAN_ClearFlag
-* Description    : Clears the CAN's pending flags.
-* Input          : CANx: where x can be 1 to select the CAN peripheral.
-*                  CAN_FLAG: specifies the flag to clear.
-*                    CAN_FLAG_RQCP0.
-*                    CAN_FLAG_RQCP1.
-*                    CAN_FLAG_RQCP2.
-*                    CAN_FLAG_FF1.       
-*                    CAN_FLAG_FOV1.   
-*                    CAN_FLAG_FF0.       
-*                    CAN_FLAG_FOV0.   
-*                    CAN_FLAG_WKU.   
-*                    CAN_FLAG_SLAK.    
-*                    CAN_FLAG_LEC.  
-* Return         : None 
-*******************************************************************************/
+/*********************************************************************
+ * @fn      CAN_ClearFlag
+ *
+ * @brief   Clears the CAN's pending flags.
+ *
+ * @param   CANx - where x can be 1 to select the CAN peripheral.
+ *          CAN_FLAG - specifies the flag to clear.
+ *            CAN_FLAG_RQCP0.
+ *            CAN_FLAG_RQCP1.
+ *            CAN_FLAG_RQCP2.
+ *            CAN_FLAG_FF1.
+ *            CAN_FLAG_FOV1.
+ *            CAN_FLAG_FF0.
+ *            CAN_FLAG_FOV0.
+ *            CAN_FLAG_WKU.
+ *            CAN_FLAG_SLAK.
+ *            CAN_FLAG_LEC.
+ *
+ * @return  none
+ */
 void CAN_ClearFlag(CAN_TypeDef* CANx, uint32_t CAN_FLAG)
 {
   uint32_t flagtmp=0;
@@ -932,27 +999,30 @@ void CAN_ClearFlag(CAN_TypeDef* CANx, uint32_t CAN_FLAG)
   }
 }
 
-/*******************************************************************************
-* Function Name  : CAN_GetITStatus
-* Description    : Checks whether the specified CANx interrupt has occurred or not.
-* Input          : CANx: where x can be 1 to select the CAN peripheral.
-*                  CAN_IT:  specifies the CAN interrupt source to check.
-*                    CAN_IT_TME.               
-*                    CAN_IT_FMP0.              
-*                    CAN_IT_FF0.               
-*                    CAN_IT_FOV0.              
-*                    CAN_IT_FMP1.              
-*                    CAN_IT_FF1.               
-*                    CAN_IT_FOV1.              
-*                    CAN_IT_WKU.  
-*                    CAN_IT_SLK.  
-*                    CAN_IT_EWG.    
-*                    CAN_IT_EPV.   
-*                    CAN_IT_BOF.    
-*                    CAN_IT_LEC.    
-*                    CAN_IT_ERR.   
-* Return         : ITStatus: SET or RESET. 
-*******************************************************************************/
+/*********************************************************************
+ * @fn      CAN_GetITStatus
+ *
+ * @brief   Checks whether the specified CANx interrupt has occurred or not.
+ *
+ * @param   CANx - where x can be 1 to select the CAN peripheral.
+ *          CAN_IT -  specifies the CAN interrupt source to check.
+ *            CAN_IT_TME.
+ *            CAN_IT_FMP0.
+ *            CAN_IT_FF0.
+ *            CAN_IT_FOV0.
+ *            CAN_IT_FMP1.
+ *            CAN_IT_FF1.
+ *            CAN_IT_FOV1.
+ *            CAN_IT_WKU.
+ *            CAN_IT_SLK.
+ *            CAN_IT_EWG.
+ *            CAN_IT_EPV.
+ *            CAN_IT_BOF.
+ *            CAN_IT_LEC.
+ *            CAN_IT_ERR.
+ *
+ * @return  ITStatus - SET or RESET.
+ */
 ITStatus CAN_GetITStatus(CAN_TypeDef* CANx, uint32_t CAN_IT)
 {
 	ITStatus itstatus = RESET;
@@ -1030,25 +1100,28 @@ ITStatus CAN_GetITStatus(CAN_TypeDef* CANx, uint32_t CAN_IT)
   return  itstatus;
 }
 
-/*******************************************************************************
-* Function Name  : CAN_ClearITPendingBit
-* Description    : Clears the CANx's interrupt pending bits.
-* Input          : CANx: where x can be 1 to select the CAN peripheral.
-*                  CAN_IT: specifies the interrupt pending bit to clear.
-*                    CAN_IT_TME.                     
-*                    CAN_IT_FF0.               
-*                    CAN_IT_FOV0.                     
-*                    CAN_IT_FF1.               
-*                    CAN_IT_FOV1.              
-*                    CAN_IT_WKU.  
-*                    CAN_IT_SLK.  
-*                    CAN_IT_EWG.    
-*                    CAN_IT_EPV.    
-*                    CAN_IT_BOF.    
-*                    CAN_IT_LEC.    
-*                    CAN_IT_ERR.   
-* Return         :  None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      CAN_ClearITPendingBit
+ *
+ * @brief   Clears the CANx's interrupt pending bits.
+ *
+ * @param   CANx - where x can be 1 to select the CAN peripheral.
+ *          CAN_IT - specifies the interrupt pending bit to clear.
+ *            CAN_IT_TME.
+ *            CAN_IT_FF0.
+ *            CAN_IT_FOV0.
+ *            CAN_IT_FF1.
+ *            CAN_IT_FOV1.
+ *            CAN_IT_WKU.
+ *            CAN_IT_SLK.
+ *            CAN_IT_EWG.
+ *            CAN_IT_EPV.
+ *            CAN_IT_BOF.
+ *            CAN_IT_LEC.
+ *            CAN_IT_ERR.
+ *
+ * @return  none
+ */
 void CAN_ClearITPendingBit(CAN_TypeDef* CANx, uint32_t CAN_IT)
 {
 	switch (CAN_IT)
@@ -1108,13 +1181,16 @@ void CAN_ClearITPendingBit(CAN_TypeDef* CANx, uint32_t CAN_IT)
 	}
 }
 
-/*******************************************************************************
-* Function Name  : CheckITStatus
-* Description    : Checks whether the CAN interrupt has occurred or not.
-* Input          : CAN_Reg: specifies the CAN interrupt register to check
-*                  It_Bit:  specifies the interrupt source bit to check.    
-* Return         : ITStatus: SET or RESET.
-*******************************************************************************/
+/*********************************************************************
+ * @fn      CheckITStatus
+ *
+ * @brief   Checks whether the CAN interrupt has occurred or not.
+ *
+ * @param   CAN_Reg - specifies the CAN interrupt register to check
+ *          It_Bit - specifies the interrupt source bit to check.
+ *
+ * @return  ITStatus - SET or RESET.
+ */
 static ITStatus CheckITStatus(uint32_t CAN_Reg, uint32_t It_Bit)
 {
   ITStatus pendingbitstatus = RESET;

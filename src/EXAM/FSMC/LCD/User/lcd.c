@@ -9,40 +9,47 @@
 #include "stdlib.h"
 #include "font.h" 
 
-//LCD brush and background colors
+/* LCD brush and background colors */
 u16 POINT_COLOR=0x0000;
 u16 BACK_COLOR=0xFFFF;
   
 _lcd_dev lcddev;
 	 
-/*******************************************************************************
-* Function Name  : LCD_WR_REG
-* Description    : Write register
-* Input          : regval: register value
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      LCD_WR_REG
+ *
+ * @brief   Write register
+ *
+ * @param   regval - register value
+ *
+ * @return  none
+ */
 void LCD_WR_REG(u16 regval)
 {   
 	LCD->LCD_REG=regval;
 }
 
-/*******************************************************************************
-* Function Name  : LCD_WR_DATA
-* Description    : Write data
-* Input          : data:
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      LCD_WR_DATA
+ *
+ * @brief   Write data
+ *
+ * @param   data
+ *
+ * @return  none
+ */
 void LCD_WR_DATA(u16 data)
 {	 
 	LCD->LCD_RAM=data;		 
 }
 
-/*******************************************************************************
-* Function Name  : LCD_RD_DATA
-* Description    : Read data
-* Input          : None
-* Return         : ram: read data
-*******************************************************************************/
+/*********************************************************************
+ * @fn      LCD_RD_DATA
+ *
+ * @brief   Read data
+ *
+ * @return  ram - read data
+ */
 u16 LCD_RD_DATA(void)
 {
 	vu16 ram;
@@ -50,25 +57,31 @@ u16 LCD_RD_DATA(void)
 	return ram;	 
 }					   
 
-/*******************************************************************************
-* Function Name  : LCD_WriteReg
-* Description    : Write value to register
-* Input          : LCD_Reg: register addr
-*                  LCD_RegValue: value
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      LCD_WriteReg
+ *
+ * @brief   Write value to register
+ *
+ * @param   LCD_Reg - register addr
+ *          LCD_RegValue - value
+ *
+ * @return  none
+ */
 void LCD_WriteReg(u16 LCD_Reg,u16 LCD_RegValue)
 {	
 	LCD->LCD_REG = LCD_Reg;
 	LCD->LCD_RAM = LCD_RegValue;
 }	   
 
-/*******************************************************************************
-* Function Name  : LCD_ReadReg
-* Description    : Read value from register
-* Input          : LCD_Reg: register addr
-* Return         : register value
-*******************************************************************************/
+/*********************************************************************
+ * @fn      LCD_ReadReg
+ *
+ * @brief   Read value from register
+ *
+ * @param   LCD_Reg - register addr
+ *
+ * @return  register value
+ */
 u16 LCD_ReadReg(u16 LCD_Reg)
 {										   
 	LCD_WR_REG(LCD_Reg);
@@ -76,36 +89,42 @@ u16 LCD_ReadReg(u16 LCD_Reg)
 	return LCD_RD_DATA();
 }   
 
-/*******************************************************************************
-* Function Name  : LCD_WriteRAM_Prepare
-* Description    : Write GRAM prepare
-* Input          : None
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      LCD_WriteRAM_Prepare
+ *
+ * @brief   Write GRAM prepare
+ *
+ * @return  none
+ */
 void LCD_WriteRAM_Prepare(void)
 {
  	LCD->LCD_REG=lcddev.wramcmd;	  
 }	 
 
-/*******************************************************************************
-* Function Name  : LCD_WriteRAM
-* Description    : Write GRAM
-* Input          : RGB_Code: colour value
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      LCD_WriteRAM
+ *
+ * @brief   Write GRAM
+ *
+ * @param   RGB_Code - colour value
+ *
+ * @return  none
+ */
 void LCD_WriteRAM(u16 RGB_Code)
 {							    
 	LCD->LCD_RAM = RGB_Code;
 }
 
-
-/*******************************************************************************
-* Function Name  : LCD_SetCursor
-* Description    : set Cursor
-* Input          : Xpos: Abscissa
-*                  Ypos: Ordinate
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      LCD_SetCursor
+ *
+ * @brief   set Cursor
+ *
+ * @param   Xpos - Abscissa
+ *          Ypos - Ordinate
+ *
+ * @return  none
+ */
 void LCD_SetCursor(u16 Xpos, u16 Ypos)
 {	 
  	if(lcddev.id==0X9341)
@@ -117,12 +136,15 @@ void LCD_SetCursor(u16 Xpos, u16 Ypos)
 	}
 } 		 
 
-/*******************************************************************************
-* Function Name  : LCD_Scan_Dir
-* Description    : set scan direction
-* Input          : dir: direction
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      LCD_Scan_Dir
+ *
+ * @brief   set scan direction
+ *
+ * @param   dir - direction
+ *
+ * @return  none
+ */
 void LCD_Scan_Dir(u8 dir)
 {
 	u16 regval=0;
@@ -206,12 +228,15 @@ void LCD_Scan_Dir(u8 dir)
   	}
 }     
 
-/*******************************************************************************
-* Function Name  : LCD_Display_Dir
-* Description    : set display direction
-* Input          : dir: direction
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      LCD_Display_Dir
+ *
+ * @brief   set display direction
+ *
+ * @param   dir - direction
+ *
+ * @return  none
+ */
 void LCD_Display_Dir(u8 dir)
 {
 	if(dir==0)
@@ -242,12 +267,13 @@ void LCD_Display_Dir(u8 dir)
 	LCD_Scan_Dir(DFT_SCAN_DIR);
 }	 
 
-/*******************************************************************************
-* Function Name  : LCD_Init
-* Description    : Init LCD
-* Input          : None
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      LCD_Init
+ *
+ * @brief   Init LCD
+ *
+ * @return  none
+ */
 void LCD_Init(void)
 { 					
  	GPIO_InitTypeDef GPIO_InitStructure;
@@ -256,7 +282,7 @@ void LCD_Init(void)
 	FSMC_NORSRAMTimingInitTypeDef  writeTiming;
 	
     RCC_AHBPeriphClockCmd(RCC_AHBPeriph_FSMC,ENABLE);
-	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOB|RCC_APB2Periph_GPIOD|RCC_APB2Periph_GPIOE|RCC_APB2Periph_GPIOG,ENABLE);
+	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOB|RCC_APB2Periph_GPIOD|RCC_APB2Periph_GPIOE,ENABLE);
 
  	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_14;
  	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
@@ -436,12 +462,15 @@ void LCD_Init(void)
 	LCD_Clear(WHITE);
 }  
 
-/*******************************************************************************
-* Function Name  : LCD_Clear
-* Description    : Clear screen
-* Input          : color: fill color
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      LCD_Clear
+ *
+ * @brief   Clear screen
+ *
+ * @param   color - fill color
+ *
+ * @return  none
+ */
 void LCD_Clear(u16 color)
 {
 	u32 index=0;      
@@ -455,17 +484,20 @@ void LCD_Clear(u16 color)
 	}
 }  
 
-/*******************************************************************************
-* Function Name  : LCD_ShowString
-* Description    : Display string
-* Input          : x: X coordinate
-*                  y: Y coordinate
-*                  width: String width
-*                  height: String height
-*                  size£ºfont size
-*                  *p: String start address
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      LCD_ShowString
+ *
+ * @brief   Display string
+ *
+ * @param   x - X coordinate
+ *          y - Y coordinate
+ *          width - String width
+ *          height - String height
+ *          size - font size
+ *          *p - String start address
+ *
+ * @return  none
+ */
 void LCD_ShowString(u16 x,u16 y,u16 width,u16 height,u8 size,u8 *p)
 {
     u8 x0=x;
@@ -481,12 +513,13 @@ void LCD_ShowString(u16 x,u16 y,u16 width,u16 height,u8 size,u8 *p)
     }
 }
 
-/*******************************************************************************
-* Function Name  : LCD_Pow
-* Description    : m^n function
-* Input          : None
-* Return         : result: m^n
-*******************************************************************************/
+/*********************************************************************
+ * @fn      LCD_Pow
+ *
+ * @brief   m^n function
+ *
+ * @return  result - m^n
+ */
 u32 LCD_Pow(u8 m,u8 n)
 {
     u32 result=1;
@@ -494,17 +527,20 @@ u32 LCD_Pow(u8 m,u8 n)
     return result;
 }
 
-/*******************************************************************************
-* Function Name  : LCD_ShowNum
-* Description    : Display number
-* Input          : x: X coordinate
-*                  y: Y coordinate
-*                  len: number lenth
-*                  size£ºfont size
-*                  color: font color
-*                  num: value(0~4294967295)
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      LCD_ShowNum
+ *
+ * @brief   Display number
+ *
+ * @param   x - X coordinate
+ *          y - Y coordinate
+ *          len - number lenth
+ *          size -font size
+ *          color - font color
+ *          num - value(0~4294967295)
+ *
+ * @return  none
+ */
 void LCD_ShowNum(u16 x,u16 y,u32 num,u8 len,u8 size)
 {
     u8 t,temp;
@@ -525,16 +561,19 @@ void LCD_ShowNum(u16 x,u16 y,u32 num,u8 len,u8 size)
     }
 }
 
-/*******************************************************************************
-* Function Name  : LCD_ShowChar
-* Description    : Displays a character in the specified position
-* Input          : x: X coordinate
-*                  y: Y coordinate
-*                  num: Displays a character
-*                  size£ºfont size
-*                  mode: superposition mode
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      LCD_ShowChar
+ *
+ * @brief   Displays a character in the specified position
+ *
+ * @param   x - X coordinate
+ *          y - Y coordinate
+ *          num - Displays a character
+ *          size -font size
+ *          mode - superposition mode
+ *
+ * @return  none
+ */
 void LCD_ShowChar(u16 x,u16 y,u8 num,u8 size,u8 mode)
 {
     u8 temp,t1,t;
@@ -565,14 +604,17 @@ void LCD_ShowChar(u16 x,u16 y,u8 num,u8 size,u8 mode)
     }
 }
 
-/*******************************************************************************
-* Function Name  : LCD_Fast_DrawPoint
-* Description    : fast draw point
-* Input          : x: X coordinate
-*                  y: Y coordinate
-*                  color: font color
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      LCD_Fast_DrawPoint
+ *
+ * @brief   fast draw point
+ *
+ * @param   x - X coordinate
+ *          y - Y coordinate
+ *          color - font color
+ *
+ * @return  none
+ */
 void LCD_Fast_DrawPoint(u16 x,u16 y,u16 color)
 {
     if(lcddev.id==0X9341)

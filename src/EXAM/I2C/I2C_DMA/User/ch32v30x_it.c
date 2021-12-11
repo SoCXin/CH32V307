@@ -11,22 +11,24 @@ void NMI_Handler(void) __attribute__((interrupt("WCH-Interrupt-fast")));
 void HardFault_Handler(void) __attribute__((interrupt("WCH-Interrupt-fast")));
 void DMA1_Channel6_IRQHandler(void) __attribute__((interrupt("WCH-Interrupt-fast")));
 
-/*******************************************************************************
-* Function Name  : NMI_Handler
-* Description    : This function handles NMI exception.
-* Input          : None
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      NMI_Handler
+ *
+ * @brief   This function handles NMI exception.
+ *
+ * @return  none
+ */
 void NMI_Handler(void)
 {
 }
 
-/*******************************************************************************
-* Function Name  : HardFault_Handler
-* Description    : This function handles Hard Fault exception.
-* Input          : None
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      HardFault_Handler
+ *
+ * @brief   This function handles Hard Fault exception.
+ *
+ * @return  none
+ */
 void HardFault_Handler(void)
 {
   while (1)
@@ -34,13 +36,13 @@ void HardFault_Handler(void)
   }
 }
 
-/*******************************************************************************
-* Function Name  : DMA1_Channel6_IRQHandler
-* Description    : This function handles DMA1 channel6 exception.
-* Input          : None
-* Output         : None
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      DMA1_Channel6_IRQHandler
+ *
+ * @brief   This function handles DMA1 channel6 exception.
+ *
+ * @return  none
+ */
 void DMA1_Channel6_IRQHandler()
 {
 	if( DMA_GetITStatus(DMA1_IT_TC6) != RESET )

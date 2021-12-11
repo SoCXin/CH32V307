@@ -41,17 +41,18 @@ u32 I2S3_Rx[Len];
 void SPI3_IRQHandler(void) __attribute__((interrupt("WCH-Interrupt-fast")));
 void SPI2_IRQHandler(void) __attribute__((interrupt("WCH-Interrupt-fast")));
 
-/*******************************************************************************
-* Function Name  : I2S2_Init
-* Description    : Init I2S2
-* Input          : None
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      I2S2_Init
+ *
+ * @brief   Init I2S2
+ *
+ * @return  none
+ */
 void I2S2_Init(void)
 {
-    GPIO_InitTypeDef GPIO_InitStructure;
-    I2S_InitTypeDef  I2S_InitStructure;
-    NVIC_InitTypeDef NVIC_InitStructure;
+    GPIO_InitTypeDef GPIO_InitStructure={0};
+    I2S_InitTypeDef  I2S_InitStructure={0};
+    NVIC_InitTypeDef NVIC_InitStructure={0};
 
     RCC_APB1PeriphClockCmd(RCC_APB1Periph_SPI2, ENABLE);
     RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOB | RCC_APB2Periph_GPIOC, ENABLE);
@@ -98,17 +99,18 @@ void I2S2_Init(void)
 
 }
 
-/*******************************************************************************
-* Function Name  : I2S3_Init
-* Description    : Init I2S3
-* Input          : None
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      I2S3_Init
+ *
+ * @brief   Init I2S2
+ *
+ * @return  none
+ */
 void I2S3_Init(void)
 {
-    GPIO_InitTypeDef GPIO_InitStructure;
-    I2S_InitTypeDef  I2S_InitStructure;
-    NVIC_InitTypeDef NVIC_InitStructure;
+    GPIO_InitTypeDef GPIO_InitStructure={0};
+    I2S_InitTypeDef  I2S_InitStructure={0};
+    NVIC_InitTypeDef NVIC_InitStructure={0};
 
     RCC_APB1PeriphClockCmd(RCC_APB1Periph_SPI3, ENABLE);
     RCC_APB2PeriphClockCmd(RCC_APB2Periph_AFIO | RCC_APB2Periph_GPIOA | RCC_APB2Periph_GPIOB | RCC_APB2Periph_GPIOC, ENABLE);
@@ -156,12 +158,13 @@ void I2S3_Init(void)
 
 u8 t=0, p=0;
 
-/*******************************************************************************
-* Function Name  : SPI2_IRQHandler
-* Description    : This function handles SPI2 exception.
-* Input          : None
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      SPI2_IRQHandler
+ *
+ * @brief   This function handles SPI2 exception.
+ *
+ * @return  none
+ */
 void SPI2_IRQHandler(void)
 {
     static u8 falg = 0;
@@ -186,12 +189,13 @@ void SPI2_IRQHandler(void)
 
 }
 
-/*******************************************************************************
-* Function Name  : SPI3_IRQHandler
-* Description    : This function handles SPI3 exception.
-* Input          : None
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      SPI3_IRQHandler
+ *
+ * @brief   This function handles SPI3 exception.
+ *
+ * @return  none
+ */
 void SPI3_IRQHandler(void)
 {
     static u8 falg = 0;
@@ -227,12 +231,13 @@ void SPI3_IRQHandler(void)
 }
 
 
-/*******************************************************************************
-* Function Name  : main
-* Description    : Main program.
-* Input          : None
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      main
+ *
+ * @brief   Main program.
+ *
+ * @return  none
+ */
 int main(void)
 {
     u32 i;

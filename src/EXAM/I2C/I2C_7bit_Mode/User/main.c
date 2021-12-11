@@ -36,16 +36,17 @@
 u8 TxData[Size] = { 0x01, 0x02, 0x03, 0x04, 0x05, 0x06 };
 u8 RxData[Size];
 
-/*******************************************************************************
-* Function Name  : IIC_Init
-* Description    : Initializes the IIC peripheral.
-* Input          : None
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      IIC_Init
+ *
+ * @brief   Initializes the IIC peripheral.
+ *
+ * @return  none
+ */
 void IIC_Init( u32 bound, u16 address )
 {
-	GPIO_InitTypeDef GPIO_InitStructure;
-	I2C_InitTypeDef I2C_InitTSturcture;
+	GPIO_InitTypeDef GPIO_InitStructure={0};
+	I2C_InitTypeDef I2C_InitTSturcture={0};
 
 	RCC_APB2PeriphClockCmd( RCC_APB2Periph_GPIOB | RCC_APB2Periph_AFIO, ENABLE );
 	GPIO_PinRemapConfig(GPIO_Remap_I2C1, ENABLE);
@@ -77,12 +78,13 @@ void IIC_Init( u32 bound, u16 address )
 #endif
 }
 
-/*******************************************************************************
-* Function Name  : main
-* Description    : Main program.
-* Input          : None
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      main
+ *
+ * @brief   Main program.
+ *
+ * @return  none
+ */
 int main(void)
 {
 	u8 i=0;

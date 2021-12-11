@@ -16,20 +16,23 @@
 */
 #include "debug.h"
 
-/*******************************************************************************
-* Function Name  : One_Pulse_Init
-* Description    : Initializes TIM1 one pulse.
-* Input          : arr: the period value.
-*                  psc: the prescaler value.
-*									 ccp: the pulse value.
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      One_Pulse_Init
+ *
+ * @brief   Initializes TIM1 one pulse.
+ *
+ * @param   arr - the period value.
+ *          psc - the prescaler value.
+ *          ccp - the pulse value.
+ *
+ * @return  none
+ */
 void One_Pulse_Init( u16 arr, u16 psc, u16 ccp )
 {
-	GPIO_InitTypeDef GPIO_InitStructure;
-	TIM_OCInitTypeDef TIM_OCInitStructure;
-	TIM_ICInitTypeDef TIM_ICInitStructure;
-	TIM_TimeBaseInitTypeDef TIM_TimeBaseInitStructure;
+	GPIO_InitTypeDef GPIO_InitStructure={0};
+	TIM_OCInitTypeDef TIM_OCInitStructure={0};
+	TIM_ICInitTypeDef TIM_ICInitStructure={0};
+	TIM_TimeBaseInitTypeDef TIM_TimeBaseInitStructure={0};
 
 	RCC_APB2PeriphClockCmd( RCC_APB2Periph_GPIOA, ENABLE );
 	RCC_APB1PeriphClockCmd( RCC_APB1Periph_TIM2, ENABLE );
@@ -67,12 +70,13 @@ void One_Pulse_Init( u16 arr, u16 psc, u16 ccp )
 	TIM_SelectSlaveMode( TIM2, TIM_SlaveMode_Trigger );
 }
 
-/*******************************************************************************
-* Function Name  : main
-* Description    : Main program.
-* Input          : None
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      main
+ *
+ * @brief   Main program.
+ *
+ * @return  none
+ */
 int main(void)
 {
 	USART_Printf_Init(115200);

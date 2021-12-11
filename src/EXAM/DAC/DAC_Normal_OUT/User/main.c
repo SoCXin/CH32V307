@@ -23,16 +23,17 @@
 u16 DAC_Value[Num]={64,128,256,512,1024,2048,4095};   
 
 
-/*******************************************************************************
-* Function Name  : Dac_Init
-* Description    : Initializes DAC collection.
-* Input          : None
-* Return         : None
-*******************************************************************************/ 
+/*********************************************************************
+ * @fn      Dac_Init
+ *
+ * @brief   Initializes DAC collection.
+ *
+ * @return  none
+ */
 void Dac_Init(void)
 {
-	GPIO_InitTypeDef GPIO_InitStructure;
-	DAC_InitTypeDef DAC_InitType;
+	GPIO_InitTypeDef GPIO_InitStructure={0};
+	DAC_InitTypeDef DAC_InitType={0};
 	
 	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA, ENABLE );
 	RCC_APB1PeriphClockCmd(RCC_APB1Periph_DAC, ENABLE );
@@ -53,13 +54,13 @@ void Dac_Init(void)
 	DAC_SetChannel1Data(DAC_Align_12b_R, 0);
 }
 
-
-/*******************************************************************************
-* Function Name  : main
-* Description    : Main program.
-* Input          : None
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      main
+ *
+ * @brief   Main program.
+ *
+ * @return  none
+ */
 int main(void)
 {
 	u8 i=0;

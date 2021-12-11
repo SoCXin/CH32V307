@@ -26,12 +26,13 @@
 #include "string.h"
 
 
-/*******************************************************************************
-* Function Name  : show_sdcard_info
-* Description    : SD Card information.
-* Input          : None
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      show_sdcard_info
+ *
+ * @brief   SD Card information.
+ *
+ * @return  none
+ */
 void show_sdcard_info(void)
 {
     switch(SDCardInfo.CardType)
@@ -52,12 +53,13 @@ void show_sdcard_info(void)
 u8 buf[512];
 u8 Readbuf[512];
 
-/*******************************************************************************
-* Function Name  : main
-* Description    : Main program.
-* Input          : None
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      main
+ *
+ * @brief   Main program.
+ *
+ * @return  none
+ */
 int main(void)
 {
     u32 i;

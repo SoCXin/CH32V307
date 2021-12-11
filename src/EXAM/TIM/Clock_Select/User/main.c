@@ -25,12 +25,14 @@
 #define ETR_CLK ETR_CLK_MODE1
 //#define ETR_CLK ETR_CLK_MODE2
 
-/*******************************************************************************
-* Function Name  : TIM1_ETRClockMode1_Init
-* Description    : Configures the External clock Mode1.
-* Input          : None
-* Return         : None
-*******************************************************************************/
+
+/*********************************************************************
+ * @fn      TIM1_ETRClockMode1_Init
+ *
+ * @brief   Configures the External clock Mode1.
+ *
+ * @return  none
+ */
 void TIM1_ETRClockMode1_Init(void)
 {
 	RCC_APB2PeriphClockCmd( RCC_APB2Periph_TIM1, ENABLE );
@@ -43,13 +45,13 @@ void TIM1_ETRClockMode1_Init(void)
 	TIM_Cmd( TIM1, ENABLE );
 }
 
-
-/*******************************************************************************
-* Function Name  : TIM1_ETRClockMode2_Init
-* Description    : Configures the External clock Mode2.
-* Input          : None
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      TIM1_ETRClockMode2_Init
+ *
+ * @brief   Configures the External clock Mode2.
+ *
+ * @return  none
+ */
 void TIM1_ETRClockMode2_Init(void)
 {
 	RCC_APB2PeriphClockCmd( RCC_APB2Periph_TIM1, ENABLE );
@@ -62,12 +64,13 @@ void TIM1_ETRClockMode2_Init(void)
 	TIM_Cmd( TIM1, ENABLE );
 }
 
-/*******************************************************************************
-* Function Name  : main
-* Description    : Main program.
-* Input          : None
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      main
+ *
+ * @brief   Main program.
+ *
+ * @return  none
+ */
 int main(void)
 {
 	USART_Printf_Init(115200);

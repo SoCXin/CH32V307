@@ -11,12 +11,13 @@
 void NMI_Handler(void) __attribute__((interrupt(/*"WCH-Interrupt-fast"*/)));
 void HardFault_Handler(void) __attribute__((interrupt(/*"WCH-Interrupt-fast"*/)));
 
-/*******************************************************************************
-* Function Name  : NMI_Handler
-* Description    : This function handles NMI exception.
-* Input          : None
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      NMI_Handler
+ *
+ * @brief   This function handles NMI exception.
+ *
+ * @return  none
+ */
 void NMI_Handler(void)
 {
     GET_INT_SP();
@@ -30,12 +31,13 @@ void NMI_Handler(void)
     FREE_INT_SP();
 }
 
-/*******************************************************************************
-* Function Name  : HardFault_Handler
-* Description    : This function handles Hard Fault exception.
-* Input          : None
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      HardFault_Handler
+ *
+ * @brief   This function handles Hard Fault exception.
+ *
+ * @return  none
+ */
 void HardFault_Handler(void)
 {
 

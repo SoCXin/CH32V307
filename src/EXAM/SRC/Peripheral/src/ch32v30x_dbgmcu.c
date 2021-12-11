@@ -7,25 +7,28 @@
 ****************************************************************************************/
 #include "ch32v30x_dbgmcu.h"
 
-/*******************************************************************************
-* Function Name  : DBGMCU_Config
-* Description    : Configures the specified peripheral and low power mode behavior
-*      when the MCU under Debug mode.
-* Input          : DBGMCU_Periph: specifies the peripheral and low power mode.
-*                    DBGMCU_IWDG_STOP: Debug IWDG stopped when Core is halted          
-*                    DBGMCU_WWDG_STOP: Debug WWDG stopped when Core is halted
-*                    DBGMCU_I2C1_SMBUS_TIMEOUT: I2C1 SMBUS timeout mode stopped when Core is halted
-*                    DBGMCU_I2C2_SMBUS_TIMEOUT: I2C2 SMBUS timeout mode stopped when Core is halted
-*                    DBGMCU_TIM1_STOP: TIM1 counter stopped when Core is halted          
-*                    DBGMCU_TIM2_STOP: TIM2 counter stopped when Core is halted          
-*                    DBGMCU_TIM3_STOP: TIM3 counter stopped when Core is halted          
-*                    DBGMCU_TIM4_STOP: TIM4 counter stopped when Core is halted
-*                    DBGMCU_SLEEP: Keep debugger connection during SLEEP mode
-*                    DBGMCU_STOP: Keep debugger connection during STOP mode
-*                    DBGMCU_STANDBY: Keep debugger connection during STANDBY mode
-*                  NewState: ENABLE or DISABLE.
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      DBGMCU_Config
+ *
+ * @brief   Configures the specified peripheral and low power mode behavior
+ *        when the MCU under Debug mode.
+ *
+ * @param   DBGMCU_Periph - specifies the peripheral and low power mode.
+ *            DBGMCU_IWDG_STOP - Debug IWDG stopped when Core is halted
+ *            DBGMCU_WWDG_STOP - Debug WWDG stopped when Core is halted
+ *            DBGMCU_I2C1_SMBUS_TIMEOUT - I2C1 SMBUS timeout mode stopped when Core is halted
+ *            DBGMCU_I2C2_SMBUS_TIMEOUT - I2C2 SMBUS timeout mode stopped when Core is halted
+ *            DBGMCU_TIM1_STOP - TIM1 counter stopped when Core is halted
+ *            DBGMCU_TIM2_STOP - TIM2 counter stopped when Core is halted
+ *            DBGMCU_TIM3_STOP - TIM3 counter stopped when Core is halted
+ *            DBGMCU_TIM4_STOP - TIM4 counter stopped when Core is halted
+ *            DBGMCU_SLEEP - Keep debugger connection during SLEEP mode
+ *            DBGMCU_STOP - Keep debugger connection during STOP mode
+ *            DBGMCU_STANDBY - Keep debugger connection during STANDBY mode
+ *          NewState - ENABLE or DISABLE.
+ *
+ * @return  none
+ */
 void DBGMCU_Config(uint32_t DBGMCU_Periph, FunctionalState NewState)
 {
 	if((DBGMCU_Periph == DBGMCU_SLEEP) || (DBGMCU_Periph == DBGMCU_STOP) || (DBGMCU_Periph == DBGMCU_STANDBY))

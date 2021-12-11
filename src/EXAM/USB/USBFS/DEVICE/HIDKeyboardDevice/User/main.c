@@ -26,12 +26,13 @@ const UINT8 Key_W_Val[ 8 ]    = { 0x00, 0x00, 0x1A, 0x00, 0x00, 0x00, 0x00, 0x00
 const UINT8 Key_NotPress[ 8 ] = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00  };
 
 
-/*******************************************************************************
-* Function Name  : main
-* Description    : Main program.
-* Input          : None
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      main
+ *
+ * @brief   Main program.
+ *
+ * @return  none
+ */
 int main(void)
 {
     UINT8 UpLoadFlag = 0x00;
@@ -71,15 +72,16 @@ int main(void)
 	}
 }
 
-/*******************************************************************************
-* Function Name  : GPIO_Config
-* Description    : GPIO Configuration Program
-* Input          : None
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      GPIO_Config
+ *
+ * @brief   GPIO Configuration Program
+ *
+ * @return  none
+ */
 void GPIO_Config( void )
 {
-    GPIO_InitTypeDef GPIO_InitTypdefStruct;
+    GPIO_InitTypeDef GPIO_InitTypdefStruct={0};
 
     RCC_APB2PeriphClockCmd( RCC_APB2Periph_GPIOB, ENABLE );
     GPIO_InitTypdefStruct.GPIO_Pin   = GPIO_Pin_15;
@@ -89,13 +91,14 @@ void GPIO_Config( void )
     GPIO_Init( GPIOB, &GPIO_InitTypdefStruct );
 }
 
-/*******************************************************************************
-* Function Name  : Basic_Key_Handle
-* Description    : Basic Key Handle
-* Input          : None
-* Return         : 0 = no key press
-*                  1 = key press down
-*******************************************************************************/
+/*********************************************************************
+ * @fn      Basic_Key_Handle
+ *
+ * @brief   Basic Key Handle
+ *
+ * @return  0 - no key press
+ *          1 - key press down
+ */
 UINT8 Basic_Key_Handle( void )
 {
     UINT8 keyval = 0;

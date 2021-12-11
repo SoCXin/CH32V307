@@ -19,16 +19,17 @@ u16 ADC_val[2];
 s16 Calibrattion_Val1 = 0;
 s16 Calibrattion_Val2 = 0;
 
-/*******************************************************************************
-* Function Name  : ADC_Function_Init
-* Description    : Initializes ADC collection.
-* Input          : None
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      ADC_Function_Init
+ *
+ * @brief   Initializes ADC collection.
+ *
+ * @return  none
+ */
 void  ADC_Function_Init(void)
 {
-    ADC_InitTypeDef ADC_InitStructure;
-    GPIO_InitTypeDef GPIO_InitStructure;
+    ADC_InitTypeDef ADC_InitStructure={0};
+    GPIO_InitTypeDef GPIO_InitStructure={0};
 
     RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA , ENABLE );
     RCC_APB2PeriphClockCmd(RCC_APB2Periph_ADC1  , ENABLE );
@@ -90,20 +91,22 @@ void  ADC_Function_Init(void)
     ADC_BufferCmd(ADC2, ENABLE);   //enable buffer
 }
 
-/*******************************************************************************
-* Function Name  : TIM2_PWM_In
-* Description    : TIM2,PWM input mode init£¨Only CH1 and CH2 channels can be used£©
-* Input          : arr:Auto reload values
-                   psc:Prescaler value
-                   ccp:Preload value
-* Output         : None
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      TIM2_PWM_In
+ *
+ * @brief   TIM2,PWM input mode init£¨Only CH1 and CH2 channels can be used£©
+ *
+ * @param   arr - Auto reload values
+ *          psc - Prescaler value
+ *          ccp - Preload value
+ *
+ * @return  none
+ */
 void TIM2_PWM_In( u16 arr, u16 psc, u16 ccp )
 {
-    GPIO_InitTypeDef GPIO_InitStructure;
-    TIM_OCInitTypeDef TIM_OCInitStructure;
-    TIM_TimeBaseInitTypeDef TIM_TimeBaseInitStructure;
+    GPIO_InitTypeDef GPIO_InitStructure={0};
+    TIM_OCInitTypeDef TIM_OCInitStructure={0};
+    TIM_TimeBaseInitTypeDef TIM_TimeBaseInitStructure={0};
 
     RCC_APB2PeriphClockCmd( RCC_APB2Periph_GPIOA, ENABLE );
     RCC_APB1PeriphClockCmd( RCC_APB1Periph_TIM2, ENABLE);
@@ -133,12 +136,45 @@ void TIM2_PWM_In( u16 arr, u16 psc, u16 ccp )
     TIM_Cmd( TIM2, ENABLE );
 }
 
-/*******************************************************************************
-* Function Name  : main
-* Description    : Main program.
-* Input          : None
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      Get_ConversionVal1
+ *
+ * @brief   Get Conversion Value.
+ *
+ * @param   val - Sampling value
+ *
+ * @return  val+Calibrattion_Val - Conversion Value.
+ */
+u16 Get_ConversionVal1(s16 val)
+{
+	if((val+Calibrattion_Val1)<0) return 0;
+	if((Calibrattion_Val1+val)>4095) return 4095;
+	return (val+Calibrattion_Val1);
+}
+
+/*********************************************************************
+ * @fn      Get_ConversionVal2
+ *
+ * @brief   Get Conversion Value.
+ *
+ * @param   val - Sampling value
+ *
+ * @return  val+Calibrattion_Val - Conversion Value.
+ */
+u16 Get_ConversionVal2(s16 val)
+{
+    if((val+Calibrattion_Val2)<0) return 0;
+    if((Calibrattion_Val2+val)>4095) return 4095;
+    return (val+Calibrattion_Val2);
+}
+
+/*********************************************************************
+ * @fn      main
+ *
+ * @brief   Main program.
+ *
+ * @return  none
+ */
 int main(void)
 {
     USART_Printf_Init(115200);
@@ -153,13 +189,13 @@ int main(void)
         while(!ADC_GetFlagStatus(ADC1, ADC_FLAG_JEOC )){/*printf("wait\r\n");*/};
         ADC_ClearFlag(ADC1, ADC_FLAG_JEOC);
         ADC_val[0] = ADC_GetInjectedConversionValue(ADC1, ADC_InjectedChannel_1);
-        printf("JADC1_ch2=%d\r\n",ADC_val[0]+Calibrattion_Val1);
+        printf("JADC1_ch2=%d\r\n",Get_ConversionVal1(ADC_val[0]+Calibrattion_Val1));
         Delay_Ms(100);
 
         while(!ADC_GetFlagStatus(ADC2, ADC_FLAG_JEOC )){/*printf("wait\r\n");*/};
         ADC_ClearFlag(ADC2, ADC_FLAG_JEOC);
         ADC_val[1] = ADC_GetInjectedConversionValue(ADC2, ADC_InjectedChannel_1);
-        printf("JADC2_ch3=%d\r\n",ADC_val[1]+Calibrattion_Val2);
+        printf("JADC2_ch3=%d\r\n",Get_ConversionVal2(ADC_val[1]+Calibrattion_Val2));
         Delay_Ms(100);
 	}
 }

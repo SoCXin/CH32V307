@@ -20,7 +20,7 @@ typedef struct
     u16 width;
     u16 height;
     u16 id;             //LCD ID
-    u8  dir;            //0锛孷ertical screen锛�1锛孒orizontal screen
+    u8  dir;
     u16 wramcmd;
     u16 setxcmd;
     u16 setycmd;

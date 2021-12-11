@@ -45,17 +45,18 @@
 
 #define Bank1_SRAM1_ADDR    ((u32)(0x60000000))
 
-/*******************************************************************************
-* Function Name  : FSMC_SRAM_Init
-* Description    : Init FSMC
-* Input          : None
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      FSMC_SRAM_Init
+ *
+ * @brief   Init FSMC
+ *
+ * @return  none
+ */
 void FSMC_SRAM_Init(void)
 {
-    FSMC_NORSRAMInitTypeDef  FSMC_NORSRAMInitStructure;
-    FSMC_NORSRAMTimingInitTypeDef  readWriteTiming;
-    GPIO_InitTypeDef  GPIO_InitStructure;
+    FSMC_NORSRAMInitTypeDef  FSMC_NORSRAMInitStructure={0};
+    FSMC_NORSRAMTimingInitTypeDef  readWriteTiming={0};
+    GPIO_InitTypeDef  GPIO_InitStructure={0};
 
     RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOB | RCC_APB2Periph_GPIOD | RCC_APB2Periph_GPIOE,ENABLE);
     RCC_AHBPeriphClockCmd(RCC_AHBPeriph_FSMC,ENABLE);
@@ -106,14 +107,17 @@ void FSMC_SRAM_Init(void)
     FSMC_NORSRAMCmd(FSMC_Bank1_NORSRAM1, ENABLE);
 }
 
-/*******************************************************************************
-* Function Name  : FSMC_SRAM_WriteBuffer
-* Description    : Write data to NOR_SRAM
-* Input          : pBuffer: data pointer
-*                  WriteAddr: Start address
-*                  n: data number
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      FSMC_SRAM_WriteBuffer
+ *
+ * @brief   Write data to NOR_SRAM
+ *
+ * @param   pBuffer - data pointer
+ *          WriteAddr - Start address
+ *          n - data number
+ *
+ * @return  none
+ */
 void FSMC_SRAM_WriteBuffer(u8* pBuffer,u32 WriteAddr,u32 n)
 {
     for(;n!=0;n--)
@@ -124,14 +128,17 @@ void FSMC_SRAM_WriteBuffer(u8* pBuffer,u32 WriteAddr,u32 n)
     }
 }
 
-/*******************************************************************************
-* Function Name  : FSMC_SRAM_ReadBuffer
-* Description    : Read data from NOR_SRAM
-* Input          : pBuffer: data pointer
-*                  WriteAddr: Start address
-*                  n: data number
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      FSMC_SRAM_ReadBuffer
+ *
+ * @brief   Read data from NOR_SRAM
+ *
+ * @param   pBuffer - data pointer
+ *          WriteAddr - Start address
+ *          n - data number
+ *
+ * @return  none
+ */
 void FSMC_SRAM_ReadBuffer(u8* pBuffer,u32 ReadAddr,u32 n)
 {
     for(;n!=0;n--)
@@ -141,12 +148,13 @@ void FSMC_SRAM_ReadBuffer(u8* pBuffer,u32 ReadAddr,u32 n)
     }
 }
 
-/*******************************************************************************
-* Function Name  : main
-* Description    : Main program.
-* Input          : None
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      main
+ *
+ * @brief   Main program.
+ *
+ * @return  none
+ */
 int main(void)
 {
     u32 i=0;

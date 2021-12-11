@@ -336,7 +336,6 @@ DMA2_Channel11_IRQHandler:  1:  j 1b
 handle_reset:
 .option push 
 .option	norelax 
-    csrw mepc, t0
 	la gp, __global_pointer$
 .option	pop 
 1:

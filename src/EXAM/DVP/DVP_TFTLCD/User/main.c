@@ -83,15 +83,16 @@ volatile UINT32 href_cnt = 0;
 
 void DVP_IRQHandler (void) __attribute__((interrupt("WCH-Interrupt-fast")));
 
-/*******************************************************************************
-* Function Name  : LCD_Reset_GPIO_Init
-* Description    : Init LCD reset GPIO.
-* Input          : None
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      LCD_Reset_GPIO_Init
+ *
+ * @brief   Init LCD reset GPIO.
+ *
+ * @return  none
+ */
 void LCD_Reset_GPIO_Init(void)
 {
-    GPIO_InitTypeDef  GPIO_InitStructure;
+    GPIO_InitTypeDef  GPIO_InitStructure={0};
 
     RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA, ENABLE);
 
@@ -102,15 +103,18 @@ void LCD_Reset_GPIO_Init(void)
     GPIO_SetBits(GPIOA,GPIO_Pin_15);
 }
 
-/*******************************************************************************
-* Function Name  : DMA_SRAMLCD_Init
-* Description    : Init SRAMLCD DMA
-* Input          : ddr: DVP data memory base addr.
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      DMA_SRAMLCD_Init
+ *
+ * @brief   Init SRAMLCD DMA
+ *
+ * @param   ddr: DVP data memory base addr.
+ *
+ * @return  none
+ */
 void DMA_SRAMLCD_Init(u32 ddr)
 {
-    DMA_InitTypeDef DMA_InitStructure;
+    DMA_InitTypeDef DMA_InitStructure={0};
 
     RCC_AHBPeriphClockCmd(RCC_AHBPeriph_DMA2, ENABLE);
 
@@ -130,12 +134,13 @@ void DMA_SRAMLCD_Init(u32 ddr)
     DMA_Init(DMA2_Channel5, &DMA_InitStructure);
 }
 
-/*******************************************************************************
-* Function Name  : DMA_SRAMLCD_Enable
-* Description    : Enable SRAMLCD DMA transmission
-* Input          : None
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      DMA_SRAMLCD_Enable
+ *
+ * @brief   Enable SRAMLCD DMA transmission
+ *
+ * @return  none
+ */
 void DMA_SRAMLCD_Enable(void)
 {
     DMA_Cmd(DMA2_Channel5, DISABLE );
@@ -143,22 +148,23 @@ void DMA_SRAMLCD_Enable(void)
     DMA_Cmd(DMA2_Channel5, ENABLE);
 }
 
-/*******************************************************************************
-* Function Name  : DVP_Init
-* Description    : Init DVP
-* Input          : None
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      DVP_Init
+ *
+ * @brief   Init DVP
+ *
+ * @return  none
+ */
 void DVP_Init(void)
 {
-    NVIC_InitTypeDef NVIC_InitStructure;
+    NVIC_InitTypeDef NVIC_InitStructure={0};
 
     RCC_AHBPeriphClockCmd(RCC_AHBPeriph_DVP, ENABLE);
 
     DVP->CR0 &= ~RB_DVP_MSK_DAT_MOD;
 
 #if (DVP_Work_Mode == RGB565_MODE)
-    /* VSYNC¡¢HSYNC:High level active */
+    /* VSYNC¡¢HSYNC - High level active */
     DVP->CR0 |= RB_DVP_D8_MOD | RB_DVP_V_POLAR;
     DVP->CR1 &= ~((RB_DVP_ALL_CLR)| RB_DVP_RCV_CLR);
     DVP->ROW_NUM = RGB565_ROW_NUM;               // rows
@@ -192,12 +198,13 @@ void DVP_Init(void)
 
 u32 DVP_ROW_cnt=0;
 
-/*******************************************************************************
-* Function Name  : DVP_IRQHandler
-* Description    : This function handles DVP exception.
-* Input          : None
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      DVP_IRQHandler
+ *
+ * @brief   This function handles DVP exception.
+ *
+ * @return  none
+ */
 void DVP_IRQHandler(void)
 {
 
@@ -262,19 +269,21 @@ void DVP_IRQHandler(void)
     if (DVP->IFR & RB_DVP_IF_FIFO_OV)
     {
         DVP->IFR &= ~RB_DVP_IF_FIFO_OV;
-
+#if 0
         printf("FIFO OV\r\n");
+
+#endif
     }
 
 }
 
-
-/*******************************************************************************
-* Function Name  : main
-* Description    : Main program.
-* Input          : None PA2 - UART2
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      main
+ *
+ * @brief   Main program.
+ *
+ * @return  none
+ */
 int main(void)
 {
     NVIC_PriorityGroupConfig(NVIC_PriorityGroup_4);

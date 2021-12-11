@@ -57,34 +57,38 @@ volatile UINT32 href_cnt = 0;
 
 void DVP_IRQHandler (void) __attribute__((interrupt("WCH-Interrupt-fast")));
 
-/*******************************************************************************
-* Function Name  : UART2_Send_Byte
-* Description    : UART2 send one byte data.
-* Input          : t: UART send Data.
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      UART2_Send_Byte
+ *
+ * @brief   UART2 send one byte data.
+ *
+ * @param   t - UART send Data.
+ *
+ * @return  none
+ */
 void UART2_Send_Byte(u8 t)
 {
     while (USART_GetFlagStatus(USART2, USART_FLAG_TC) == RESET);
     USART_SendData(USART2, t);
 }
 
-/*******************************************************************************
-* Function Name  : DVP_Init
-* Description    : Init DVP
-* Input          : None
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      DVP_Init
+ *
+ * @brief   Init DVP
+ *
+ * @return  none
+ */
 void DVP_Init(void)
 {
-    NVIC_InitTypeDef NVIC_InitStructure;
+    NVIC_InitTypeDef NVIC_InitStructure={0};
 
     RCC_AHBPeriphClockCmd(RCC_AHBPeriph_DVP, ENABLE);
 
     DVP->CR0 &= ~RB_DVP_MSK_DAT_MOD;
 
 #if (DVP_Work_Mode == JPEG_MODE)
-    /* VSYNC¡¢HSYNC:High level active */
+    /* VSYNC¡¢HSYNC - High level active */
     DVP->CR0 |= RB_DVP_D8_MOD | RB_DVP_V_POLAR | RB_DVP_JPEG;
     DVP->CR1 &= ~(RB_DVP_ALL_CLR| RB_DVP_RCV_CLR);
 
@@ -98,7 +102,7 @@ void DVP_Init(void)
     DVP->CR1 &= ~RB_DVP_FCRC;
     DVP->CR1 |= DVP_RATE_25P;  //25%
 
-    //Interupt Enable
+    /* Interupt Enable */
     DVP->IER |= RB_DVP_IE_STP_FRM;
     DVP->IER |= RB_DVP_IE_FIFO_OV;
     DVP->IER |= RB_DVP_IE_FRM_DONE;
@@ -117,12 +121,13 @@ void DVP_Init(void)
 
 u32 DVP_ROW_cnt=0;
 
-/*******************************************************************************
-* Function Name  : DVP_IRQHandler
-* Description    : This function handles DVP exception.
-* Input          : None
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      DVP_IRQHandler
+ *
+ * @brief   This function handles DVP exception.
+ *
+ * @return  none
+ */
 void DVP_IRQHandler(void)
 {
     if (DVP->IFR & RB_DVP_IF_ROW_DONE)
@@ -155,7 +160,7 @@ void DVP_IRQHandler(void)
 #if (DVP_Work_Mode == JPEG_MODE)
         DVP->CR0 &= ~RB_DVP_ENABLE;       //disable DVP
 
-        //Use uart2 send JPEG data.
+        /* Use uart2 send JPEG data */
         {
             UINT32 i;
             UINT8 val;
@@ -197,18 +202,21 @@ void DVP_IRQHandler(void)
     {
         DVP->IFR &= ~RB_DVP_IF_FIFO_OV;   //clear Interrupt
 
+#if 0
         printf("FIFO OV\r\n");
+
+#endif
     }
 
 }
 
-
-/*******************************************************************************
-* Function Name  : main
-* Description    : Main program.
-* Input          : None PA2 - UART2
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      main
+ *
+ * @brief   Main program.
+ *
+ * @return  none
+ */
 int main(void)
 {
     NVIC_PriorityGroupConfig(NVIC_PriorityGroup_4);

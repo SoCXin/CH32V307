@@ -36,12 +36,13 @@ void RCC_IRQHandler(void)    __attribute__((interrupt(/*"WCH-Interrupt-fast"*/))
 void EXTI0_IRQHandler(void)  __attribute__((interrupt(/*"WCH-Interrupt-fast"*/)));
 void EXTI1_IRQHandler(void)  __attribute__((interrupt(/*"WCH-Interrupt-fast"*/)));
 
-/*******************************************************************************
-* Function Name  : Interrupt_Init
-* Description    : Initializes interruption.
-* Input          : None
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      Interrupt_Init
+ *
+ * @brief   Initializes interruption.
+ *
+ * @return  none
+ */
 void Interrupt_Init(void)
 {
     NVIC_EnableIRQ(WWDG_IRQn);
@@ -64,14 +65,14 @@ void Interrupt_Init(void)
 }
 
 
-
-/*******************************************************************************
-* Function Name  : main
-* Description    : Main program.
-* Input          : None
-* Return         : None
-*******************************************************************************/
 uint8_t step=1;
+/*********************************************************************
+ * @fn      main
+ *
+ * @brief   Main program.
+ *
+ * @return  none
+ */
 int main(void)
 {
     Delay_Init();
@@ -91,6 +92,13 @@ int main(void)
    }
 }
 
+/*********************************************************************
+ * @fn      WWDG_IRQHandler
+ *
+ * @brief   This function handles WWDG exception.
+ *
+ * @return  none
+ */
 void WWDG_IRQHandler(void)
 {
     step++;
@@ -98,8 +106,19 @@ void WWDG_IRQHandler(void)
     printf("  step:%d\r\n",step);
 
     NVIC_SetPendingIRQ(PVD_IRQn);
+	asm("nop");
+	asm("nop");
+	asm("nop");
+	asm("nop");
 }
 
+/*********************************************************************
+ * @fn      PVD_IRQHandler
+ *
+ * @brief   This function handles PVD exception.
+ *
+ * @return  none
+ */
 void PVD_IRQHandler(void)
 {
     step++;
@@ -107,7 +126,19 @@ void PVD_IRQHandler(void)
     printf("  step:%d\r\n",step);
 
     NVIC_SetPendingIRQ(TAMPER_IRQn);
+	asm("nop");
+	asm("nop");
+	asm("nop");
+	asm("nop");
 }
+
+/*********************************************************************
+ * @fn      TAMPER_IRQHandler
+ *
+ * @brief   This function handles TAMPER exception.
+ *
+ * @return  none
+ */
 void TAMPER_IRQHandler(void)
 {
     step++;
@@ -115,7 +146,19 @@ void TAMPER_IRQHandler(void)
     printf("  step:%d\r\n",step);
 
     NVIC_SetPendingIRQ(RTC_IRQn);
+	asm("nop");
+	asm("nop");
+	asm("nop");
+	asm("nop");
 }
+
+/*********************************************************************
+ * @fn      RTC_IRQHandler
+ *
+ * @brief   This function handles RTC exception.
+ *
+ * @return  none
+ */
 void RTC_IRQHandler(void)
 {
     step++;
@@ -123,7 +166,19 @@ void RTC_IRQHandler(void)
     printf("  step:%d\r\n",step);
 
     NVIC_SetPendingIRQ(FLASH_IRQn);
+	asm("nop");
+	asm("nop");
+	asm("nop");
+	asm("nop");
 }
+
+/*********************************************************************
+ * @fn      FLASH_IRQHandler
+ *
+ * @brief   This function handles FLASH exception.
+ *
+ * @return  none
+ */
 void FLASH_IRQHandler(void)
 {
     step++;
@@ -131,7 +186,19 @@ void FLASH_IRQHandler(void)
     printf("  step:%d\r\n",step);
 
     NVIC_SetPendingIRQ(RCC_IRQn);
+	asm("nop");
+	asm("nop");
+	asm("nop");
+	asm("nop");
 }
+
+/*********************************************************************
+ * @fn      RCC_IRQHandler
+ *
+ * @brief   This function handles RCC exception.
+ *
+ * @return  none
+ */
 void RCC_IRQHandler(void)
 {
     step++;
@@ -139,7 +206,19 @@ void RCC_IRQHandler(void)
     printf("  step:%d\r\n",step);
 
     NVIC_SetPendingIRQ(EXTI0_IRQn);
+	asm("nop");
+	asm("nop");
+	asm("nop");
+	asm("nop");
 }
+
+/*********************************************************************
+ * @fn      EXTI0_IRQHandler
+ *
+ * @brief   This function handles EXTI0 exception.
+ *
+ * @return  none
+ */
 void EXTI0_IRQHandler(void)
 {
     step++;
@@ -147,13 +226,29 @@ void EXTI0_IRQHandler(void)
     printf("  step:%d\r\n",step);
 
     NVIC_SetPendingIRQ(EXTI1_IRQn);
+	asm("nop");
+	asm("nop");
+	asm("nop");
+	asm("nop");
 }
+
+/*********************************************************************
+ * @fn      EXTI1_IRQHandler
+ *
+ * @brief   This function handles EXTI1 exception.
+ *
+ * @return  none
+ */
 void EXTI1_IRQHandler(void)
 {
     step++;
     printf(" 8.EXTI1_IRQHandler");
     printf("  step:%d\r\n",step);
-
+	asm("nop");
+	asm("nop");
+	asm("nop");
+	asm("nop");
+	printf("GISR:%08x\r\n",PFIC->GISR);
 }
 
 

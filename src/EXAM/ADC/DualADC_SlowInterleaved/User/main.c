@@ -22,17 +22,18 @@ s16 Calibrattion_Val2 = 0;
 
 void ADC1_2_IRQHandler(void)   __attribute__((interrupt("WCH-Interrupt-fast")));
 
-/*******************************************************************************
-* Function Name  : ADC_Function_Init
-* Description    : Initializes ADC collection.
-* Input          : None
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      ADC_Function_Init
+ *
+ * @brief   Initializes ADC collection.
+ *
+ * @return  none
+ */
 void  ADC_Function_Init(void)
 {
-    ADC_InitTypeDef ADC_InitStructure;
-    GPIO_InitTypeDef GPIO_InitStructure;
-    NVIC_InitTypeDef NVIC_InitStructure;
+    ADC_InitTypeDef ADC_InitStructure={0};
+    GPIO_InitTypeDef GPIO_InitStructure={0};
+    NVIC_InitTypeDef NVIC_InitStructure={0};
 
     RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA , ENABLE );
     RCC_APB2PeriphClockCmd(RCC_APB2Periph_ADC1  , ENABLE );
@@ -80,7 +81,6 @@ void  ADC_Function_Init(void)
     ADC_Init(ADC2, &ADC_InitStructure);
     ADC_RegularChannelConfig(ADC2, ADC_Channel_2, 1, ADC_SampleTime_13Cycles5 );
 
-    ADC_ITConfig( ADC2, ADC_IT_EOC, ENABLE);
     ADC_SoftwareStartConvCmd(ADC2, ENABLE);
     ADC_Cmd(ADC2, ENABLE);
 
@@ -94,12 +94,45 @@ void  ADC_Function_Init(void)
     ADC_BufferCmd(ADC2, ENABLE);   //enable buffer
 }
 
-/*******************************************************************************
-* Function Name  : main
-* Description    : Main program.
-* Input          : None
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      Get_ConversionVal1
+ *
+ * @brief   Get Conversion Value.
+ *
+ * @param   val - Sampling value
+ *
+ * @return  val+Calibrattion_Val - Conversion Value.
+ */
+u16 Get_ConversionVal1(s16 val)
+{
+	if((val+Calibrattion_Val1)<0) return 0;
+	if((Calibrattion_Val1+val)>4095) return 4095;
+	return (val+Calibrattion_Val1);
+}
+
+/*********************************************************************
+ * @fn      Get_ConversionVal2
+ *
+ * @brief   Get Conversion Value.
+ *
+ * @param   val - Sampling value
+ *
+ * @return  val+Calibrattion_Val - Conversion Value.
+ */
+u16 Get_ConversionVal2(s16 val)
+{
+    if((val+Calibrattion_Val2)<0) return 0;
+    if((Calibrattion_Val2+val)>4095) return 4095;
+    return (val+Calibrattion_Val2);
+}
+
+/*********************************************************************
+ * @fn      main
+ *
+ * @brief   Main program.
+ *
+ * @return  none
+ */
 int main(void)
 {
     USART_Printf_Init(115200);
@@ -118,21 +151,23 @@ int main(void)
     }
 }
 
-/*******************************************************************************
-* Function Name  : ADC1_2_IRQHandler
-* Description    : ADC1_2 Interrupt Service Function.
-* Input          : None
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      ADC1_2_IRQHandler
+ *
+ * @brief   ADC1_2 Interrupt Service Function.
+ *
+ * @return  none
+ */
 void ADC1_2_IRQHandler()
 {
     if(ADC_GetITStatus( ADC1, ADC_IT_EOC)){
         temp=ADC1->RDATAR;
         Adc_Val[0]=temp&0xffff;
         Adc_Val[1]=(temp>>16)&0xffff;
-
-        printf("\r\nADC1 ch2=%d\r\n",Adc_Val[0]+Calibrattion_Val1);
-        printf("\r\nADC2 ch2=%d\r\n",Adc_Val[1]+Calibrattion_Val2);
+#if 0
+        printf("\r\nADC1 ch2=%d\r\n",Get_ConversionVal1(Adc_Val[0]+Calibrattion_Val1));
+        printf("\r\nADC2 ch2=%d\r\n",Get_ConversionVal2(Adc_Val[1]+Calibrattion_Val2));
+#endif
     }
     ADC_ClearITPendingBit( ADC1, ADC_IT_EOC);
 }

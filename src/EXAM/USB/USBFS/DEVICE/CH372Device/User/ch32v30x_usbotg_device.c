@@ -114,20 +114,20 @@ const UINT8  MyProdInfoHD[] =
 };
 
 /* USB序列号字符串描述符 */
-const UINT8  MySerNumInfoHD[ ] =
+const UINT8  MySerNumInfoHD[] =
 {
     /* 0123456789 */
     22,03,48,0,49,0,50,0,51,0,52,0,53,0,54,0,55,0,56,0,57,0
 };
 
 /* USB设备限定描述符 */
-const UINT8 MyUSBQUADescHD[ ] =
+const UINT8 MyUSBQUADescHD[] =
 {
     0x0A, 0x06, 0x00, 0x02, 0xFF, 0x00, 0xFF, 0x40, 0x01, 0x00,
 };
 
 /* USB全速模式,其他速度配置描述符 */
-UINT8 TAB_USB_FS_OSC_DESC[ sizeof( MyCfgDescrHD ) ] =
+UINT8 TAB_USB_FS_OSC_DESC[sizeof(MyCfgDescrHD)] =
 {
     0x09, 0x07,                                                                 /* 其他部分通过程序复制 */
 };
@@ -135,12 +135,13 @@ UINT8 TAB_USB_FS_OSC_DESC[ sizeof( MyCfgDescrHD ) ] =
 
 void OTG_FS_IRQHandler(void) __attribute__((interrupt("WCH-Interrupt-fast")));
 
-/*******************************************************************************
-* Function Name  : USBOTG_FS_DeviceInit
-* Description    : Initializes USB device.
-* Input          : None
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      USBOTG_FS_DeviceInit
+ *
+ * @brief   Initializes USB device.
+ *
+ * @return  none
+ */
 void USBDeviceInit( void )
 {
     USBOTG_FS->BASE_CTRL = 0x00;
@@ -168,7 +169,6 @@ void USBDeviceInit( void )
     USBOTG_FS->UEP6_RX_CTRL = USBHD_UEP_R_RES_ACK;
     USBOTG_FS->UEP7_RX_CTRL = USBHD_UEP_R_RES_ACK;
 
-
     USBOTG_FS->UEP0_TX_CTRL = USBHD_UEP_T_RES_NAK;
     USBOTG_FS->UEP1_TX_LEN = 8;
     USBOTG_FS->UEP2_TX_LEN = 8;
@@ -186,21 +186,22 @@ void USBDeviceInit( void )
     USBOTG_FS->UEP6_TX_CTRL = USBHD_UEP_T_RES_ACK|USBHD_UEP_AUTO_TOG;
     USBOTG_FS->UEP7_TX_CTRL = USBHD_UEP_T_RES_ACK|USBHD_UEP_AUTO_TOG;
 
-
-    USBOTG_FS->INT_FG   = 0xFF;
-    USBOTG_FS->INT_EN   = USBHD_UIE_SUSPEND | USBHD_UIE_BUS_RST | USBHD_UIE_TRANSFER;
+    USBOTG_FS->INT_FG = 0xFF;
+    USBOTG_FS->INT_EN = USBHD_UIE_SUSPEND | USBHD_UIE_BUS_RST | USBHD_UIE_TRANSFER;
     USBOTG_FS->DEV_ADDR = 0x00;
 
     USBOTG_FS->BASE_CTRL = USBHD_UC_DEV_PU_EN | USBHD_UC_INT_BUSY | USBHD_UC_DMA_EN;
     USBOTG_FS->UDEV_CTRL = USBHD_UD_PD_DIS|USBHD_UD_PORT_EN;
 }
-/*******************************************************************************
-* Function Name  : USBOTG_RCC_Init
-* Description    : USBOTG RCC init
-* Input          : None
-* Return         : None
-*******************************************************************************/
-void USBOTG_RCC_Init( void )
+
+/*********************************************************************
+ * @fn      USBOTG_RCC_Init
+ *
+ * @brief   Initializes the usbotg clock configuration.
+ *
+ * @return  none
+ */
+void USBOTG_RCC_Init(void)
 {
     RCC_USBCLK48MConfig( RCC_USBCLK48MCLKSource_USBPHY );
     RCC_USBHSPLLCLKConfig( RCC_HSBHSPLLCLKSource_HSE );
@@ -210,12 +211,14 @@ void USBOTG_RCC_Init( void )
     RCC_AHBPeriphClockCmd( RCC_AHBPeriph_USBHS, ENABLE );
     RCC_AHBPeriphClockCmd( RCC_AHBPeriph_OTG_FS, ENABLE );
 }
-/*******************************************************************************
-* Function Name  : USBOTG_Init
-* Description    : USBOTG设备全速速设备初始化
-* Input          : None
-* Return         : None
-*******************************************************************************/
+
+/*********************************************************************
+ * @fn      USBOTG_Init
+ *
+ * @brief   Initializes the USBOTG full speed device.
+ *
+ * @return  none
+ */
 void USBOTG_Init( void )
 {
     /* 端点缓冲区初始化 */
@@ -236,12 +239,14 @@ void USBOTG_Init( void )
     /* 使能usb中断 */
     NVIC_EnableIRQ( OTG_FS_IRQn );
 }
-/*******************************************************************************
-* Function Name  : OTG_FS_IRQHandler
-* Description    : OTG_FS_IRQHandler OTG设备中断处理函数
-* Input          : None
-* Return         : None
-*******************************************************************************/
+
+/*********************************************************************
+ * @fn      OTG_FS_IRQHandler
+ *
+ * @brief   This function handles OTG_FS exception.
+ *
+ * @return  none
+ */
 void OTG_FS_IRQHandler( void )
 {
     UINT8  len, chtype;
@@ -255,6 +260,7 @@ void OTG_FS_IRQHandler( void )
         {
             /* SETUP包处理 */
             case USBHD_UIS_TOKEN_SETUP:
+#if 0
                 /* 打印当前Usbsetup命令  */
                 printf( "Setup Req :\n" );
                 printf( "%02X ", pSetupReqPakHD->bRequestType );
@@ -263,6 +269,9 @@ void OTG_FS_IRQHandler( void )
                 printf( "%04X ", pSetupReqPakHD->wIndex );
                 printf( "%04X ", pSetupReqPakHD->wLength );
                 printf( "\n" );
+
+#endif
+
                 USBOTG_FS->UEP0_TX_CTRL = USBHD_UEP_T_TOG|USBHD_UEP_T_RES_NAK;
                 USBOTG_FS->UEP0_RX_CTRL = USBHD_UEP_R_TOG|USBHD_UEP_R_RES_ACK;
                 SetupReqLen  = pSetupReqPakHD->wLength;
@@ -599,7 +608,11 @@ void OTG_FS_IRQHandler( void )
                 }
                 if( errflag == 0xff)
                 {
+#if 0
                     printf("uep0 stall\n");
+
+#endif
+
                     USBOTG_FS->UEP0_TX_CTRL = USBHD_UEP_T_TOG|USBHD_UEP_T_RES_STALL;
                     USBOTG_FS->UEP0_RX_CTRL = USBHD_UEP_R_TOG|USBHD_UEP_R_RES_STALL;
                 }
@@ -702,7 +715,7 @@ void OTG_FS_IRQHandler( void )
                         {
                             USBOTG_FS->UEP1_RX_CTRL ^= USBHD_UEP_R_TOG;
                             len = USBOTG_FS->RX_LEN;
-                            printf( "len %d\n", len );
+
                             DevEP1_OUT_Deal( len );
                         }
                         break;
@@ -712,7 +725,6 @@ void OTG_FS_IRQHandler( void )
                         {
                             USBOTG_FS->UEP2_RX_CTRL ^= USBHD_UEP_R_TOG;
                             len = USBOTG_FS->RX_LEN;
-                            printf( "len %d\n", len );
                             DevEP2_OUT_Deal( len );
                         }
                         break;
@@ -722,7 +734,6 @@ void OTG_FS_IRQHandler( void )
                         {
                             USBOTG_FS->UEP3_RX_CTRL ^= USBHD_UEP_R_TOG;
                             len = USBOTG_FS->RX_LEN;
-                            printf( "len %d\n", len );
                             DevEP3_OUT_Deal( len );
                         }
                         break;
@@ -732,7 +743,6 @@ void OTG_FS_IRQHandler( void )
                         {
                             USBOTG_FS->UEP4_RX_CTRL ^= USBHD_UEP_R_TOG;
                             len = USBOTG_FS->RX_LEN;
-                            printf( "len %d\n", len );
                             DevEP4_OUT_Deal( len );
                         }
                         break;
@@ -742,7 +752,6 @@ void OTG_FS_IRQHandler( void )
                         {
                             USBOTG_FS->UEP5_RX_CTRL ^= USBHD_UEP_R_TOG;
                             len = USBOTG_FS->RX_LEN;
-                            printf( "len %d\n", len );
                             DevEP5_OUT_Deal( len );
                         }
                         break;
@@ -752,7 +761,6 @@ void OTG_FS_IRQHandler( void )
                         {
                             USBOTG_FS->UEP6_RX_CTRL ^= USBHD_UEP_R_TOG;
                             len = USBOTG_FS->RX_LEN;
-                            printf( "len %d\n", len );
                             DevEP6_OUT_Deal( len );
                         }
                         break;
@@ -762,12 +770,14 @@ void OTG_FS_IRQHandler( void )
                         {
                             USBOTG_FS->UEP7_RX_CTRL ^= USBHD_UEP_R_TOG;
                             len = USBOTG_FS->RX_LEN;
-                            printf( "len %d\n", len );
                             DevEP7_OUT_Deal( len );
                         }
                         break;
                 }
+#if 0
+                printf( "len %d\n", len );
 
+#endif
                 break;
 
             case USBHD_UIS_TOKEN_SOF:
@@ -816,95 +826,121 @@ void OTG_FS_IRQHandler( void )
         USBOTG_FS->INT_FG = intflag;
     }
 }
-/*******************************************************************************
-* Function Name  : DevEP1_IN_Deal
-* Description    : Device endpoint1 IN.
-* Input          : l: IN length(<64B)
-* Return         : None
-*******************************************************************************/
+
+/*********************************************************************
+ * @fn      DevEP1_IN_Deal
+ *
+ * @brief   Device endpoint1 IN.
+ *
+ * @param   l - IN length(<64B)
+ *
+ * @return  none
+ */
 void DevEP1_IN_Deal( UINT8 l )
 {
     USBOTG_FS->UEP1_TX_LEN = l;
     USBOTG_FS->UEP1_TX_CTRL = (USBOTG_FS->UEP1_TX_CTRL & ~USBHD_UEP_T_RES_MASK)| USBHD_UEP_T_RES_ACK;
 }
 
-/*******************************************************************************
-* Function Name  : DevEP2_IN_Deal
-* Description    : Device endpoint2 IN.
-* Input          : l: IN length(<64B)
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      DevEP2_IN_Deal
+ *
+ * @brief   Device endpoint2 IN.
+ *
+ * @param   l - IN length(<64B)
+ *
+ * @return  none
+ */
 void DevEP2_IN_Deal( UINT8 l )
 {
     USBOTG_FS->UEP2_TX_LEN = l;
     USBOTG_FS->UEP2_TX_CTRL = (USBOTG_FS->UEP2_TX_CTRL & ~USBHD_UEP_T_RES_MASK)| USBHD_UEP_T_RES_ACK;
 }
 
-/*******************************************************************************
-* Function Name  : DevEP3_IN_Deal
-* Description    : Device endpoint3 IN.
-* Input          : l: IN length(<64B)
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      DevEP3_IN_Deal
+ *
+ * @brief   Device endpoint3 IN.
+ *
+ * @param   l - IN length(<64B)
+ *
+ * @return  none
+ */
 void DevEP3_IN_Deal( UINT8 l )
 {
     USBOTG_FS->UEP3_TX_LEN = l;
     USBOTG_FS->UEP3_TX_CTRL = (USBOTG_FS->UEP3_TX_CTRL & ~USBHD_UEP_T_RES_MASK)| USBHD_UEP_T_RES_ACK;
 }
 
-/*******************************************************************************
-* Function Name  : DevEP4_IN_Deal
-* Description    : Device endpoint4 IN.
-* Input          : l: IN length(<64B)
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      DevEP4_IN_Deal
+ *
+ * @brief   Device endpoint4 IN.
+ *
+ * @param   l - IN length(<64B)
+ *
+ * @return  none
+ */
 void DevEP4_IN_Deal( UINT8 l )
 {
     USBOTG_FS->UEP4_TX_LEN = l;
     USBOTG_FS->UEP4_TX_CTRL = (USBOTG_FS->UEP4_TX_CTRL & ~USBHD_UEP_T_RES_MASK)| USBHD_UEP_T_RES_ACK;
 }
 
-/*******************************************************************************
-* Function Name  : DevEP5_IN_Deal
-* Description    : Device endpoint5 IN.
-* Input          : l: IN length(<64B)
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      DevEP5_IN_Deal
+ *
+ * @brief   Device endpoint5 IN.
+ *
+ * @param   l - IN length(<64B)
+ *
+ * @return  none
+ */
 void DevEP5_IN_Deal( UINT8 l )
 {
     USBOTG_FS->UEP5_TX_LEN = l;
     USBOTG_FS->UEP5_TX_CTRL = (USBOTG_FS->UEP5_TX_CTRL & ~USBHD_UEP_T_RES_MASK)| USBHD_UEP_T_RES_ACK;
 }
 
-/*******************************************************************************
-* Function Name  : DevEP6_IN_Deal
-* Description    : Device endpoint6 IN.
-* Input          : l: IN length(<64B)
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      DevEP6_IN_Deal
+ *
+ * @brief   Device endpoint6 IN.
+ *
+ * @param   l - IN length(<64B)
+ *
+ * @return  none
+ */
 void DevEP6_IN_Deal( UINT8 l )
 {
     USBOTG_FS->UEP6_TX_LEN = l;
     USBOTG_FS->UEP6_TX_CTRL = (USBOTG_FS->UEP6_TX_CTRL & ~USBHD_UEP_T_RES_MASK)| USBHD_UEP_T_RES_ACK;
 }
 
-/*******************************************************************************
-* Function Name  : DevEP7_IN_Deal
-* Description    : Device endpoint7 IN.
-* Input          : l: IN length(<64B)
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      DevEP7_IN_Deal
+ *
+ * @brief   Device endpoint7 IN.
+ *
+ * @param   l - IN length(<64B)
+ *
+ * @return  none
+ */
 void DevEP7_IN_Deal( UINT8 l )
 {
     USBOTG_FS->UEP7_TX_LEN = l;
     USBOTG_FS->UEP7_TX_CTRL = (USBOTG_FS->UEP7_TX_CTRL & ~USBHD_UEP_T_RES_MASK)| USBHD_UEP_T_RES_ACK;
 }
-/*******************************************************************************
-* Function Name  : DevEP1_OUT_Deal
-* Description    : Deal device Endpoint 1 OUT.
-* Input          : l: Data length.
-* Return         : None
-*******************************************************************************/
+
+/*********************************************************************
+ * @fn      DevEP1_OUT_Deal
+ *
+ * @brief   Deal device Endpoint 1 OUT.
+ *
+ * @param   l - Data length.
+ *
+ * @return  none
+ */
 void DevEP1_OUT_Deal( UINT8 l )
 {
     UINT8 i;
@@ -917,12 +953,15 @@ void DevEP1_OUT_Deal( UINT8 l )
     DevEP1_IN_Deal( l );
 }
 
-/*******************************************************************************
-* Function Name  : DevEP2_OUT_Deal
-* Description    : Deal device Endpoint 2 OUT.
-* Input          : l: Data length.
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      DevEP2_OUT_Deal
+ *
+ * @brief   Deal device Endpoint 2 OUT.
+ *
+ * @param   l - Data length.
+ *
+ * @return  none
+ */
 void DevEP2_OUT_Deal( UINT8 l )
 {
     UINT8 i;
@@ -935,12 +974,15 @@ void DevEP2_OUT_Deal( UINT8 l )
     DevEP2_IN_Deal( l );
 }
 
-/*******************************************************************************
-* Function Name  : DevEP3_OUT_Deal
-* Description    : Deal device Endpoint 3 OUT.
-* Input          : l: Data length.
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      DevEP3_OUT_Deal
+ *
+ * @brief   Deal device Endpoint 3 OUT.
+ *
+ * @param   l - Data length.
+ *
+ * @return  none
+ */
 void DevEP3_OUT_Deal( UINT8 l )
 {
     UINT8 i;
@@ -953,12 +995,15 @@ void DevEP3_OUT_Deal( UINT8 l )
     DevEP3_IN_Deal( l );
 }
 
-/*******************************************************************************
-* Function Name  : DevEP4_OUT_Deal
-* Description    : Deal device Endpoint 4 OUT.
-* Input          : l: Data length.
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      DevEP4_OUT_Deal
+ *
+ * @brief   Deal device Endpoint 4 OUT.
+ *
+ * @param   l - Data length.
+ *
+ * @return  none
+ */
 void DevEP4_OUT_Deal( UINT8 l )
 {
     UINT8 i;
@@ -971,12 +1016,15 @@ void DevEP4_OUT_Deal( UINT8 l )
     DevEP4_IN_Deal( l );
 }
 
-/*******************************************************************************
-* Function Name  : DevEP5_OUT_Deal
-* Description    : Deal device Endpoint 5 OUT.
-* Input          : l: Data length.
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      DevEP5_OUT_Deal
+ *
+ * @brief   Deal device Endpoint 5 OUT.
+ *
+ * @param   l - Data length.
+ *
+ * @return  none
+ */
 void DevEP5_OUT_Deal( UINT8 l )
 {
     UINT8 i;
@@ -989,12 +1037,15 @@ void DevEP5_OUT_Deal( UINT8 l )
     DevEP5_IN_Deal( l );
 }
 
-/*******************************************************************************
-* Function Name  : DevEP6_OUT_Deal
-* Description    : Deal device Endpoint 6 OUT.
-* Input          : l: Data length.
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      DevEP6_OUT_Deal
+ *
+ * @brief   Deal device Endpoint 6 OUT.
+ *
+ * @param   l - Data length.
+ *
+ * @return  none
+ */
 void DevEP6_OUT_Deal( UINT8 l )
 {
     UINT8 i;
@@ -1007,12 +1058,15 @@ void DevEP6_OUT_Deal( UINT8 l )
     DevEP6_IN_Deal( l );
 }
 
-/*******************************************************************************
-* Function Name  : DevEP7_OUT_Deal
-* Description    : Deal device Endpoint 7 OUT.
-* Input          : l: Data length.
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      DevEP7_OUT_Deal
+ *
+ * @brief   Deal device Endpoint 7 OUT.
+ *
+ * @param   l - Data length.
+ *
+ * @return  none
+ */
 void DevEP7_OUT_Deal( UINT8 l )
 {
     UINT8 i;

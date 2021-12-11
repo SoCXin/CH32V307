@@ -43,15 +43,17 @@ u8 Tempdata=0x00;
 TestStatus TransferStatus1 = FAILED;
 TestStatus TransferStatus2 = FAILED;
 
-
-/*******************************************************************************
-* Function Name  : Buffercmp
-* Description    : Compares two buffers
-* Input          : Buf1,Buf2:buffers to be compared
-*                  BufferLength: buffer's length
-* Return         : PASSED: Buf1 identical to Buf2
-*                  FAILED: Buf1 differs from Buf2
-*******************************************************************************/
+/*********************************************************************
+ * @fn      Buffercmp
+ *
+ * @brief   Compares two buffers
+ *
+ * @param   Buf1,Buf2 - buffers to be compared
+ *          BufferLength - buffer's length
+ *
+ * @return  PASSED - Buf1 identical to Buf
+ *          FAILED - Buf1 differs from Buf2
+ */
 TestStatus Buffercmp(uint8_t* Buf1, uint8_t* Buf2, uint16_t BufLength)
 {
   while(BufLength--)
@@ -66,17 +68,18 @@ TestStatus Buffercmp(uint8_t* Buf1, uint8_t* Buf2, uint16_t BufLength)
   return PASSED;
 }
 
-/*******************************************************************************
-* Function Name  : USART2_ReCFG
-* Description    : ReInitializes the USART2 peripheral.
-* Input          : None
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      USART2_ReCFG
+ *
+ * @brief   ReInitializes the USART2 peripheral.
+ *
+ * @return  none
+ */
 void USART2_ReCFG(void)
 {
-  GPIO_InitTypeDef  GPIO_InitStructure;
-	USART_InitTypeDef USART_InitStructure;
-	USART_ClockInitTypeDef USART_ClockInitStructure;
+  GPIO_InitTypeDef  GPIO_InitStructure={0};
+	USART_InitTypeDef USART_InitStructure={0};
+	USART_ClockInitTypeDef USART_ClockInitStructure={0};
 
 	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA , ENABLE);
 	RCC_APB1PeriphClockCmd(RCC_APB1Periph_USART2 , ENABLE);
@@ -111,16 +114,17 @@ void USART2_ReCFG(void)
 	USART_Cmd(USART2, ENABLE);
 }
 
-/*******************************************************************************
-* Function Name  : SPI1_INIT
-* Description    : Initializes the SPI1 to be Slave Mode.
-* Input          : None
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      SPI1_INIT
+ *
+ * @brief   Initializes the SPI1 to be Slave Mode.
+ *
+ * @return  none
+ */
 void SPI1_INIT(void)
 {
-	GPIO_InitTypeDef GPIO_InitStructure;
-	SPI_InitTypeDef SPI_InitStructure;
+	GPIO_InitTypeDef GPIO_InitStructure={0};
+	SPI_InitTypeDef SPI_InitStructure={0};
 
 	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA | RCC_APB2Periph_SPI1, ENABLE);
   SPI_StructInit(&SPI_InitStructure);
@@ -146,12 +150,13 @@ void SPI1_INIT(void)
   SPI_Cmd(SPI1, ENABLE);
 }
 
-/*******************************************************************************
-* Function Name  : main
-* Description    : Main program.
-* Input          : None
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      main
+ *
+ * @brief   Main program.
+ *
+ * @return  none
+ */
 int main(void)
 {
 	NVIC_PriorityGroupConfig(NVIC_PriorityGroup_2);

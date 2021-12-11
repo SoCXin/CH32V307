@@ -59,6 +59,7 @@ typedef struct
   OPA_Mode_TypeDef  Mode;         /* Specifies the mode of OPA */
 }OPA_InitTypeDef;
 
+
 void OPA_DeInit(void);
 void OPA_Init(OPA_InitTypeDef* OPA_InitStruct);
 void OPA_StructInit(OPA_InitTypeDef* OPA_InitStruct);

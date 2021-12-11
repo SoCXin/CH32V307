@@ -19,17 +19,18 @@
 /* Global Variable */
 s16 Calibrattion_Val = 0;
 
-/*******************************************************************************
-* Function Name  : ADC_Function_Init
-* Description    : Initializes ADC collection.
-* Input          : None
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      ADC_Function_Init
+ *
+ * @brief   Initializes ADC collection.
+ *
+ * @return  none
+ */
 void ADC_Function_Init(void)
 {
-	ADC_InitTypeDef ADC_InitStructure;
-	GPIO_InitTypeDef GPIO_InitStructure;
-	NVIC_InitTypeDef NVIC_InitStructure;
+	ADC_InitTypeDef ADC_InitStructure={0};
+	GPIO_InitTypeDef GPIO_InitStructure={0};
+	NVIC_InitTypeDef NVIC_InitStructure={0};
 
 	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA, ENABLE );
   RCC_APB2PeriphClockCmd(RCC_APB2Periph_ADC1, ENABLE );
@@ -71,16 +72,17 @@ void ADC_Function_Init(void)
     ADC_BufferCmd(ADC1, ENABLE);   //enable buffer
 }
 
-/*******************************************************************************
-* Function Name  : EXTI_Event_Init
-* Description    : Initializes EXTI.
-* Input          : None
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      EXTI_Event_Init
+ *
+ * @brief   Initializes EXTI.
+ *
+ * @return  none
+ */
 void EXTI_Event_Init(void)
 {
-	EXTI_InitTypeDef EXTI_InitStructure;
-	GPIO_InitTypeDef GPIO_InitStructure;
+	EXTI_InitTypeDef EXTI_InitStructure={0};
+	GPIO_InitTypeDef GPIO_InitStructure={0};
 
   RCC_APB2PeriphClockCmd( RCC_APB2Periph_GPIOA, ENABLE );
 	RCC_APB2PeriphClockCmd( RCC_APB2Periph_AFIO, ENABLE );
@@ -98,12 +100,29 @@ void EXTI_Event_Init(void)
 	EXTI_Init(&EXTI_InitStructure);
 }
 
-/*******************************************************************************
-* Function Name  : main
-* Description    : Main program.
-* Input          : None
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      Get_ConversionVal1
+ *
+ * @brief   Get Conversion Value.
+ *
+ * @param   val - Sampling value
+ *
+ * @return  val+Calibrattion_Val - Conversion Value.
+ */
+u16 Get_ConversionVal(s16 val)
+{
+	if((val+Calibrattion_Val)<0) return 0;
+	if((Calibrattion_Val+val)>4095) return 4095;
+	return (val+Calibrattion_Val);
+}
+
+/*********************************************************************
+ * @fn      main
+ *
+ * @brief   Main program.
+ *
+ * @return  none
+ */
 int main(void)
 {
 	USART_Printf_Init(115200);
@@ -118,20 +137,23 @@ int main(void)
 
 void ADC1_2_IRQHandler(void) __attribute__((interrupt("WCH-Interrupt-fast")));
 
-/*******************************************************************************
-* Function Name  : ADC1_2_IRQHandler
-* Description    : This function handles analog watchdog exception.
-* Input          : None
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      ADC1_2_IRQHandler
+ *
+ * @brief   ADC1_2 Interrupt Service Function.
+ *
+ * @return  none
+ */
 void ADC1_2_IRQHandler()
 {
 	u16 ADC_val;
 
 	if(ADC_GetITStatus( ADC1, ADC_IT_JEOC)){
-		printf("ADC Extline trigger conversion...\r\n");
 		ADC_val = ADC_GetInjectedConversionValue(ADC1, ADC_InjectedChannel_1);
-		printf( "JADC%04d\r\n", ADC_val+Calibrattion_Val );
+#if 0
+		printf("ADC Extline trigger conversion...\r\n");
+		printf( "JADC%04d\r\n", Get_ConversionVal(ADC_val+Calibrattion_Val));
+#endif
 	}
 
 	ADC_ClearITPendingBit( ADC1, ADC_IT_JEOC);

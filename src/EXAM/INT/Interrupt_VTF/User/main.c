@@ -21,24 +21,26 @@ uint32_t time=0;
 
 void SysTick_Handler(void) __attribute__((interrupt("WCH-Interrupt-fast")));
 
-/*******************************************************************************
-* Function Name  : Interrupt_VTF_Init
-* Description    : Initializes VTF.
-* Input          : None
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      Interrupt_VTF_Init
+ *
+ * @brief   Initializes VTF.
+ *
+ * @return  none
+ */
 void Interrupt_VTF_Init(void)
 {
     NVIC_EnableIRQ(SysTicK_IRQn);
     SetVTFIRQ((u32)SysTick_Handler,SysTicK_IRQn,0,ENABLE);
 }
 
-/*******************************************************************************
-* Function Name  : Systick_Init
-* Description    : Initializes Systick.
-* Input          : None
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      Systick_Init
+ *
+ * @brief   Initializes Systick.
+ *
+ * @return  none
+ */
 void Systick_Init(void)
 {
     SysTick->SR=0;
@@ -47,12 +49,13 @@ void Systick_Init(void)
     SysTick->CTLR=0x7;
 }
 
-/*******************************************************************************
-* Function Name  : main
-* Description    : Main program.
-* Input          : None
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      main
+ *
+ * @brief   Main program.
+ *
+ * @return  none
+ */
 int main(void)
 {
 	USART_Printf_Init(115200);
@@ -67,13 +70,13 @@ int main(void)
    }
 }
 
-
-/*******************************************************************************
-* Function Name  : SysTick_Handler
-* Description    : This function handles SysTick exception.
-* Input          : None
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      SysTick_Handler
+ *
+ * @brief   This function handles SysTick exception.
+ *
+ * @return  none
+ */
 void SysTick_Handler(void)
 {
     time=SysTick->CNT;

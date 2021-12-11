@@ -31,12 +31,7 @@ TaskHandle_t Task2Task_Handler;
 
 /* Global Variable */
 
-/*******************************************************************************
-* Function Name  : main
-* Description    : Main program.
-* Input          : None
-* Return         : None
-*******************************************************************************/
+
 void task1_task(void *pvParameters)
 {
     while(1)
@@ -60,6 +55,13 @@ void task2_task(void *pvParameters)
     }
 }
 
+/*********************************************************************
+ * @fn      main
+ *
+ * @brief   Main program.
+ *
+ * @return  none
+ */
 int main(void)
 {
 	NVIC_PriorityGroupConfig(NVIC_PriorityGroup_0);    //------建议使用分组1或直接操作优先级寄存器------

@@ -46,14 +46,17 @@ TestStatus TransferStatus2 = FAILED;
 void USART2_IRQHandler(void) __attribute__((interrupt("WCH-Interrupt-fast")));
 void USART3_IRQHandler(void) __attribute__((interrupt("WCH-Interrupt-fast")));
 
-/*******************************************************************************
-* Function Name  : Buffercmp
-* Description    : Compares two buffers
-* Input          : Buf1,Buf2:buffers to be compared
-*                  BufferLength: buffer's length
-* Return         : PASSED: Buf1 identical to Buf2
-*                  FAILED: Buf1 differs from Buf2
-*******************************************************************************/
+/*********************************************************************
+ * @fn      Buffercmp
+ *
+ * @brief   Compares two buffers
+ *
+ * @param   Buf1,Buf2 - buffers to be compared
+ *          BufferLength - buffer's length
+ *
+ * @return  PASSED - Buf1 identical to Buf
+ *          FAILED - Buf1 differs from Buf2
+ */
 TestStatus Buffercmp(uint8_t* Buf1, uint8_t* Buf2, uint16_t BufLength)
 {
   while(BufLength--)
@@ -68,18 +71,18 @@ TestStatus Buffercmp(uint8_t* Buf1, uint8_t* Buf2, uint16_t BufLength)
   return PASSED;
 }
 
-
-/*******************************************************************************
-* Function Name  : USARTx_CFG
-* Description    : Initializes the USART2 & USART3 peripheral.
-* Input          : None
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      USARTx_CFG
+ *
+ * @brief   Initializes the USART2 & USART3 peripheral.
+ *
+ * @return  none
+ */
 void USARTx_CFG(void)
 {
-  GPIO_InitTypeDef  GPIO_InitStructure;
-	USART_InitTypeDef USART_InitStructure;
-	NVIC_InitTypeDef  NVIC_InitStructure;
+  GPIO_InitTypeDef  GPIO_InitStructure={0};
+	USART_InitTypeDef USART_InitStructure={0};
+	NVIC_InitTypeDef  NVIC_InitStructure={0};
 
 	RCC_APB1PeriphClockCmd(RCC_APB1Periph_USART2|RCC_APB1Periph_USART3, ENABLE);
 	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA |RCC_APB2Periph_GPIOB , ENABLE);
@@ -129,12 +132,14 @@ void USARTx_CFG(void)
 	USART_Cmd(USART2, ENABLE);
 	USART_Cmd(USART3, ENABLE);
 }
-/*******************************************************************************
-* Function Name  : main
-* Description    : Main program.
-* Input          : None
-* Return         : None
-*******************************************************************************/
+
+/*********************************************************************
+ * @fn      main
+ *
+ * @brief   Main program.
+ *
+ * @return  none
+ */
 int main(void)
 {
 	NVIC_PriorityGroupConfig(NVIC_PriorityGroup_2);
@@ -180,21 +185,21 @@ int main(void)
 	printf("TxBuffer1---->RxBuffer2     TxBuffer2---->RxBuffer1\r\n");
 	printf("TxBuffer1:%s\r\n",TxBuffer1);
 	printf("RxBuffer1:%s\r\n",RxBuffer1);
-  printf("TxBuffer2:%s\r\n",TxBuffer2);
+    printf("TxBuffer2:%s\r\n",TxBuffer2);
 	printf("RxBuffer2:%s\r\n",RxBuffer2);
 
 	while(1)
-  {
+    {
 	}
 }
 
-
-/*******************************************************************************
-* Function Name  : USART2_IRQHandler
-* Description    : This function handles USART2 global interrupt request.
-* Input          : None
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      USART2_IRQHandler
+ *
+ * @brief   This function handles USART2 global interrupt request.
+ *
+ * @return  none
+ */
 void USART2_IRQHandler(void)
 {
   if(USART_GetITStatus(USART2, USART_IT_RXNE) != RESET)
@@ -204,18 +209,19 @@ void USART2_IRQHandler(void)
     if(RxCnt1 == TxSize2)
     {
       USART_ITConfig(USART2, USART_IT_RXNE, DISABLE);
-			Rxfinish1=1;
+      Rxfinish1=1;
     }
   }
 
 }
 
-/*******************************************************************************
-* Function Name  : USART3_IRQHandler
-* Description    : This function handles USART3 global interrupt request.
-* Input          : None
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      USART3_IRQHandler
+ *
+ * @brief   This function handles USART3 global interrupt request.
+ *
+ * @return  none
+ */
 void USART3_IRQHandler(void)
 {
   if(USART_GetITStatus(USART3, USART_IT_RXNE) != RESET)

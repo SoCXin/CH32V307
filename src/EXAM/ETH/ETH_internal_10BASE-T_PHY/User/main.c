@@ -70,15 +70,16 @@ uint8_t ARP_package[]=
 #endif
 };
 
-/*******************************************************************************
-* Function Name  : SET_MCO
-* Description    : Set MCO wave output.
-* Input          : None
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      SET_MCO
+ *
+ * @brief   Set MCO wave output.
+ *
+ * @return  none
+ */
 void SET_MCO(void)
 {
-    GPIO_InitTypeDef GPIO;
+    GPIO_InitTypeDef GPIO={0};
 
     RCC_AHBPeriphClockCmd(RCC_APB2Periph_GPIOA,ENABLE);
 
@@ -102,15 +103,16 @@ void SET_MCO(void)
     RCC_AHBPeriphClockCmd(RCC_APB2Periph_AFIO,ENABLE);
 }
 
-/*******************************************************************************
-* Function Name  : TIM1_Init
-* Description    : Ethernet send counter.
-* Input          : None
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      TIM1_Init
+ *
+ * @brief   Ethernet send counter.
+ *
+ * @return  none
+ */
 void TIM1_Init( void )
 {
-    TIM_TimeBaseInitTypeDef  TIM_TimeBaseStructure;
+    TIM_TimeBaseInitTypeDef  TIM_TimeBaseStructure={0};
 
     RCC_APB2PeriphClockCmd(RCC_APB2Periph_TIM1, ENABLE); /* ´ò¿ªTIM1Ê±ÖÓ  */
 
@@ -125,12 +127,13 @@ void TIM1_Init( void )
     TIM_Cmd(TIM1, ENABLE);
 }
 
-/*******************************************************************************
-* Function Name  : main
-* Description    : Main program.
-* Input          : None
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      main
+ *
+ * @brief   Main program.
+ *
+ * @return  none
+ */
 int main(void)
 {
     RCC_ClocksTypeDef RCC_ClocksStatus;

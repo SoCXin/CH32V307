@@ -36,12 +36,13 @@
 u8 buf[NAND_ECC_SECTOR_SIZE];
 u8 pbuf[NAND_ECC_SECTOR_SIZE];
 
-/*******************************************************************************
-* Function Name  : main
-* Description    : Main program.
-* Input          : None
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      main
+ *
+ * @brief   Main program.
+ *
+ * @return  none
+ */
 int main(void)
 {
     u32 i=0;

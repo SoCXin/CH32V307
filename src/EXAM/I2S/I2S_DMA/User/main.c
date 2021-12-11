@@ -33,16 +33,17 @@ u16 I2S2_Tx[Len] = { 0x1111, 0x2222, 0x3333, 0x4444, 0x5555, 0x6666, 0x7777, 0x8
 u16 I2S3_Rx[Len];
 
 
-/*******************************************************************************
-* Function Name  : I2S2_Init
-* Description    : Init I2S2
-* Input          : None
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      I2S2_Init
+ *
+ * @brief   Init I2S2
+ *
+ * @return  none
+ */
 void I2S2_Init(void)
 {
-    GPIO_InitTypeDef GPIO_InitStructure;
-    I2S_InitTypeDef  I2S_InitStructure;
+    GPIO_InitTypeDef GPIO_InitStructure={0};
+    I2S_InitTypeDef  I2S_InitStructure={0};
 
     RCC_APB1PeriphClockCmd(RCC_APB1Periph_SPI2, ENABLE);
     RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOB | RCC_APB2Periph_GPIOC, ENABLE);
@@ -69,16 +70,17 @@ void I2S2_Init(void)
     I2S_Cmd(SPI2, ENABLE);
 }
 
-/*******************************************************************************
-* Function Name  : I2S3_Init
-* Description    : Init I2S3
-* Input          : None
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      I2S3_Init
+ *
+ * @brief   Init I2S2
+ *
+ * @return  none
+ */
 void I2S3_Init(void)
 {
-    GPIO_InitTypeDef GPIO_InitStructure;
-    I2S_InitTypeDef  I2S_InitStructure;
+    GPIO_InitTypeDef GPIO_InitStructure={0};
+    I2S_InitTypeDef  I2S_InitStructure={0};
 
     RCC_APB1PeriphClockCmd(RCC_APB1Periph_SPI3, ENABLE);
     RCC_APB2PeriphClockCmd(RCC_APB2Periph_AFIO | RCC_APB2Periph_GPIOA | RCC_APB2Periph_GPIOB | RCC_APB2Periph_GPIOC, ENABLE);
@@ -105,20 +107,21 @@ void I2S3_Init(void)
     I2S_Cmd(SPI3, ENABLE);
 }
 
-
-/*******************************************************************************
-* Function Name  : DMA_Tx_Init
-* Description    : Initializes the I2S2 DMA Channelx configuration.
-* Input          : DMA_CHx:
-*                    x can be 1 to 7.
-*                  ppadr: Peripheral base address.
-*                  memadr: Memory base address.
-*                  bufsize: DMA channel buffer size.
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      DMA_Tx_Init
+ *
+ * @brief   Initializes the DMAy Channelx configuration.
+ *
+ * @param   DMA_CHx - x can be 1 to 7.
+ *          ppadr - Peripheral base address.
+ *          memadr - Memory base address.
+ *          bufsize - DMA channel buffer size.
+ *
+ * @return  none
+ */
 void DMA_Tx_Init( DMA_Channel_TypeDef* DMA_CHx, u32 ppadr, u32 memadr, u16 bufsize)
 {
-    DMA_InitTypeDef DMA_InitStructure;
+    DMA_InitTypeDef DMA_InitStructure={0};
 
     RCC_AHBPeriphClockCmd( RCC_AHBPeriph_DMA1, ENABLE );
 
@@ -138,19 +141,21 @@ void DMA_Tx_Init( DMA_Channel_TypeDef* DMA_CHx, u32 ppadr, u32 memadr, u16 bufsi
     DMA_Init( DMA_CHx, &DMA_InitStructure );
 }
 
-/*******************************************************************************
-* Function Name  : DMA_Rx_Init
-* Description    : Initializes the I2S3 DMA Channelx configuration.
-* Input          : DMA_CHx:
-*                    x can be 1 to 7.
-*                  ppadr; Peripheral base address.
-*                  memadr: Memory base address.
-*                  bufsize: DMA channel buffer size.
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      DMA_Rx_Init
+ *
+ * @brief   Initializes the I2S3 DMA Channelx configuration.
+ *
+ * @param   DMA_CHx - x can be 1 to 7.
+ *          ppadr - Peripheral base address.
+ *          memadr - Memory base address.
+ *          bufsize - DMA channel buffer size.
+ *
+ * @return  none
+ */
 void DMA_Rx_Init( DMA_Channel_TypeDef* DMA_CHx, u32 ppadr, u32 memadr, u16 bufsize )
 {
-    DMA_InitTypeDef DMA_InitStructure;
+    DMA_InitTypeDef DMA_InitStructure={0};
 
     RCC_AHBPeriphClockCmd( RCC_AHBPeriph_DMA2, ENABLE );
 
@@ -170,12 +175,13 @@ void DMA_Rx_Init( DMA_Channel_TypeDef* DMA_CHx, u32 ppadr, u32 memadr, u16 bufsi
     DMA_Init( DMA_CHx, &DMA_InitStructure );
 }
 
-/*******************************************************************************
-* Function Name  : main
-* Description    : Main program.
-* Input          : None
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      main
+ *
+ * @brief   Main program.
+ *
+ * @return  none
+ */
 int main(void)
 {
     u32 i;

@@ -11,22 +11,24 @@ void NMI_Handler(void) __attribute__((interrupt("WCH-Interrupt-fast")));
 void HardFault_Handler(void) __attribute__((interrupt("WCH-Interrupt-fast")));
 void RTC_IRQHandler(void) __attribute__((interrupt("WCH-Interrupt-fast")));
 
-/*******************************************************************************
-* Function Name  : NMI_Handler
-* Description    : This function handles NMI exception.
-* Input          : None
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      NMI_Handler
+ *
+ * @brief   This function handles NMI exception.
+ *
+ * @return  none
+ */
 void NMI_Handler(void)
 {
 }
 
-/*******************************************************************************
-* Function Name  : HardFault_Handler
-* Description    : This function handles Hard Fault exception.
-* Input          : None
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      HardFault_Handler
+ *
+ * @brief   This function handles Hard Fault exception.
+ *
+ * @return  none
+ */
 void HardFault_Handler(void)
 {
   while (1)
@@ -34,12 +36,13 @@ void HardFault_Handler(void)
   }
 }
 
-/*******************************************************************************
-* Function Name  : RTC_IRQHandler
-* Description    : This function handles RTC Handler.
-* Input          : None
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      RTC_IRQHandler
+ *
+ * @brief   This function handles RTC Handler.
+ *
+ * @return  none
+ */
 void RTC_IRQHandler(void)
 {
 	if (RTC_GetITStatus(RTC_IT_SEC) != RESET)   /* Seconds interrupt */
@@ -57,16 +60,3 @@ void RTC_IRQHandler(void)
 }
 
 
-/*******************************************************************************
-* Function Name  : RVNVIC_INTCFG
-* Description    : Set Fast Interrupt and Set Interrupt Priority.
-* Input          : None
-* Return         : None
-*******************************************************************************/
-void RVNVIC_INTCFG(void)
-{
-  /* Set Fast Interrupt */
-
-  /* Set Interrupt Priority */
-
-}

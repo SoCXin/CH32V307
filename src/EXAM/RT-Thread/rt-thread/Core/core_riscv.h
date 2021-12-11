@@ -106,150 +106,196 @@ typedef struct
 #define PFIC            ((PFIC_Type *) 0xE000E000 )
 #define NVIC            PFIC
 #define NVIC_KEY1       ((uint32_t)0xFA050000)
-#define	NVIC_KEY2				((uint32_t)0xBCAF0000)
-#define	NVIC_KEY3				((uint32_t)0xBEEF0000)
+#define NVIC_KEY2               ((uint32_t)0xBCAF0000)
+#define NVIC_KEY3               ((uint32_t)0xBEEF0000)
 
 #define SysTick         ((SysTick_Type *) 0xE000F000)
 
-/* risc-v specific functions */
+/*********************************************************************
+ * @fn      __enable_irq
+ *
+ * @brief   Enable Global Interrupt
+ *
+ * @return  none
+ */
 RV_STATIC_INLINE void __enable_irq() { __asm volatile ("csrw 0x800, %0" : : "r" (0x6088) ); }
+
+/*********************************************************************
+ * @fn      __disable_irq
+ *
+ * @brief   Disable Global Interrupt
+ *
+ * @return  none
+ */
 RV_STATIC_INLINE void __disable_irq() { __asm volatile ("csrw 0x800, %0" : : "r" (0x6000) ); }
+
+/*********************************************************************
+ * @fn      __NOP
+ *
+ * @brief   nop
+ *
+ * @return  none
+ */
 RV_STATIC_INLINE void __NOP() { __asm volatile ("nop"); }
 
-
-
-/* ##########################   NVIC functions  #################################### */
-
-/*******************************************************************************
-* Function Name  : NVIC_EnableIRQ
-* Description    : Enable Interrupt
-* Input          : IRQn: Interrupt Numbers
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      NVIC_EnableIRQ
+ *
+ * @brief   Enable Interrupt
+ *
+ * @param   IRQn: Interrupt Numbers
+ *
+ * @return  none
+ */
 RV_STATIC_INLINE void NVIC_EnableIRQ(IRQn_Type IRQn){
   NVIC->IENR[((uint32_t)(IRQn) >> 5)] = (1 << ((uint32_t)(IRQn) & 0x1F));
 }
 
-/*******************************************************************************
-* Function Name  : NVIC_DisableIRQ
-* Description    : Disable Interrupt
-* Input          : IRQn: Interrupt Numbers
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      NVIC_DisableIRQ
+ *
+ * @brief   Disable Interrupt
+ *
+ * @param   IRQn: Interrupt Numbers
+ *
+ * @return  none
+ */
 RV_STATIC_INLINE void NVIC_DisableIRQ(IRQn_Type IRQn)
 {
   NVIC->IRER[((uint32_t)(IRQn) >> 5)] = (1 << ((uint32_t)(IRQn) & 0x1F));
 }
 
-/*******************************************************************************
-* Function Name  : NVIC_GetStatusIRQ
-* Description    : Get Interrupt Enable State
-* Input          : IRQn: Interrupt Numbers
-* Return         : 1: Interrupt Enable
-*                  0: Interrupt Disable
-*******************************************************************************/
+/*********************************************************************
+ * @fn      NVIC_GetStatusIRQ
+ *
+ * @brief   Get Interrupt Enable State
+ *
+ * @param   IRQn: Interrupt Numbers
+ *
+ * @return  1 - Interrupt Enable
+ *          0 - Interrupt Disable
+ */
 RV_STATIC_INLINE uint32_t NVIC_GetStatusIRQ(IRQn_Type IRQn)
 {
   return((uint32_t) ((NVIC->ISR[(uint32_t)(IRQn) >> 5] & (1 << ((uint32_t)(IRQn) & 0x1F)))?1:0));
 }
 
-/*******************************************************************************
-* Function Name  : NVIC_GetPendingIRQ
-* Description    : Get Interrupt Pending State
-* Input          : IRQn: Interrupt Numbers
-* Return         : 1: Interrupt Pending Enable
-*                  0: Interrupt Pending Disable
-*******************************************************************************/
+/*********************************************************************
+ * @fn      NVIC_GetPendingIRQ
+ *
+ * @brief   Get Interrupt Pending State
+ *
+ * @param   IRQn: Interrupt Numbers
+ *
+ * @return  1 - Interrupt Pending Enable
+ *          0 - Interrupt Pending Disable
+ */
 RV_STATIC_INLINE uint32_t NVIC_GetPendingIRQ(IRQn_Type IRQn)
 {
   return((uint32_t) ((NVIC->IPR[(uint32_t)(IRQn) >> 5] & (1 << ((uint32_t)(IRQn) & 0x1F)))?1:0));
 }
 
-/*******************************************************************************
-* Function Name  : NVIC_SetPendingIRQ
-* Description    : Set Interrupt Pending
-* Input          : IRQn: Interrupt Numbers
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      NVIC_SetPendingIRQ
+ *
+ * @brief   Set Interrupt Pending
+ *
+ * @param   IRQn: Interrupt Numbers
+ *
+ * @return  None
+ */
 RV_STATIC_INLINE void NVIC_SetPendingIRQ(IRQn_Type IRQn)
 {
   NVIC->IPSR[((uint32_t)(IRQn) >> 5)] = (1 << ((uint32_t)(IRQn) & 0x1F));
 }
 
-/*******************************************************************************
-* Function Name  : NVIC_ClearPendingIRQ
-* Description    : Clear Interrupt Pending
-* Input          : IRQn: Interrupt Numbers
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      NVIC_ClearPendingIRQ
+ *
+ * @brief   Clear Interrupt Pending
+ *
+ * @param   IRQn: Interrupt Numbers
+ *
+ * @return  None
+ */
 RV_STATIC_INLINE void NVIC_ClearPendingIRQ(IRQn_Type IRQn)
 {
   NVIC->IPRR[((uint32_t)(IRQn) >> 5)] = (1 << ((uint32_t)(IRQn) & 0x1F));
 }
 
-/*******************************************************************************
-* Function Name  : NVIC_GetActive
-* Description    : Get Interrupt Active State
-* Input          : IRQn: Interrupt Numbers
-* Return         : 1: Interrupt Active
-*                  0: Interrupt No Active
-*******************************************************************************/
+/*********************************************************************
+ * @fn      NVIC_GetActive
+ *
+ * @brief   Get Interrupt Active State
+ *
+ * @param   IRQn: Interrupt Numbers
+ *
+ * @return  1 - Interrupt Active
+ *          0 - Interrupt No Active
+ */
 RV_STATIC_INLINE uint32_t NVIC_GetActive(IRQn_Type IRQn)
 {
   return((uint32_t)((NVIC->IACTR[(uint32_t)(IRQn) >> 5] & (1 << ((uint32_t)(IRQn) & 0x1F)))?1:0));
 }
 
-/*******************************************************************************
-* Function Name  : NVIC_SetPriority
-* Description    : Set Interrupt Priority
-* Input          : IRQn: Interrupt Numbers
-*                  priority: bit7:pre-emption priority
-*                            bit6-bit4: subpriority
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      NVIC_SetPriority
+ *
+ * @brief   Set Interrupt Priority
+ *
+ * @param   IRQn - Interrupt Numbers
+ *          priority -
+ *              bit7 - pre-emption priority
+ *              bit6~bit4 - subpriority
+ * @return  None
+ */
 RV_STATIC_INLINE void NVIC_SetPriority(IRQn_Type IRQn, uint8_t priority)
 {
   NVIC->IPRIOR[(uint32_t)(IRQn)] = priority;
 }
 
-/*******************************************************************************
-* Function Name  : __WFI
-* Description    : Wait for Interrupt
-* Input          : None
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      __WFI
+ *
+ * @brief   Wait for Interrupt
+ *
+ * @return  None
+ */
 __attribute__( ( always_inline ) ) RV_STATIC_INLINE void __WFI(void)
 {
-  NVIC->SCTLR &= ~(1<<3);	// wfi
+  NVIC->SCTLR &= ~(1<<3);   // wfi
   asm volatile ("wfi");
 }
 
-/*******************************************************************************
-* Function Name  : __WFE
-* Description    : Wait for Events
-* Input          : None
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      __WFE
+ *
+ * @brief   Wait for Events
+ *
+ * @return  None
+ */
 __attribute__( ( always_inline ) ) RV_STATIC_INLINE void __WFE(void)
 {
   uint32_t t;
 
   t = NVIC->SCTLR;
-  NVIC->SCTLR |= (1<<3)|(1<<5);		// (wfi->wfe)+(__sev)
+  NVIC->SCTLR |= (1<<3)|(1<<5);     // (wfi->wfe)+(__sev)
   NVIC->SCTLR = (NVIC->SCTLR & ~(1<<5)) | ( t & (1<<5));
   asm volatile ("wfi");
   asm volatile ("wfi");
 }
 
-/*******************************************************************************
-* Function Name  : SetVTFIRQ
-* Description    : Set VTF Interrupt
-* Input          : addr£ºVTF interrupt service function base address.
-*                  IRQn£ºInterrupt Numbers
-*                  num£ºVTF Interrupt Numbers
-*                  NewState: DISABLE or ENABLE
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      SetVTFIRQ
+ *
+ * @brief   Set VTF Interrupt
+ *
+ * @param   add - VTF interrupt service function base address.
+ *          IRQn -Interrupt Numbers
+ *          num - VTF Interrupt Numbers
+ *          NewState - DISABLE or ENABLE
+ * @return  None
+ */
 RV_STATIC_INLINE void SetVTFIRQ(uint32_t addr, IRQn_Type IRQn, uint8_t num, FunctionalState NewState){
   if(num > 3)  return ;
 
@@ -264,12 +310,13 @@ RV_STATIC_INLINE void SetVTFIRQ(uint32_t addr, IRQn_Type IRQn, uint8_t num, Func
   }
 }
 
-/*******************************************************************************
-* Function Name  : NVIC_SystemReset
-* Description    : Initiate a system reset request
-* Input          : None
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      NVIC_SystemReset
+ *
+ * @brief   Initiate a system reset request
+ *
+ * @return  None
+ */
 RV_STATIC_INLINE void NVIC_SystemReset(void)
 {
   NVIC->CFGR = NVIC_KEY3|(1<<7);
@@ -315,6 +362,7 @@ extern uint32_t __get_MARCHID(void);
 extern uint32_t __get_MIMPID(void);
 extern uint32_t __get_MHARTID(void);
 extern uint32_t __get_SP(void);
+
 
 
 #endif

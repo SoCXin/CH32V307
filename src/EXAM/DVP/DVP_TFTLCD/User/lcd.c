@@ -9,40 +9,47 @@
 #include "stdlib.h"
 #include "font.h" 
 
-//LCD brush and background colors
+/* LCD brush and background colors */
 u16 POINT_COLOR=0x0000;
 u16 BACK_COLOR=0xFFFF;
   
 _lcd_dev lcddev;
 	 
-/*******************************************************************************
-* Function Name  : LCD_WR_REG
-* Description    : Write register
-* Input          : regval: register value
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      LCD_WR_REG
+ *
+ * @brief   Write register
+ *
+ * @param   regval - register value
+ *
+ * @return  none
+ */
 void LCD_WR_REG(u16 regval)
 {   
 	LCD->LCD_REG=regval;
 }
 
-/*******************************************************************************
-* Function Name  : LCD_WR_DATA
-* Description    : Write data
-* Input          : data:
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      LCD_WR_DATA
+ *
+ * @brief   Write data
+ *
+ * @param   data
+ *
+ * @return  none
+ */
 void LCD_WR_DATA(u16 data)
 {	 
 	LCD->LCD_RAM=data;		 
 }
 
-/*******************************************************************************
-* Function Name  : LCD_RD_DATA
-* Description    : Read data
-* Input          : None
-* Return         : ram: read data
-*******************************************************************************/
+/*********************************************************************
+ * @fn      LCD_RD_DATA
+ *
+ * @brief   Read data
+ *
+ * @return  ram - read data
+ */
 u16 LCD_RD_DATA(void)
 {
 	vu16 ram;
@@ -50,25 +57,31 @@ u16 LCD_RD_DATA(void)
 	return ram;	 
 }					   
 
-/*******************************************************************************
-* Function Name  : LCD_WriteReg
-* Description    : Write value to register
-* Input          : LCD_Reg: register addr
-*                  LCD_RegValue: value
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      LCD_WriteReg
+ *
+ * @brief   Write value to register
+ *
+ * @param   LCD_Reg - register addr
+ *          LCD_RegValue - value
+ *
+ * @return  none
+ */
 void LCD_WriteReg(u16 LCD_Reg,u16 LCD_RegValue)
 {	
 	LCD->LCD_REG = LCD_Reg;
 	LCD->LCD_RAM = LCD_RegValue;
 }	   
 
-/*******************************************************************************
-* Function Name  : LCD_ReadReg
-* Description    : Read value from register
-* Input          : LCD_Reg: register addr
-* Return         : register value
-*******************************************************************************/
+/*********************************************************************
+ * @fn      LCD_ReadReg
+ *
+ * @brief   Read value from register
+ *
+ * @param   LCD_Reg - register addr
+ *
+ * @return  register value
+ */
 u16 LCD_ReadReg(u16 LCD_Reg)
 {										   
 	LCD_WR_REG(LCD_Reg);
@@ -76,36 +89,42 @@ u16 LCD_ReadReg(u16 LCD_Reg)
 	return LCD_RD_DATA();
 }   
 
-/*******************************************************************************
-* Function Name  : LCD_WriteRAM_Prepare
-* Description    : Write GRAM prepare
-* Input          : None
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      LCD_WriteRAM_Prepare
+ *
+ * @brief   Write GRAM prepare
+ *
+ * @return  none
+ */
 void LCD_WriteRAM_Prepare(void)
 {
  	LCD->LCD_REG=lcddev.wramcmd;	  
 }	 
 
-/*******************************************************************************
-* Function Name  : LCD_WriteRAM
-* Description    : Write GRAM
-* Input          : RGB_Code: colour value
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      LCD_WriteRAM
+ *
+ * @brief   Write GRAM
+ *
+ * @param   RGB_Code - colour value
+ *
+ * @return  none
+ */
 void LCD_WriteRAM(u16 RGB_Code)
 {							    
 	LCD->LCD_RAM = RGB_Code;
 }
 
-
-/*******************************************************************************
-* Function Name  : LCD_SetCursor
-* Description    : set Cursor
-* Input          : Xpos: Abscissa
-*                  Ypos: Ordinate
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      LCD_SetCursor
+ *
+ * @brief   set Cursor
+ *
+ * @param   Xpos - Abscissa
+ *          Ypos - Ordinate
+ *
+ * @return  none
+ */
 void LCD_SetCursor(u16 Xpos, u16 Ypos)
 {	 
  	if(lcddev.id==0X9341)
@@ -117,12 +136,15 @@ void LCD_SetCursor(u16 Xpos, u16 Ypos)
 	}
 } 		 
 
-/*******************************************************************************
-* Function Name  : LCD_Scan_Dir
-* Description    : set scan direction
-* Input          : dir: direction
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      LCD_Scan_Dir
+ *
+ * @brief   set scan direction
+ *
+ * @param   dir - direction
+ *
+ * @return  none
+ */
 void LCD_Scan_Dir(u8 dir)
 {
 	u16 regval=0;
@@ -206,12 +228,15 @@ void LCD_Scan_Dir(u8 dir)
   	}
 }     
 
-/*******************************************************************************
-* Function Name  : LCD_Display_Dir
-* Description    : set display direction
-* Input          : dir: direction
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      LCD_Display_Dir
+ *
+ * @brief   set display direction
+ *
+ * @param   dir - direction
+ *
+ * @return  none
+ */
 void LCD_Display_Dir(u8 dir)
 {
 	if(dir==0)
@@ -242,12 +267,13 @@ void LCD_Display_Dir(u8 dir)
 	LCD_Scan_Dir(DFT_SCAN_DIR);
 }	 
 
-/*******************************************************************************
-* Function Name  : LCD_Init
-* Description    : Init LCD
-* Input          : None
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      LCD_Init
+ *
+ * @brief   Init LCD
+ *
+ * @return  none
+ */
 void LCD_Init(void)
 { 					
  	GPIO_InitTypeDef GPIO_InitStructure;
@@ -256,7 +282,7 @@ void LCD_Init(void)
 	FSMC_NORSRAMTimingInitTypeDef  writeTiming;
 	
     RCC_AHBPeriphClockCmd(RCC_AHBPeriph_FSMC,ENABLE);
-	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOB|RCC_APB2Periph_GPIOD|RCC_APB2Periph_GPIOE|RCC_APB2Periph_GPIOG,ENABLE);
+	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOB|RCC_APB2Periph_GPIOD|RCC_APB2Periph_GPIOE,ENABLE);
 
  	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_14;
  	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
@@ -436,12 +462,15 @@ void LCD_Init(void)
 	LCD_Clear(WHITE);
 }  
 
-/*******************************************************************************
-* Function Name  : LCD_Clear
-* Description    : Clear screen
-* Input          : color: fill color
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      LCD_Clear
+ *
+ * @brief   Clear screen
+ *
+ * @param   color - fill color
+ *
+ * @return  none
+ */
 void LCD_Clear(u16 color)
 {
 	u32 index=0;      

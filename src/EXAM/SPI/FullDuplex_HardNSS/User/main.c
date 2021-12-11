@@ -14,7 +14,7 @@
  
  本例程演示在硬件 NSS 模式下，Master 和 Slave 同时全双工收发。
  注：两块板子分别下载 Master 和 Slave 程序，同时上电。
-     硬件连线：PA4 —— PA4
+     硬件连线：
                PA5 —— PA5
                PA6 —— PA6
                PA7 —— PA7
@@ -42,16 +42,17 @@ u16 TxData[Size] = { 0x0101, 0x0202, 0x0303, 0x0404, 0x0505, 0x0606,
                      0x2121, 0x2222, 0x2323, 0x2424, 0x2525, 0x2626 };
 u16 RxData[Size];
 
-/*******************************************************************************
-* Function Name  : SPI_FullDuplex_Init
-* Description    : Configuring the SPI for full-duplex communication.
-* Input          : None
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      SPI_FullDuplex_Init
+ *
+ * @brief   Configuring the SPI for full-duplex communication.
+ *
+ * @return  none
+ */
 void SPI_FullDuplex_Init(void)
 {
-	GPIO_InitTypeDef GPIO_InitStructure;
-	SPI_InitTypeDef SPI_InitStructure;
+	GPIO_InitTypeDef GPIO_InitStructure={0};
+	SPI_InitTypeDef SPI_InitStructure={0};
 
 	RCC_APB2PeriphClockCmd( RCC_APB2Periph_GPIOA | RCC_APB2Periph_SPI1, ENABLE );
 
@@ -118,13 +119,13 @@ void SPI_FullDuplex_Init(void)
 	SPI_Cmd( SPI1, ENABLE );
 }
 
-
-/*******************************************************************************
-* Function Name  : main
-* Description    : Main program.
-* Input          : None
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      main
+ *
+ * @brief   Main program.
+ *
+ * @return  none
+ */
 int main(void)
 {
 	u8 i=0;

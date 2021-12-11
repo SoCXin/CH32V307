@@ -11,22 +11,24 @@ void NMI_Handler(void) __attribute__((interrupt("WCH-Interrupt-fast")));
 void HardFault_Handler(void) __attribute__((interrupt("WCH-Interrupt-fast")));
 void TAMPER_IRQHandler(void) __attribute__((interrupt("WCH-Interrupt-fast")));
 
-/*******************************************************************************
-* Function Name  : NMI_Handler
-* Description    : This function handles NMI exception.
-* Input          : None
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      NMI_Handler
+ *
+ * @brief   This function handles NMI exception.
+ *
+ * @return  none
+ */
 void NMI_Handler(void)
 {
 }
 
-/*******************************************************************************
-* Function Name  : HardFault_Handler
-* Description    : This function handles Hard Fault exception.
-* Input          : None
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      HardFault_Handler
+ *
+ * @brief   This function handles Hard Fault exception.
+ *
+ * @return  none
+ */
 void HardFault_Handler(void)
 {
   while (1)
@@ -34,24 +36,29 @@ void HardFault_Handler(void)
   }
 }
 
-/*******************************************************************************
-* Function Name  : TAMPER_IRQHandler
-* Description    : This function handles SysTick Handler.
-* Input          : None
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      TAMPER_IRQHandler
+ *
+ * @brief   This function handles Hard Fault exception.
+ *
+ * @return  none
+ */
 void TAMPER_IRQHandler(void)
 {
   if( BKP_GetITStatus() == SET )
-	{
+  {
+#if 0
 		printf("TAMPER_IRQHandler\r\n");
 		printf( "BKP_DR1:%08x\r\n", BKP->DATAR1 );
-	  printf( "BKP_DR2:%08x\r\n", BKP->DATAR2 );
-	  printf( "BKP_DR3:%08x\r\n", BKP->DATAR3 );
-    printf( "BKP_DR4:%08x\r\n", BKP->DATAR4 );
-	}
+	    printf( "BKP_DR2:%08x\r\n", BKP->DATAR2 );
+	    printf( "BKP_DR3:%08x\r\n", BKP->DATAR3 );
+        printf( "BKP_DR4:%08x\r\n", BKP->DATAR4 );
 
-	BKP_ClearITPendingBit();
+#endif
+
+  }
+
+  BKP_ClearITPendingBit();
 }
 
 

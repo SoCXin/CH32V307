@@ -43,15 +43,16 @@
 #include "debug.h"
 #include "lcd.h"
 
-/*******************************************************************************
-* Function Name  : LCD_Reset_GPIO_Init
-* Description    : Init LCD reset GPIO.
-* Input          : None
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      LCD_Reset_GPIO_Init
+ *
+ * @brief   Init LCD reset GPIO.
+ *
+ * @return  none
+ */
 void LCD_Reset_GPIO_Init(void)
 {
-    GPIO_InitTypeDef  GPIO_InitStructure;
+    GPIO_InitTypeDef  GPIO_InitStructure={0};
 
     RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA, ENABLE);
 
@@ -62,12 +63,13 @@ void LCD_Reset_GPIO_Init(void)
     GPIO_SetBits(GPIOA,GPIO_Pin_15);
 }
 
-/*******************************************************************************
-* Function Name  : main
-* Description    : Main program.
-* Input          : None
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      main
+ *
+ * @brief   Main program.
+ *
+ * @return  none
+ */
 int main(void)
 {
  	u8 x=0;

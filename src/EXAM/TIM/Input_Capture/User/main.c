@@ -17,20 +17,23 @@
 
 #include "debug.h"
 
-/*******************************************************************************
-* Function Name  : Input_Capture_Init
-* Description    : Initializes TIM1 input capture.
-* Input          : arr: the period value.
-*                  psc: the prescaler value.
-*									 ccp: the pulse value.
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      Input_Capture_Init
+ *
+ * @brief   Initializes TIM1 input capture.
+ *
+ * @param   arr - the period value.
+ *          psc - the prescaler value.
+ *          ccp - the pulse value.
+ *
+ * @return  none
+ */
 void Input_Capture_Init( u16 arr, u16 psc )
 {
-	GPIO_InitTypeDef GPIO_InitStructure;
-	TIM_ICInitTypeDef TIM_ICInitStructure;
-	TIM_TimeBaseInitTypeDef TIM_TimeBaseInitStructure;
-	NVIC_InitTypeDef NVIC_InitStructure;
+	GPIO_InitTypeDef GPIO_InitStructure={0};
+	TIM_ICInitTypeDef TIM_ICInitStructure={0};
+	TIM_TimeBaseInitTypeDef TIM_TimeBaseInitStructure={0};
+	NVIC_InitTypeDef NVIC_InitStructure={0};
 
 	RCC_APB2PeriphClockCmd( RCC_APB2Periph_GPIOA | RCC_APB2Periph_TIM1, ENABLE );
 
@@ -68,12 +71,13 @@ void Input_Capture_Init( u16 arr, u16 psc )
 	TIM_Cmd( TIM1, ENABLE );
 }
 
-/*******************************************************************************
-* Function Name  : main
-* Description    : Main program.
-* Input          : None
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      main
+ *
+ * @brief   Main program.
+ *
+ * @return  none
+ */
 int main(void)
 {
 	USART_Printf_Init(115200);

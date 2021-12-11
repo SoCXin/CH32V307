@@ -38,16 +38,17 @@ u32 I2S3_Tx[Len];
 u32 I2S2_Rx[Len];
 
 
-/*******************************************************************************
-* Function Name  : I2S2_Init
-* Description    : Init I2S2
-* Input          : None
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      I2S2_Init
+ *
+ * @brief   Init I2S2
+ *
+ * @return  none
+ */
 void I2S2_Init(void)
 {
-    GPIO_InitTypeDef GPIO_InitStructure;
-    I2S_InitTypeDef  I2S_InitStructure;
+    GPIO_InitTypeDef GPIO_InitStructure={0};
+    I2S_InitTypeDef  I2S_InitStructure={0};
 
     RCC_APB1PeriphClockCmd(RCC_APB1Periph_SPI2, ENABLE);
     RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOB | RCC_APB2Periph_GPIOC, ENABLE);
@@ -83,16 +84,17 @@ void I2S2_Init(void)
     I2S_Init(SPI2, &I2S_InitStructure);
 }
 
-/*******************************************************************************
-* Function Name  : I2S3_Init
-* Description    : Init I2S2
-* Input          : None
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      I2S3_Init
+ *
+ * @brief   Init I2S2
+ *
+ * @return  none
+ */
 void I2S3_Init(void)
 {
-    GPIO_InitTypeDef GPIO_InitStructure;
-    I2S_InitTypeDef  I2S_InitStructure;
+    GPIO_InitTypeDef GPIO_InitStructure={0};
+    I2S_InitTypeDef  I2S_InitStructure={0};
 
     RCC_APB1PeriphClockCmd(RCC_APB1Periph_SPI3, ENABLE);
     RCC_APB2PeriphClockCmd(RCC_APB2Periph_AFIO | RCC_APB2Periph_GPIOA | RCC_APB2Periph_GPIOB | RCC_APB2Periph_GPIOC, ENABLE);
@@ -129,12 +131,13 @@ void I2S3_Init(void)
     I2S_Init(SPI3, &I2S_InitStructure);
 }
 
-/*******************************************************************************
-* Function Name  : main
-* Description    : Main program.
-* Input          : None
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      main
+ *
+ * @brief   Main program.
+ *
+ * @return  none
+ */
 int main(void)
 {
     u32 i;

@@ -45,12 +45,13 @@ __attribute__((aligned (8))) UINT8 g_memStart[LOSCFG_SYS_HEAP_SIZE];
 UINT32 g_VlaueSp=0;
 
 
-/*******************************************************************************
-* Function Name  : taskSampleEntry2
-* Description    : taskSampleEntry2 program.
-* Input          : None
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      taskSampleEntry2
+ *
+ * @brief   taskSampleEntry2 program.
+ *
+ * @return  none
+ */
 VOID taskSampleEntry2(VOID)
 {
     while(1) {
@@ -59,12 +60,13 @@ VOID taskSampleEntry2(VOID)
     }
 }
 
-/*******************************************************************************
-* Function Name  : taskSampleEntry1
-* Description    : taskSampleEntry1 program.
-* Input          : None
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      taskSampleEntry1
+ *
+ * @brief   taskSampleEntry1 program.
+ *
+ * @return  none
+ */
 VOID taskSampleEntry1(VOID)
 {
     while(1) {
@@ -74,17 +76,18 @@ VOID taskSampleEntry1(VOID)
 
 }
 
-/*******************************************************************************
-* Function Name  : EXTI0_INT_INIT
-* Description    : Initializes EXTI0 collection.
-* Input          : None
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      EXTI0_INT_INIT
+ *
+ * @brief   Initializes EXTI0 collection.
+ *
+ * @return  none
+ */
 void EXTI0_INT_INIT(void)
 {
-  GPIO_InitTypeDef  GPIO_InitStructure;
-  EXTI_InitTypeDef EXTI_InitStructure;
-  NVIC_InitTypeDef NVIC_InitStructure;
+  GPIO_InitTypeDef  GPIO_InitStructure={0};
+  EXTI_InitTypeDef EXTI_InitStructure={0};
+  NVIC_InitTypeDef NVIC_InitStructure={0};
 
   RCC_APB2PeriphClockCmd(RCC_APB2Periph_AFIO|RCC_APB2Periph_GPIOA,ENABLE);
 
@@ -107,12 +110,13 @@ void EXTI0_INT_INIT(void)
   NVIC_Init(&NVIC_InitStructure);
 }
 
-/*******************************************************************************
-* Function Name  : taskSample
-* Description    : taskSample program.
-* Input          : None
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      taskSample
+ *
+ * @brief   taskSample program.
+ *
+ * @return  none
+ */
 UINT32 taskSample(VOID)
 {
     UINT32  uwRet;
@@ -140,13 +144,13 @@ UINT32 taskSample(VOID)
     return LOS_OK;
 }
 
-
-/*******************************************************************************
-* Function Name  : main
-* Description    : Main program.
-* Input          : None
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      main
+ *
+ * @brief   Main program.
+ *
+ * @return  none
+ */
 LITE_OS_SEC_TEXT_INIT int main(void)
 {
     unsigned int ret;
@@ -168,14 +172,15 @@ LITE_OS_SEC_TEXT_INIT int main(void)
     }
 
 }
-
-/*******************************************************************************
-* Function Name  : EXTI0_IRQHandler
-* Description    : This function handles EXTI0 Handler.
-* Input          : None
-* Return         : None
-*******************************************************************************/
 void EXTI0_IRQHandler(void) __attribute__((interrupt(/*"WCH-Interrupt-fast"*/)));
+
+/*********************************************************************
+ * @fn      EXTI0_IRQHandler
+ *
+ * @brief   This function handles EXTI0 Handler.
+ *
+ * @return  none
+ */
 void EXTI0_IRQHandler(void)
 {
   /* 中断栈使用的是原来调用main设置的值，将中断栈和线程栈分开，这样线程跳中断，中断函数如果嵌套深度较大，不至于

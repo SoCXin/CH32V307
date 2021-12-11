@@ -10,12 +10,14 @@
 
 nand_attriute nand_dev;
 
-/*******************************************************************************
-* Function Name  : NAND_Init
-* Description    : Init NANDFLASH
-* Input          : None
-* Return         : None
-*******************************************************************************/
+
+/*********************************************************************
+ * @fn      NAND_Init
+ *
+ * @brief   Init NANDFLASH
+ *
+ * @return  none
+ */
 u8 NAND_Init(void)
 {
     FSMC_NANDInitTypeDef  FSMC_NANDInitStructure;
@@ -83,12 +85,13 @@ u8 NAND_Init(void)
     return 0;
 }
 
-/*******************************************************************************
-* Function Name  : NAND_ReadID
-* Description    : Read NANDFLASH ID
-* Input          : None
-* Return         : id: NANDFLASH ID
-*******************************************************************************/
+/*********************************************************************
+ * @fn      NAND_ReadID
+ *
+ * @brief   Read NANDFLASH ID
+ *
+ * @return  id - NANDFLASH ID
+ */
 u32 NAND_ReadID(void)
 {
     u8 deviceid[5];
@@ -107,15 +110,16 @@ u32 NAND_ReadID(void)
     return id;
 }
 
-/*******************************************************************************
-* Function Name  : NAND_ReadStatus
-* Description    : Read NANDFLASH status
-* Input          : None
-* Return         : data:
-*                   bit0£º0-Pass 1£ºFail
-*                   bit6:0-Busy 1-Ready
-*                   bit7:0-Protected 1-Not Protected
-*******************************************************************************/
+/*********************************************************************
+ * @fn      NAND_ReadStatus
+ *
+ * @brief   Read NANDFLASH status
+ *
+ * @return  data -
+ *            bit - 0-Pass 1-Fail
+ *            bit6 - 0-Busy 1-Ready
+ *            bit7 - 0-Protected 1-Not Protected
+ */
 u8 NAND_ReadStatus(void)
 {
     vu8 data=0;
@@ -125,13 +129,14 @@ u8 NAND_ReadStatus(void)
     return data;
 }
 
-/*******************************************************************************
-* Function Name  : NAND_WaitForReady
-* Description    : Wait NANDFLASH ready
-* Input          : None
-* Return         : NSTA_READY: OK
-*                  NSTA_TIMEOUT: timeout
-*******************************************************************************/
+/*********************************************************************
+ * @fn      NAND_WaitForReady
+ *
+ * @brief   Wait NANDFLASH ready
+ *
+ * @return  NSTA_READY - OK
+ *          NSTA_TIMEOUT - timeout
+ */
 u8 NAND_WaitForReady(void)
 {
     u8 status=0;
@@ -146,13 +151,14 @@ u8 NAND_WaitForReady(void)
     return NSTA_READY;
 }
 
-/*******************************************************************************
-* Function Name  : NAND_Reset
-* Description    : Reset NANDFLASH
-* Input          : None
-* Return         : 0: success
-*                  1: ERR
-*******************************************************************************/
+/*********************************************************************
+ * @fn      NAND_Reset
+ *
+ * @brief   Reset NANDFLASH
+ *
+ * @return  0 - success
+ *          1 - ERR
+ */
 u8 NAND_Reset(void)
 {
     *(vu8*)(NAND_ADDRESS|NAND_CMD)=NAND_RESET;
@@ -160,15 +166,18 @@ u8 NAND_Reset(void)
     else return 1;
 }
 
-/*******************************************************************************
-* Function Name  : NAND_WaitRB
-* Description    : Wait RB signal valid
-* Input          : rb:
-*                   0- Low level active
-*                   1- High level active
-* Return         : 0: success
-*                  1: ERR
-*******************************************************************************/
+/*********************************************************************
+ * @fn      NAND_WaitRB
+ *
+ * @brief   Wait RB signal valid
+ *
+ * @param   rb -
+ *            0- Low level active
+ *            1- High level active
+ *
+ * @return  0 - success
+ *          1 - ERR
+ */
 u8 NAND_WaitRB(vu8 rb)
 {
     vu16 time=0;
@@ -180,27 +189,33 @@ u8 NAND_WaitRB(vu8 rb)
     return 1;
 }
 
-/*******************************************************************************
-* Function Name  : NAND_Delay
-* Description    : delay function
-* Input          : i: delay time
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      NAND_Delay
+ *
+ * @brief   Delay function
+ *
+ * @param   i - delay time
+ *
+ * @return  none
+ */
 void NAND_Delay(vu32 i)
 {
     while(i>0)i--;
 }
 
-/*******************************************************************************
-* Function Name  : NAND_ReadPage
-* Description    : Read the data of the specified page and column of NAND flash
-* Input          : PageNum: page number
-*                  ColNum: column number
-*                  pBuffer: data
-*                  NumByteToRead: data number
-* Return         : 0: success
-*                  1: ERR
-*******************************************************************************/
+/*********************************************************************
+ * @fn      NAND_ReadPage
+ *
+ * @brief   Read the data of the specified page and column of NAND flash
+ *
+ * @param   PageNum - page number
+ *          ColNum - column number
+ *          pBuffer - data
+ *          NumByteToRead - data number
+ *
+ * @return  0 - success
+ *          1 - ERR
+ */
 u8 NAND_ReadPage(u32 PageNum,u16 ColNum,u8 *pBuffer,u16 NumByteToRead)
 {
     vu16 i=0;
@@ -231,16 +246,19 @@ u8 NAND_ReadPage(u32 PageNum,u16 ColNum,u8 *pBuffer,u16 NumByteToRead)
     return errsta;
 }
 
-/*******************************************************************************
-* Function Name  : NAND_WritePage
-* Description    : Write the data of the specified page and column of NAND flash
-* Input          : PageNum: page number
-*                  ColNum: column number
-*                  pBuffer: data
-*                  NumByteToRead: data number
-* Return         : 0: success
-*                  1: ERR
-*******************************************************************************/
+/*********************************************************************
+ * @fn      NAND_WritePage
+ *
+ * @brief   Write the data of the specified page and column of NAND flash
+ *
+ * @param   PageNum - page number
+ *          ColNum - column number
+ *          pBuffer - data
+ *          NumByteToRead - data number
+ *
+ * @return  0 - success
+ *          1 - ERR
+ */
 u8 NAND_WritePage(u32 PageNum,u16 ColNum,u8 *pBuffer,u16 NumByteToWrite)
 {
     vu16 i=0;
@@ -269,13 +287,16 @@ u8 NAND_WritePage(u32 PageNum,u16 ColNum,u8 *pBuffer,u16 NumByteToWrite)
     return 0;
 }
 
-/*******************************************************************************
-* Function Name  : NAND_EraseBlock
-* Description    : Erase NANDFLASH block
-* Input          : BlockNum: Block number
-* Return         : 0: success
-*                  1: ERR
-*******************************************************************************/
+/*********************************************************************
+ * @fn      NAND_EraseBlock
+ *
+ * @brief   Erase NANDFLASH block
+ *
+ * @param   0 - success
+ *          1 - ERR
+ *
+ * @return  none
+ */
 u8  NAND_EraseBlock(u32 BlockNum)
 {
     if(nand_dev.id==FS33ND01GS108TF)BlockNum<<=6;

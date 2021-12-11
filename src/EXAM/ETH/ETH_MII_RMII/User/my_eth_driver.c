@@ -37,12 +37,14 @@ GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;\
 GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING;\
 GPIO_Init(a, &GPIO_InitStructure)
 
-/*******************************************************************************
-* Function Name  : ETH_RxPkt_ChainMode
-* Description    : MAC receive a ethernet frame in chain mode.
-* Input          : None
-* Return         : Frame information.
-*******************************************************************************/
+
+/*********************************************************************
+ * @fn      ETH_RxPkt_ChainMode
+ *
+ * @brief   MAC receive a ethernet frame in chain mode.
+ *
+ * @return  Frame information.
+ */
 FrameTypeDef ETH_RxPkt_ChainMode(void)
 {
   u32 framelength = 0;
@@ -95,12 +97,15 @@ FrameTypeDef ETH_RxPkt_ChainMode(void)
   return (frame);
 }
 
-/*******************************************************************************
-* Function Name  : ETH_TxPkt_ChainMode
-* Description    : MAC send a ethernet frame in chain mode.
-* Input          : Send length;
-* Return         : Send status.
-*******************************************************************************/
+/*********************************************************************
+ * @fn      ETH_TxPkt_ChainMode
+ *
+ * @brief   MAC send a ethernet frame in chain mode.
+ *
+ * @param   Send length
+ *
+ * @return  Send status.
+ */
 uint32_t ETH_TxPkt_ChainMode(u16 FrameLength)
 {
     /* Check if the descriptor is owned by the ETHERNET DMA (when set) or CPU (when reset) */
@@ -139,12 +144,15 @@ uint32_t ETH_TxPkt_ChainMode(u16 FrameLength)
     return ETH_SUCCESS;
 }
 
-/*******************************************************************************
-* Function Name  : mac_send
-* Description    : MAC send a ethernet frame in chain mode.
-* Input          : Send length and send pointer.
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      mac_send
+ *
+ * @brief   MAC send a ethernet frame in chain mode.
+ *
+ * @param   Send length and send pointer.
+ *
+ * @return  none
+ */
 void mac_send(uint8_t * content_ptr, uint16_t content_len)
 {
     u8 *buffer =  (u8 *)ETH_GetCurrentTxBufferAddress();
@@ -156,13 +164,16 @@ void mac_send(uint8_t * content_ptr, uint16_t content_len)
     }
 }
 
-/*******************************************************************************
-* Function Name  : ETH_Init
-* Description    : ETH initialization.
-* Input          : ETH_InitStruct:initialization struct.
-*                  PHYAddress:PHY address.
-* Return         : Initialization status.
-*******************************************************************************/
+/*********************************************************************
+ * @fn      ETH_Init
+ *
+ * @brief   ETH initialization.
+ *
+ * @param   ETH_InitStruct:initialization struct.
+ *          PHYAddress:PHY address.
+ *
+ * @return  Initialization status.
+ */
 uint32_t ETH_Init(ETH_InitTypeDef* ETH_InitStruct, uint16_t PHYAddress)
 {
     uint32_t tmpreg = 0;
@@ -389,13 +400,13 @@ uint32_t ETH_Init(ETH_InitTypeDef* ETH_InitStruct, uint16_t PHYAddress)
   return ETH_SUCCESS;
 }
 
-
-/*******************************************************************************
-* Function Name  : Ethernet_Configuration
-* Description    : Ethernet initialization.
-* Input          : None.
-* Return         : None.
-*******************************************************************************/
+/*********************************************************************
+ * @fn      Ethernet_Configuration
+ *
+ * @brief   Ethernet initialization.
+ *
+ * @return  none
+ */
 void Ethernet_Configuration(void)
 {
     ETH_InitTypeDef ETH_InitStructure;
@@ -483,12 +494,13 @@ void Ethernet_Configuration(void)
     NVIC_EnableIRQ(ETH_IRQn);
 }
 
-/*******************************************************************************
-* Function Name  : PHY_control_pin_init
-* Description    : PHY interrupt GPIO Initialization.
-* Input          : None
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      PHY_control_pin_init
+ *
+ * @brief   PHY interrupt GPIO Initialization.
+ *
+ * @return  none
+ */
 void PHY_control_pin_init(void)
 {
     GPIO_InitTypeDef  GPIO_InitStructure;
@@ -516,12 +528,13 @@ void PHY_control_pin_init(void)
     NVIC_EnableIRQ(EXTI15_10_IRQn);
 }
 
-/*******************************************************************************
-* Function Name  : GETH_pin_init
-* Description    : PHY RGMII interface GPIO initialization.
-* Input          : None.
-* Return         : None.
-*******************************************************************************/
+/*********************************************************************
+ * @fn      GETH_pin_init
+ *
+ * @brief   PHY RGMII interface GPIO initialization.
+ *
+ * @return  none
+ */
 void GETH_pin_init(void)
 {
     GPIO_InitTypeDef GPIO_InitStructure;
@@ -550,12 +563,13 @@ void GETH_pin_init(void)
     define_I(GPIOB,GPIO_Pin_1);/* 125m in */
 }
 
-/*******************************************************************************
-* Function Name  : GETH_pin_init
-* Description    : PHY MII/RMII interface GPIO initialization.
-* Input          : None.
-* Return         : None.
-*******************************************************************************/
+/*********************************************************************
+ * @fn      GETH_pin_init
+ *
+ * @brief   PHY MII/RMII interface GPIO initialization.
+ *
+ * @return  none
+ */
 void FETH_pin_init(void)
 {
     GPIO_InitTypeDef GPIO_InitStructure;

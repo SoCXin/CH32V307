@@ -19,13 +19,13 @@
 
 /* Global Variable */
 
-
-/*******************************************************************************
-* Function Name  : TestDataWrite
-* Description    : Write 0x11111111 to certain address of 2K RAM and 30K RAM.
-* Input          : None
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      TestDataWrite
+ *
+ * @brief   Write 0x11111111 to certain address of 2K RAM and 30K RAM.
+ *
+ * @return  none
+ */
 void TestDataWrite(void)
 {
     uint32_t myAddr=0x20000000+10*1024;
@@ -60,12 +60,13 @@ void TestDataWrite(void)
 
 }
 
-/*******************************************************************************
-* Function Name  : TestDataRead
-* Description    : Print the data of certain address of 2K RAM and 30K RAM.
-* Input          : None
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      TestDataRead
+ *
+ * @brief   Print the data of certain address of 2K RAM and 30K RAM.
+ *
+ * @return  none
+ */
 void TestDataRead(void)
 {
     uint32_t myAddr=0x20000000+10*1024;
@@ -84,15 +85,16 @@ void TestDataRead(void)
 
 }
 
-/*******************************************************************************
-* Function Name  : main
-* Description    : Main program.
-* Input          : None
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      main
+ *
+ * @brief   Main program.
+ *
+ * @return  none
+ */
 int main(void)
 {
-    GPIO_InitTypeDef GPIO_InitStructure;
+    GPIO_InitTypeDef GPIO_InitStructure={0};
 
     /* Configure unused GPIO as IPU or IPD to reduce power consumption */
     RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA|RCC_APB2Periph_GPIOB|

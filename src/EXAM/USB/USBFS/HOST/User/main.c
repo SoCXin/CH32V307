@@ -2,128 +2,69 @@
 * File Name          : main.c
 * Author             : WCH
 * Version            : V1.0.0
-* Date               : 2021/06/06
+* Date               : 2021/10/26
 * Description        : Main program body.
 *******************************************************************************/
-
 /*
  *@Note
-  USBFS设备的简易枚举过程例程：
+  USBFS的简易枚举过程例程 (仅适用于CH32V305,CH32V307)：
   OTG_FS_DM(PA11)、OTG_FS_DP(PA12)。
-
+  FS的OTG和H/D基地址一致，H/D不支持OTG功能。
 */
-#include "debug.h"
 #include "stdio.h"
 #include "string.h"
-#include "ch32vf30x_usbotg_host.h"
+#include <ch32vf30x_usbfs_host.h>
+#include "debug.h"
 
-#define IN_TRANSFER      0
-#define OUT_TRANSFER     0
-#define ISOIN_TRANSFER   0
-#define ISOUT_TRANSFER   0
-
-UINT16  RecvLen;
-UINT32  packnum;
-__attribute__ ((aligned(16))) UINT8 ComParebuff[64];
 extern PUSBHS_HOST pOTGHost;
-void GPIOInit(void)
-{
-    GPIO_InitTypeDef   GPIO_InitStructure;
-    RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA, ENABLE);
+extern USBHS_HOST ThisUsbDev;
+__attribute__ ((aligned(4))) UINT8 ComParebuff[sizeof(USBHS_HOST)];
 
-    GPIO_InitStructure.GPIO_Pin=GPIO_Pin_7;
-    GPIO_InitStructure.GPIO_Mode=GPIO_Mode_Out_PP;
-    GPIO_InitStructure.GPIO_Speed=GPIO_Speed_50MHz;
-    GPIO_Init(GPIOA,&GPIO_InitStructure);
-
-}
-/*******************************************************************************
-* Function Name  : main
-* Description    : Main program.
-* Input          : None
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      main
+ *
+ * @brief   Main program.
+ *
+ * @return  none
+ */
 int main(void)
 {
     UINT8 s;
-    UINT8 flg=1;
-    USART_Printf_Init(115200);
+    USART_Printf_Init(921600);
     Delay_Init();
     printf("SystemClk:%d\r\n",SystemCoreClock);
-    memset(ComParebuff,0xff,64);
-    GPIOInit();
     USBOTG_HostInit(ENABLE);
-    pOTGHost=(PUSBHS_HOST)ComParebuff;
+    pOTGHost = &ThisUsbDev;
+
     while(1)
     {
-        while(flg)
+        s = ERR_SUCCESS;
+        if ( USBOTG_H_FS->INT_FG & USBHD_UIF_DETECT )
         {
-            s = ERR_SUCCESS;
-            if ( USBOTG_FS->INT_FG & USBHD_UIF_DETECT )
+            USBOTG_H_FS->INT_FG = USBHD_UIF_DETECT ;
+
+            s = AnalyzeRootHub( );
+            if ( s == ERR_USB_CONNECT )
             {
-                USBOTG_FS->INT_FG = USBHD_UIF_DETECT ;
-
-                s = AnalyzeRootHub( );
-                if ( s == ERR_USB_CONNECT )
-                {
-                    printf( "New Device In\r\n" );
-                    FoundNewDev = 1;
-
-                }
-                if( s == ERR_USB_DISCON )
-                {
-                    printf( "Device Out\r\n" );
-                }
+                printf( "New Device In\r\n" );
+                FoundNewDev = 1;
             }
-
-            if ( FoundNewDev || s == ERR_USB_CONNECT )
+            if( s == ERR_USB_DISCON )
             {
-                FoundNewDev = 0;
-                Delay_Ms( 200 );
-                s = USBOTG_HostEnum();
-                if ( s == ERR_SUCCESS )
-                {
-                    printf( "Device Enum Succeed\r\n" );
-                    flg=0;
-                }
-                else printf( "Device Enum Failed\r\n" );
+                printf( "Device Out\r\n" );
             }
         }
 
-#if IN_TRANSFER
-        if( USBOTG_FS->MIS_ST & USBHD_UMS_SOF_ACT)
+        if ( FoundNewDev || s == ERR_USB_CONNECT )
         {
-            USBOTG_FS->MIS_ST = USBHD_UMS_SOF_ACT;
-            USBHD_UH_RX_DMA = (UINT32)&endpRXbuff[0];
-            RecvLen=USBHostTransact(USB_PID_IN<<4|USBOTG_EP1,0,20000000);
-            packnum++;
-            if(packnum>200000)
+            FoundNewDev = 0;
+            Delay_Ms( 200 );
+            s = USBOTG_HostEnum( pOTGHost );
+            if ( s == ERR_SUCCESS )
             {
-                printf("success!\n");
-                break;
+                printf( "Enum Succeed\r\n" );
             }
+            else printf( "Enum Failed:%02x\r\n", s );
         }
-
-#endif
-#if OUT_TRANSFER
-
-       if(  USBOTG_FS->MIS_ST&USBHD_UMS_SOF_ACT)
-       {
-           USBOTG_FS->MIS_ST=USBHD_UMS_SOF_ACT;
-
-            USBHD_UH_TX_DMA=(UINT32)&ComParebuff[0];
-            USBHD_UH_TX_LEN=64;
-            s=USBHostTransact(USB_PID_OUT<<4|USBOTG_EP1,0,2000000);;
-            packnum++;
-            if(packnum>200000)
-            {
-                printf("success!\n");
-                break;
-            }
-       }
-#endif
-
-    }
-    while(1);
+     }
 }
-

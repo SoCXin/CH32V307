@@ -16,15 +16,16 @@
 
 #include "debug.h"
 
-/*******************************************************************************
-* Function Name  : BKP_Tamper_Init
-* Description    : Initializes the BKP Tamper.
-* Input          : None
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      BKP_Tamper_Init
+ *
+ * @brief   Initializes the BKP Tamper.
+ *
+ * @return  none
+ */
 void BKP_Tamper_Init(void)
 {
-	NVIC_InitTypeDef NVIC_InitStructure;
+	NVIC_InitTypeDef NVIC_InitStructure={0};
 
 	RCC_APB1PeriphClockCmd( RCC_APB1Periph_PWR | RCC_APB1Periph_BKP, ENABLE );
 
@@ -55,12 +56,13 @@ void BKP_Tamper_Init(void)
 	BKP_TamperPinCmd( ENABLE );
 }
 
-/*******************************************************************************
-* Function Name  : main
-* Description    : Main program.
-* Input          : None
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      main
+ *
+ * @brief   Main program.
+ *
+ * @return  none
+ */
 int main(void)
 {
 	NVIC_PriorityGroupConfig(NVIC_PriorityGroup_4);

@@ -29,18 +29,21 @@
 //#define SLAVE_MODE   GATED_MODE
 #define SLAVE_MODE   TRIGGER__MODE
 
-/*******************************************************************************
-* Function Name  : TIM1_Synchro_ExtTrigger_Init
-* Description    : Initializes TIM1 external trigger synchronization.
-* Input          : arr: the period value.
-*                  psc: the prescaler value.
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      TIM1_Synchro_ExtTrigger_Init
+ *
+ * @brief   Initializes TIM1 external trigger synchronization.
+ *
+ * @param   arr - the period value.
+ *          psc - the prescaler value.
+ *
+ * @return  none
+ */
 void TIM1_Synchro_ExtTrigger_Init( u16 arr, u16 psc )
 {
-	GPIO_InitTypeDef GPIO_InitStructure;
-	TIM_ICInitTypeDef TIM_ICInitStructure;
-	TIM_TimeBaseInitTypeDef TIM_TimeBaseInitStructure;
+	GPIO_InitTypeDef GPIO_InitStructure={0};
+	TIM_ICInitTypeDef TIM_ICInitStructure={0};
+	TIM_TimeBaseInitTypeDef TIM_TimeBaseInitStructure={0};
 
 	RCC_APB2PeriphClockCmd( RCC_APB2Periph_GPIOA | RCC_APB2Periph_TIM1, ENABLE );
 
@@ -83,12 +86,14 @@ void TIM1_Synchro_ExtTrigger_Init( u16 arr, u16 psc )
 
 #endif
 }
-/*******************************************************************************
-* Function Name  : main
-* Description    : Main program.
-* Input          : None
-* Return         : None
-*******************************************************************************/
+
+/*********************************************************************
+ * @fn      main
+ *
+ * @brief   Main program.
+ *
+ * @return  none
+ */
 int main(void)
 {
 	USART_Printf_Init(115200);

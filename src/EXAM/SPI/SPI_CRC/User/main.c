@@ -36,16 +36,17 @@
 u8 TxData[Size] = { 0x01, 0x02, 0x03, 0x04};
 u8 RxData[Size];
 
-/*******************************************************************************
-* Function Name  : SPI_1Lines_HalfDuplex_Init
-* Description    : Configuring the SPI for half-duplex communication.
-* Input          : None
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      SPI_1Lines_HalfDuplex_Init
+ *
+ * @brief   Configuring the SPI for half-duplex communication.
+ *
+ * @return  none
+ */
 void SPI_1Lines_HalfDuplex_Init(void)
 {
-	GPIO_InitTypeDef GPIO_InitStructure;
-	SPI_InitTypeDef SPI_InitStructure;
+	GPIO_InitTypeDef GPIO_InitStructure={0};
+	SPI_InitTypeDef SPI_InitStructure={0};
 
 	RCC_APB2PeriphClockCmd( RCC_APB2Periph_GPIOA | RCC_APB2Periph_SPI1, ENABLE );
 
@@ -94,12 +95,13 @@ void SPI_1Lines_HalfDuplex_Init(void)
 	SPI_Cmd( SPI1, ENABLE );
 }
 
-/*******************************************************************************
-* Function Name  : main
-* Description    : Main program.
-* Input          : None
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      main
+ *
+ * @brief   Main program.
+ *
+ * @return  none
+ */
 int main(void)
 {
 	u8 i=0,crcval;

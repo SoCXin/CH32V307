@@ -21,15 +21,16 @@
 
 /* Global Variable */
 
-/*******************************************************************************
- * Function Name  : WWDG_NVIC_Config
- * Description    : WWDG INT init.
- * Input          : None
- * Return         : None
- *******************************************************************************/
+/*********************************************************************
+ * @fn      WWDG_NVIC_Config
+ *
+ * @brief   WWDG INT init.
+ *
+ * @return  none
+ */
 static void WWDG_NVIC_Config(void)
 {
-  NVIC_InitTypeDef NVIC_InitStructure;
+  NVIC_InitTypeDef NVIC_InitStructure={0};
   NVIC_InitStructure.NVIC_IRQChannel = WWDG_IRQn;
   NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0;
   NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;
@@ -37,19 +38,21 @@ static void WWDG_NVIC_Config(void)
   NVIC_Init(&NVIC_InitStructure);
 }
 
-
-/*******************************************************************************
-* Function Name  : WWDG_Config
-* Description    : Configure WWDG.
-* Input          : tr : The value of the decrement counter(0x7f~0x40)
-*                  wr : Window value(0x7f~0x40)
-*                  prv: Prescaler value
-*                       WWDG_Prescaler_1
-*                       WWDG_Prescaler_2
-*                       WWDG_Prescaler_4
-*                       WWDG_Prescaler_8
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      WWDG_Config
+ *
+ * @brief   Configure WWDG.
+ *
+ * @param   tr - The value of the decrement counter(0x7f~0x40)
+ *          wr - Window value(0x7f~0x40)
+ *          prv - Prescaler value
+ *            WWDG_Prescaler_1
+ *            WWDG_Prescaler_2
+ *            WWDG_Prescaler_4
+ *            WWDG_Prescaler_8
+ *
+ * @return  none
+ */
 void WWDG_Config(uint8_t tr, uint8_t wr, uint32_t prv)
 {
 	RCC_APB1PeriphClockCmd(RCC_APB1Periph_WWDG, ENABLE);
@@ -63,23 +66,25 @@ void WWDG_Config(uint8_t tr, uint8_t wr, uint32_t prv)
 	WWDG_EnableIT();
 }
 
-/*******************************************************************************
-* Function Name  : WWDG_Feed
-* Description    : Feed WWDG.
-* Input          : None
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      WWDG_Feed
+ *
+ * @brief   Feed WWDG.
+ *
+ * @return  none
+ */
 void WWDG_Feed(void)
 {
 	WWDG_SetCounter( WWDG_CNT );
 }
 
-/*******************************************************************************
-* Function Name  : main
-* Description    : Main program.
-* Input          : None
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      main
+ *
+ * @brief   Main program.
+ *
+ * @return  none
+ */
 int main(void)
 {
 	u8 wwdg_tr,wwdg_wr;

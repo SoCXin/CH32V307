@@ -21,34 +21,37 @@
 #define RX_MODE   1
 
 /* CAN Communication Mode Selection */
-#define CAN_MODE   TX_MODE
-//#define CAN_MODE   RX_MODE
+//#define CAN_MODE   TX_MODE
+#define CAN_MODE   RX_MODE
 
 /* Global Variable */
 u8 txbuf[8];
 u8 tx;
 
-/*******************************************************************************
-* Function Name  : CAN_Mode_Init
-* Description    : Initializes CAN communication test mode.
-* Input          : tsjw£»CAN synchronisation jump width.
-*									 tbs2£ºCAN time quantum in bit segment 1.
-*						  		 tbs1£ºCAN time quantum in bit segment 2.
-*									 brp£ºSpecifies the length of a time quantum.
-*				  				 mode£ºTest mode.
-*                    CAN_Mode_Normal.
-*										 CAN_Mode_LoopBack.					
-*										 CAN_Mode_Silent.		
-*										 CAN_Mode_Silent_LoopBack.	
-* Return         : None
-*     			       Bps	=Fpclk1/((tpb1+1+tbs2+1+1)*brp)
-*******************************************************************************/
+/*********************************************************************
+ * @fn      CAN_Mode_Init
+ *
+ * @brief   Initializes CAN communication test mode.
+ *          Bps =Fpclk1/((tpb1+1+tbs2+1+1)*brp)
+ *
+ * @param   tsjw - CAN synchronisation jump width.
+ *          tbs2 - CAN time quantum in bit segment 1.
+ *          tbs1 - CAN time quantum in bit segment 2.
+ *          brp - Specifies the length of a time quantum.
+ *          mode - Test mode.
+ *            CAN_Mode_Normal.
+ *            CAN_Mode_LoopBack.
+ *            CAN_Mode_Silent.
+ *            CAN_Mode_Silent_LoopBack.
+ *
+ * @return  none
+ */
 void CAN_Mode_Init( u8 tsjw, u8 tbs2, u8 tbs1, u16 brp, u8 mode )
 {
-	GPIO_InitTypeDef GPIO_InitSturcture;
-	CAN_InitTypeDef CAN_InitSturcture;
-	CAN_FilterInitTypeDef CAN_FilterInitSturcture;
-	NVIC_InitTypeDef NVIC_InitStructure;
+	GPIO_InitTypeDef GPIO_InitSturcture={0};
+	CAN_InitTypeDef CAN_InitSturcture={0};
+	CAN_FilterInitTypeDef CAN_FilterInitSturcture={0};
+	NVIC_InitTypeDef NVIC_InitStructure={0};
 	
 	RCC_APB2PeriphClockCmd( RCC_APB2Periph_AFIO | RCC_APB2Periph_GPIOB, ENABLE ); 
 	RCC_APB1PeriphClockCmd( RCC_APB1Periph_CAN1, ENABLE );	
@@ -116,14 +119,17 @@ void CAN_Mode_Init( u8 tsjw, u8 tbs2, u8 tbs1, u16 brp, u8 mode )
 }
 
 #if (CAN_MODE == TX_MODE)	
-/*******************************************************************************
-* Function Name  : CAN_Send_Msg
-* Description    : CAN Transmit function.
-* Input          : msg£ºTransmit data buffer.
-*									 len£ºData length.
-* Return         : 0£ºSend successful.
-*									 1£ºSend failed.
-*******************************************************************************/
+/*********************************************************************
+ * @fn      CAN_Send_Msg
+ *
+ * @brief   CAN Transmit function.
+ *
+ * @param   msg - Transmit data buffer.
+ *          len - Data length.
+ *
+ * @return  0 - Send successful.
+ *          1 - Send failed.
+ */
 u8 CAN_Send_Msg( u8 *msg, u8 len )
 {
 	u8 mbox;
@@ -159,19 +165,21 @@ u8 CAN_Send_Msg( u8 *msg, u8 len )
 	}
 }
 
-/*******************************************************************************
-* Function Name  : USB_HP_CAN1_TX_IRQHandler
-* Description    : This function handles CAN transmit mailboxe Handler.
-* Input          : None
-* Output         : None
-* Return         : None
-*******************************************************************************/
+void USB_HP_CAN1_TX_IRQHandler(void) __attribute__((interrupt("WCH-Interrupt-fast")));
+/*********************************************************************
+ * @fn      USB_HP_CAN1_TX_IRQHandler
+ *
+ * @brief   This function handles CAN transmit mailboxe Handler.
+ *
+ * @return  none
+ */
 void USB_HP_CAN1_TX_IRQHandler(void)
 {	
   u8 i;
 	
 	if( CAN_GetITStatus( CAN1, CAN_IT_TME ) != RESET )
 	{
+#if 0
 		printf( "Send Success\r\n" );
 		printf( "Send Data:\r\n" );
 		
@@ -180,20 +188,25 @@ void USB_HP_CAN1_TX_IRQHandler(void)
 			printf( "%02x\r\n", txbuf[i] );				
 		}
 		
-		printf( "TDTR:%08x\r\n", CAN1->sTxMailBox[0].TXMDTR );		
+		printf( "TDTR:%08x\r\n", CAN1->sTxMailBox[0].TXMDTR );
+
+#endif
 	}
 	
 	CAN_ClearITPendingBit( CAN1, CAN_IT_TME );	
 }
 
 #elif (CAN_MODE == RX_MODE)
-/*******************************************************************************
-* Function Name  : CAN_Receive_Msg
-* Description    : CAN Receive function.
-* Input          : buf£ºReceive data buffer.
-* Output         : None
-* Return         : CanRxStructure.DLC£ºReceive data length.
-*******************************************************************************/
+/*********************************************************************
+ * @fn      CAN_Receive_Msg
+ *
+ * @brief   CAN Receive function.
+ *
+ * @param   buf - Receive data buffer.
+ *          len - Data length.
+ *
+ * @return  CanRxStructure.DLC - Receive data length.
+ */
 u8 CAN_Receive_Msg( u8 *buf )
 {
 	u8 i;
@@ -216,13 +229,16 @@ u8 CAN_Receive_Msg( u8 *buf )
 	
 }
 
-/*******************************************************************************
-* Function Name  : USB_LP_CAN1_RX0_IRQHandler
-* Description    : This function handles CAN receive FIFO0 Handler.
-* Input          : None
-* Output         : None
-* Return         : None
-*******************************************************************************/
+
+void USB_LP_CAN1_RX0_IRQHandler(void) __attribute__((interrupt("WCH-Interrupt-fast")));
+
+/*********************************************************************
+ * @fn      USB_LP_CAN1_RX0_IRQHandler
+ *
+ * @brief   This function handles CAN receive FIFO0 Handler.
+ *
+ * @return  none
+ */
 void USB_LP_CAN1_RX0_IRQHandler(void)
 {
 	u8 rx,i;
@@ -231,7 +247,8 @@ void USB_LP_CAN1_RX0_IRQHandler(void)
 	if( CAN_GetITStatus( CAN1, CAN_IT_FMP0 ) != RESET )
 	{
 		rx = CAN_Receive_Msg( rxbuf );	
-		
+
+#if 0
 		if( rx )	
 		{
 			printf( "Receive Data:\r\n" );
@@ -242,7 +259,9 @@ void USB_LP_CAN1_RX0_IRQHandler(void)
 			}
 		}
 		
-		printf( "RDTR:%08x\r\n", CAN1->sFIFOMailBox[0].RXMDTR );		
+		printf( "RDTR:%08x\r\n", CAN1->sFIFOMailBox[0].RXMDTR );
+
+#endif
 	}
 	
 	CAN_ClearITPendingBit( CAN1, CAN_IT_FMP0 );	
@@ -250,12 +269,13 @@ void USB_LP_CAN1_RX0_IRQHandler(void)
 
 #endif	
 
-/*******************************************************************************
-* Function Name  : main
-* Description    : Main program.
-* Input          : None
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      main
+ *
+ * @brief   Main program.
+ *
+ * @return  none
+ */
 int main(void)
 {
 	u8 i=0;

@@ -44,14 +44,17 @@ u8 Rxfinish1=0,Rxfinish2=0;
 TestStatus TransferStatus1 = FAILED;
 TestStatus TransferStatus2 = FAILED;
 
-/*******************************************************************************
-* Function Name  : Buffercmp
-* Description    : Compares two buffers
-* Input          : Buf1,Buf2:buffers to be compared
-*                  BufferLength: buffer's length
-* Return         : PASSED: Buf1 identical to Buf2
-*                  FAILED: Buf1 differs from Buf2
-*******************************************************************************/
+/*********************************************************************
+ * @fn      Buffercmp
+ *
+ * @brief   Compares two buffers
+ *
+ * @param   Buf1,Buf2 - buffers to be compared
+ *          BufferLength - buffer's length
+ *
+ * @return  PASSED - Buf1 identical to Buf
+ *          FAILED - Buf1 differs from Buf2
+ */
 TestStatus Buffercmp(uint8_t* Buf1, uint8_t* Buf2, uint16_t BufLength)
 {
   while(BufLength--)
@@ -66,16 +69,17 @@ TestStatus Buffercmp(uint8_t* Buf1, uint8_t* Buf2, uint16_t BufLength)
   return PASSED;
 }
 
-/*******************************************************************************
-* Function Name  : USARTx_CFG
-* Description    : Initializes the USART2 & USART3 peripheral.
-* Input          : None
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      USARTx_CFG
+ *
+ * @brief   Initializes the USART2 & USART3 peripheral.
+ *
+ * @return  none
+ */
 void USARTx_CFG(void)
 {
-  GPIO_InitTypeDef  GPIO_InitStructure;
-	USART_InitTypeDef USART_InitStructure;
+  GPIO_InitTypeDef  GPIO_InitStructure={0};
+	USART_InitTypeDef USART_InitStructure={0};
 
 	RCC_APB1PeriphClockCmd(RCC_APB1Periph_USART2|RCC_APB1Periph_USART3, ENABLE);
 	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA |RCC_APB2Periph_GPIOB , ENABLE);
@@ -116,15 +120,16 @@ void USARTx_CFG(void)
 	USART_Cmd(USART3, ENABLE);
 }
 
-/*******************************************************************************
-* Function Name  : DMA_INIT
-* Description    : Configures the DMA for USART2 & USART3.
-* Input          : None
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      DMA_INIT
+ *
+ * @brief   Configures the DMA for USART2 & USART3.
+ *
+ * @return  none
+ */
 void DMA_INIT(void)
 {
-	DMA_InitTypeDef DMA_InitStructure;
+	DMA_InitTypeDef DMA_InitStructure={0};
   RCC_AHBPeriphClockCmd(RCC_AHBPeriph_DMA1, ENABLE);
 
   DMA_DeInit(DMA1_Channel7);
@@ -163,55 +168,56 @@ void DMA_INIT(void)
   DMA_Init(DMA1_Channel3, &DMA_InitStructure);
 }
 
-/*******************************************************************************
-* Function Name  : main
-* Description    : Main program.
-* Input          : None
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      main
+ *
+ * @brief   Main program.
+ *
+ * @return  none
+ */
 int main(void)
 {
-	NVIC_PriorityGroupConfig(NVIC_PriorityGroup_2);
-  Delay_Init();
-	USART_Printf_Init(115200);
-	printf("SystemClk:%d\r\n",SystemCoreClock);
+    NVIC_PriorityGroupConfig(NVIC_PriorityGroup_2);
+    Delay_Init();
+    USART_Printf_Init(115200);
+    printf("SystemClk:%d\r\n",SystemCoreClock);
 
-	printf("USART DMA TEST\r\n");
-  DMA_INIT();
-	USARTx_CFG();                                                 /* USART2 & USART3 INIT */
-  USART_DMACmd(USART2,USART_DMAReq_Tx|USART_DMAReq_Rx,ENABLE);
-  USART_DMACmd(USART3,USART_DMAReq_Rx|USART_DMAReq_Tx,ENABLE);
-	while (DMA_GetFlagStatus(DMA1_FLAG_TC7) == RESET)             /* Wait until USART2 TX DMA1 Transfer Complete */
-  {
-  }
-  while (DMA_GetFlagStatus(DMA1_FLAG_TC6) == RESET)             /* Wait until USART2 RX DMA1 Transfer Complete */
-  {
-  }
-  while (DMA_GetFlagStatus(DMA1_FLAG_TC2) == RESET)             /* Wait until USART3 TX DMA1 Transfer Complete */
-  {
-  }
-  while (DMA_GetFlagStatus(DMA1_FLAG_TC3) == RESET)             /* Wait until USART3 RX DMA1 Transfer Complete */
-  {
-  }
-	TransferStatus1=Buffercmp(TxBuffer1,RxBuffer2,TxSize1);
-	TransferStatus2=Buffercmp(TxBuffer2,RxBuffer1,TxSize2);
+    printf("USART DMA TEST\r\n");
+    DMA_INIT();
+    USARTx_CFG();                                                 /* USART2 & USART3 INIT */
+    USART_DMACmd(USART2,USART_DMAReq_Tx|USART_DMAReq_Rx,ENABLE);
+    USART_DMACmd(USART3,USART_DMAReq_Rx|USART_DMAReq_Tx,ENABLE);
+    while (DMA_GetFlagStatus(DMA1_FLAG_TC7) == RESET)             /* Wait until USART2 TX DMA1 Transfer Complete */
+    {
+    }
+    while (DMA_GetFlagStatus(DMA1_FLAG_TC6) == RESET)             /* Wait until USART2 RX DMA1 Transfer Complete */
+    {
+    }
+    while (DMA_GetFlagStatus(DMA1_FLAG_TC2) == RESET)             /* Wait until USART3 TX DMA1 Transfer Complete */
+    {
+    }
+    while (DMA_GetFlagStatus(DMA1_FLAG_TC3) == RESET)             /* Wait until USART3 RX DMA1 Transfer Complete */
+    {
+    }
+    TransferStatus1=Buffercmp(TxBuffer1,RxBuffer2,TxSize1);
+    TransferStatus2=Buffercmp(TxBuffer2,RxBuffer1,TxSize2);
 
-	if(TransferStatus1 && TransferStatus2)
-	{
-	  printf("Send Success!\r\n");
-	}
-	else
-  {
-	  printf("Send Fail!\r\n");
-	}
+    if(TransferStatus1 && TransferStatus2)
+    {
+      printf("Send Success!\r\n");
+    }
+    else
+    {
+      printf("Send Fail!\r\n");
+    }
 
-	printf("TxBuffer1:%s\r\n",TxBuffer1);
-	printf("RxBuffer1:%s\r\n",RxBuffer1);
-  printf("TxBuffer2:%s\r\n",TxBuffer2);
-	printf("RxBuffer2:%s\r\n",RxBuffer2);
+    printf("TxBuffer1:%s\r\n",TxBuffer1);
+    printf("RxBuffer1:%s\r\n",RxBuffer1);
+    printf("TxBuffer2:%s\r\n",TxBuffer2);
+    printf("RxBuffer2:%s\r\n",RxBuffer2);
 
-	while(1)
-  {
-	}
+    while(1)
+    {
+    }
 }
 

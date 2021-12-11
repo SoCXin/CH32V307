@@ -10,7 +10,7 @@
  *@Note
    双DAC输出正弦波例程：
  DAC分别从PA4和PA5输出
-  输出两路完全相同的正弦波
+  输出完全相同的正弦波
 */
 
 #include "debug.h"
@@ -27,16 +27,17 @@ uint32_t DAC_Value[Num]={2048,2248,2447,2642,2831,3013,3185,3347,3496,3631,3750,
 uint32_t Dual_DAC_Value[Num];
 
 
-/*******************************************************************************
-* Function Name  : Dac_Init
-* Description    : Initializes DAC collection.
-* Input          : None
-* Return         : None
-*******************************************************************************/ 
+/*********************************************************************
+ * @fn      Dac_Init
+ *
+ * @brief   Initializes DAC collection.
+ *
+ * @return  none
+ */
 void Dual_Dac_Init(void)
 {
-	GPIO_InitTypeDef GPIO_InitStructure;
-	DAC_InitTypeDef DAC_InitType;
+	GPIO_InitTypeDef GPIO_InitStructure={0};
+	DAC_InitTypeDef DAC_InitType={0};
 	
 	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA, ENABLE );
 	RCC_APB1PeriphClockCmd(RCC_APB1Periph_DAC, ENABLE );
@@ -63,15 +64,16 @@ void Dual_Dac_Init(void)
     DAC_SetDualChannelData(DAC_Align_12b_R, 0x123,0x321);
 }
 
-/*******************************************************************************
-* Function Name  : Dac_DMA_Init
-* Description    : Initializes DAC DMA.
-* Input          : None
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      DAC1_DMA_INIT
+ *
+ * @brief   Initializes DMA of DAC1 collection.
+ *
+ * @return  none
+ */
 void Dac_Dma_Init(void)
 {
-    DMA_InitTypeDef DMA_InitStructure;
+    DMA_InitTypeDef DMA_InitStructure={0};
     RCC_AHBPeriphClockCmd(RCC_AHBPeriph_DMA2, ENABLE);
 
     DMA_StructInit( &DMA_InitStructure);
@@ -91,15 +93,16 @@ void Dac_Dma_Init(void)
     DMA_Cmd(DMA2_Channel3, ENABLE);
 }
 
-/*******************************************************************************
-* Function Name  : Timer4_Init
-* Description    : Initializes TIM4.
-* Input          : None
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      Timer4_Init
+ *
+ * @brief   Initializes TIM4
+ *
+ * @return  none
+ */
 void Timer4_Init(void)
 {
-    TIM_TimeBaseInitTypeDef  TIM_TimeBaseStructure;
+    TIM_TimeBaseInitTypeDef  TIM_TimeBaseStructure={0};
     RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM4, ENABLE);
 
     TIM_TimeBaseStructInit(&TIM_TimeBaseStructure);
@@ -113,12 +116,13 @@ void Timer4_Init(void)
     TIM_Cmd(TIM4, ENABLE);
 }
 
-/*******************************************************************************
-* Function Name  : main
-* Description    : Main program.
-* Input          : None
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      main
+ *
+ * @brief   Main program.
+ *
+ * @return  none
+ */
 int main(void)
 {
     uint8_t i=0;

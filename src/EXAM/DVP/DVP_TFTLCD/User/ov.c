@@ -7,7 +7,7 @@
 *******************************************************************************/
 #include "ov.h"
 
-//Start Camera list of initialization configuration registers
+/* Start Camera list of initialization configuration registers */
 const UINT8 OV2640_InitRegTbl[][2]=
 {
 	0xff, 0x00, 0x2c, 0xff,	0x2e, 0xdf,	0xff, 0x01,	0x3c, 0x32,
@@ -65,31 +65,32 @@ const UINT8 OV2640_InitRegTbl[][2]=
 	0xe5, 0x1f,	0xe1, 0x67,	0xe0, 0x00,	0xdd, 0x7f,	0x05, 0x00,
 };
 
-//YUV422
+/* YUV422 */
 const UINT8 OV2640_YUV422RegTbl[][2]=
 {
 	0xFF, 0x00,	0xDA, 0x10,	0xD7, 0x03,	0xDF, 0x00,	0x33, 0x80,	0x3C, 0x40,	0xe1, 0x77,	0x00, 0x00,
 };
 
-//JPEG
+/* JPEG */
 const UINT8 OV2640_JPEGRegTbl[][2]=
 {
 	0xff, 0x01,	0xe0, 0x14,	0xe1, 0x77,	0xe5, 0x1f,	0xd7, 0x03,	0xda, 0x10,	0xe0, 0x00,
 };
 
-//RGB565
+/* RGB565 */
 const UINT8 OV2640_RGB565RegTbl[][2]=
 {
 	0xFF, 0x00,	0xDA, 0x09,	0xD7, 0x03,	0xDF, 0x02,	0x33, 0xa0,	0x3C, 0x00,	0xe1, 0x67,
 	0xff, 0x01,	0xe0, 0x00,	0xe1, 0x00,	0xe5, 0x00,	0xd7, 0x00,	0xda, 0x00,	0xe0, 0x00,
 };
 
-/*******************************************************************************
-* Function Name  : SCCB_GPIO_Init
-* Description    : Init SCCB GPIO.
-* Input          : None
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      SCCB_GPIO_Init
+ *
+ * @brief   Init SCCB GPIO.
+ *
+ * @return  none
+ */
 void SCCB_GPIO_Init(void)
 {
 	IIC_SCL_OUT;
@@ -98,12 +99,13 @@ void SCCB_GPIO_Init(void)
 	IIC_SDA_SET;
 }
 
-/*******************************************************************************
-* Function Name  : SCCB_Start
-* Description    : Start Signal
-* Input          : None
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      SCCB_Start
+ *
+ * @brief   Start Signal
+ *
+ * @return  none
+ */
 void SCCB_Start(void)
 {
 	IIC_SDA_SET;
@@ -114,12 +116,13 @@ void SCCB_Start(void)
 	IIC_SCL_CLR;
 }
 
-/*******************************************************************************
-* Function Name  : SCCB_Stop
-* Description    : Stop Signal
-* Input          : None
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      SCCB_Stop
+ *
+ * @brief   Stop Signal
+ *
+ * @return  none
+ */
 void SCCB_Stop(void)
 {
 	IIC_SDA_CLR;
@@ -130,12 +133,13 @@ void SCCB_Stop(void)
 	Delay_Us(50);
 }
 
-/*******************************************************************************
-* Function Name  : SCCB_No_Ack
-* Description    : NAK Signal
-* Input          : None
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      SCCB_No_Ack
+ *
+ * @brief   NAK Signal
+ *
+ * @return  none
+ */
 void SCCB_No_Ack(void)
 {
 	Delay_Us(50);
@@ -148,13 +152,16 @@ void SCCB_No_Ack(void)
 	Delay_Us(50);
 }
 
-/*******************************************************************************
-* Function Name  : SCCB_WR_Byte
-* Description    : Write One Byte
-* Input          : data
-* Return         : 0: Success
-*                  other: Err
-*******************************************************************************/
+/*********************************************************************
+ * @fn      SCCB_WR_Byte
+ *
+ * @brief   Write One Byte
+ *
+ * @param   data
+ *
+ * @return  0 - Success
+ *          other - Err
+ */
 UINT8 SCCB_WR_Byte(UINT8 data)
 {
 	UINT8 i,t;
@@ -188,12 +195,13 @@ UINT8 SCCB_WR_Byte(UINT8 data)
 	return t;
 }
 
-/*******************************************************************************
-* Function Name  : SCCB_RD_Byte
-* Description    : Read One Byte
-* Input          : None
-* Return         : Read one byte data
-*******************************************************************************/
+/*********************************************************************
+ * @fn      SCCB_RD_Byte
+ *
+ * @brief   Read One Byte
+ *
+ * @return  Read one byte data
+ */
 UINT8 SCCB_RD_Byte(void)
 {
 	UINT8 t=0,i;
@@ -216,14 +224,17 @@ UINT8 SCCB_RD_Byte(void)
 	return t;
 }
 
-/*******************************************************************************
-* Function Name  : SCCB_WR_Reg
-* Description    : Write camera Register
-* Input          : Reg_Adr: Register address
-*                  Reg_Val: Register value
-* Return         : 0: Success
-*                  other: Err
-*******************************************************************************/
+/*********************************************************************
+ * @fn      SCCB_WR_Reg
+ *
+ * @brief   Write camera Register
+ *
+ * @param   Reg_Adr - Register address
+ *          Reg_Val - Register value
+ *
+ * @return  0 - Success
+ *          other - Err
+ */
 UINT8 SCCB_WR_Reg(UINT8 Reg_Adr,UINT8 Reg_Val)
 {
 	UINT8 res=0;
@@ -239,12 +250,13 @@ UINT8 SCCB_WR_Reg(UINT8 Reg_Adr,UINT8 Reg_Val)
   	return	res;
 }
 
-/*******************************************************************************
-* Function Name  : SCCB_RD_Reg
-* Description    : Read camera Register
-* Input          : None
-* Return         : Camera Register value
-*******************************************************************************/
+/*********************************************************************
+ * @fn      SCCB_RD_Reg
+ *
+ * @brief   Read camera Register
+ *
+ * @return  Camera Register value
+ */
 UINT8 SCCB_RD_Reg(UINT8 Reg_Adr)
 {
 	UINT8 val=0;
@@ -267,12 +279,13 @@ UINT8 SCCB_RD_Reg(UINT8 Reg_Adr)
   	return val;
 }
 
-/*******************************************************************************
-* Function Name  : DVP_GPIO_Init
-* Description    : Init DVP GPIO.
-* Input          : None
-* Return         : None
-* *****************************************************************************/
+/*********************************************************************
+ * @fn      DVP_GPIO_Init
+ *
+ * @brief   Init DVP GPIO.
+ *
+ * @return  none
+ */
 void DVP_GPIO_Init(void)
 {
     GPIO_InitTypeDef  GPIO_InitStructure;
@@ -303,14 +316,14 @@ void DVP_GPIO_Init(void)
 
 }
 
-
-/*******************************************************************************
-* Function Name  : OV2640_Init
-* Description    : Init OV2640
-* Input          : None
-* Return         : 0: Success
-*                  1: Err
-*******************************************************************************/
+/*********************************************************************
+ * @fn      OV2640_Init
+ *
+ * @brief   Init OV2640
+ *
+ * @return  0 - Success
+ *          1 - Err
+ */
 UINT8 OV2640_Init(void)
 {
 	UINT16 i=0;
@@ -361,12 +374,13 @@ UINT8 OV2640_Init(void)
   	return 0;
 }
 
-/*******************************************************************************
-* Function Name  : RGB565_Mode_Init
-* Description    : Init RGB565 mode
-* Input          : None
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      RGB565_Mode_Init
+ *
+ * @brief   Init RGB565 mode
+ *
+ * @return  none
+ */
 void RGB565_Mode_Init(void)
 {
 	OV2640_RGB565_Mode();
@@ -374,12 +388,13 @@ void RGB565_Mode_Init(void)
 	OV2640_Speed_Set(28,1);
 }
 
-/*******************************************************************************
-* Function Name  : JPEG_Mode_Init
-* Description    : Init JPEG mode
-* Input          : None
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      JPEG_Mode_Init
+ *
+ * @brief   Init JPEG mode
+ *
+ * @return  none
+ */
 void JPEG_Mode_Init(void)
 {
 	OV2640_JPEG_Mode();
@@ -387,12 +402,13 @@ void JPEG_Mode_Init(void)
   	OV2640_Speed_Set(30,1);
 }
 
-/*******************************************************************************
-* Function Name  : OV2640_JPEG_Mode
-* Description    : JPEG Mode
-* Input          : None
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      OV2640_JPEG_Mode
+ *
+ * @brief   JPEG Mode
+ *
+ * @return  none
+ */
 void OV2640_JPEG_Mode(void)
 {
 	UINT16 i=0;
@@ -409,12 +425,13 @@ void OV2640_JPEG_Mode(void)
 	}
 }
 
-/*******************************************************************************
-* Function Name  : OV2640_RGB565_Mode
-* Description    : RGB565 Mode
-* Input          : None
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      OV2640_RGB565_Mode
+ *
+ * @brief   RGB565 Mode
+ *
+ * @return  none
+ */
 void OV2640_RGB565_Mode(void)
 {
 	UINT16 i=0;
@@ -426,14 +443,16 @@ void OV2640_RGB565_Mode(void)
 	}
 }
 
-/*******************************************************************************
-* Function Name  : OV2640_OutSize_Set
-* Description    : Set Image Resolution
-* Input          : Image_width:
-*                  Image_height:
-* Return         : 0£ºSuccess
-*                  other£ºErr
-*******************************************************************************/
+/*********************************************************************
+ * @fn      OV2640_OutSize_Set
+ *
+ * @brief   Set Image Resolution
+ *
+ * @param   Image_width -
+ *          Image_height -
+ *
+ * @return  none
+ */
 UINT8 OV2640_OutSize_Set(UINT16 Image_width,UINT16 Image_height)
 {
 	UINT16 Out_Size_Width;
@@ -457,14 +476,17 @@ UINT8 OV2640_OutSize_Set(UINT16 Image_width,UINT16 Image_height)
 	return 0;
 }
 
-/*******************************************************************************
-* Function Name  : OV2640_Speed_Set
-* Description    : Set DVP PCLK
-* Input          : Pclk_Div: DVP output speed ctrl
-*                  Xclk_Div: Crystal oscillator input frequency division
-* Return         : 0£ºSuccess
-*                  other: Err
-*******************************************************************************/
+/*********************************************************************
+ * @fn      OV2640_Speed_Set
+ *
+ * @brief   Set DVP PCLK
+ *
+ * @param   Pclk_Div - DVP output speed ctrl
+ *          Xclk_Div - Crystal oscillator input frequency division
+ *
+ * @return  0 - Success
+ *          other - Err
+ */
 void OV2640_Speed_Set(UINT8 Pclk_Div, UINT8 Xclk_Div)
 {
 	SCCB_WR_Reg(0XFF,0X00);

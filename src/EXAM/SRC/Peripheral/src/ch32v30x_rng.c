@@ -8,12 +8,15 @@
 #include "ch32v30x_rng.h"
 #include "ch32v30x_rcc.h"
 
-/*******************************************************************************
-* Function Name  : RNG_Cmd
-* Description    : Enables or disables the RNG peripheral.
-* Input          : NewState: ENABLE or DISABLE.
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      RNG_Cmd
+ *
+ * @brief   Enables or disables the RNG peripheral.
+ *
+ * @param   NewState - ENABLE or DISABLE.
+ *
+ * @return  none
+ */
 void RNG_Cmd(FunctionalState NewState)
 {
   if (NewState != DISABLE)
@@ -26,23 +29,27 @@ void RNG_Cmd(FunctionalState NewState)
   }
 }
 
-/*******************************************************************************
-* Function Name  : RNG_GetRandomNumber
-* Description    : Returns a 32-bit random number.
-* Input          : None
-* Return         : 32-bit random number.
-*******************************************************************************/
+/*********************************************************************
+ * @fn      RNG_GetRandomNumber
+ *
+ * @brief   Returns a 32-bit random number.
+ *
+ * @return  32-bit random number.
+ */
 uint32_t RNG_GetRandomNumber(void)
 {
   return RNG->DR;
 }
 
-/*******************************************************************************
-* Function Name  : RNG_ITConfig
-* Description    : Enables or disables the RNG interrupt.
-* Input          : NewState: ENABLE or DISABLE.
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      RNG_ITConfig
+ *
+ * @brief   Enables or disables the RNG interrupt.
+ *
+ * @param   NewState - ENABLE or DISABLE.
+ *
+ * @return  32-bit random number.
+ */
 void RNG_ITConfig(FunctionalState NewState)
 {
   if (NewState != DISABLE)
@@ -55,15 +62,18 @@ void RNG_ITConfig(FunctionalState NewState)
   }
 }
 
-/*******************************************************************************
-* Function Name  : RNG_GetFlagStatus
-* Description    : Checks whether the specified RNG flag is set or not.
-* Input          : RNG_FLAG: specifies the RNG flag to check.
-  *                  RNG_FLAG_DRDY: Data Ready flag.
-  *                  RNG_FLAG_CECS: Clock Error Current flag.
-  *                  RNG_FLAG_SECS: Seed Error Current flag.
-* Return         : bitstatus£ºSET or RESET.
-*******************************************************************************/
+/*********************************************************************
+ * @fn      RNG_GetFlagStatus
+ *
+ * @brief   Checks whether the specified RNG flag is set or not.
+ *
+ * @param   RNG_FLAG - specifies the RNG flag to check.
+ *            RNG_FLAG_DRDY - Data Ready flag.
+ *            RNG_FLAG_CECS - Clock Error Current flag.
+ *            RNG_FLAG_SECS - Seed Error Current flag.
+ *
+ * @return  32-bit random number.
+ */
 FlagStatus RNG_GetFlagStatus(uint8_t RNG_FLAG)
 {
   FlagStatus bitstatus = RESET;
@@ -80,27 +90,33 @@ FlagStatus RNG_GetFlagStatus(uint8_t RNG_FLAG)
   return  bitstatus;
 }
 
-/*******************************************************************************
-* Function Name  : RNG_ClearFlag
-* Description    : Clears the RNG flags.
-* Input          : RNG_FLAG: specifies the flag to clear.
-*                    RNG_FLAG_CECS: Clock Error Current flag.
-*                    RNG_FLAG_SECS: Seed Error Current flag.
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      RNG_ClearFlag
+ *
+ * @brief   Clears the RNG flags.
+ *
+ * @param   RNG_FLAG - specifies the flag to clear.
+ *            RNG_FLAG_CECS - Clock Error Current flag.
+ *            RNG_FLAG_SECS - Seed Error Current flag.
+ *
+ * @return  32-bit random number.
+ */
 void RNG_ClearFlag(uint8_t RNG_FLAG)
 {
   RNG->SR = ~(uint32_t)(((uint32_t)RNG_FLAG) << 4);
 }
 
-/*******************************************************************************
-* Function Name  : RNG_GetFlagStatus
-* Description    : Checks whether the specified RNG interrupt has occurred or not.
-* Input          : RNG_IT: specifies the RNG interrupt source to check.
-*                    RNG_IT_CEI: Clock Error Interrupt.
-*                    RNG_IT_SEI: Seed Error Interrupt.
-* Return         : bitstatus£ºSET or RESET.
-*******************************************************************************/
+/*********************************************************************
+ * @fn      RNG_GetFlagStatus
+ *
+ * @brief   Checks whether the specified RNG interrupt has occurred or not.
+ *
+ * @param   RNG_IT - specifies the RNG interrupt source to check.
+ *            RNG_IT_CEI - Clock Error Interrupt.
+ *            RNG_IT_SEI - Seed Error Interrupt.
+ *
+ * @return  bitstatus£ºSET or RESET.
+ */
 ITStatus RNG_GetITStatus(uint8_t RNG_IT)
 {
   ITStatus bitstatus = RESET;
@@ -117,14 +133,17 @@ ITStatus RNG_GetITStatus(uint8_t RNG_IT)
   return bitstatus;
 }
 
-/*******************************************************************************
-* Function Name  : RNG_ClearITPendingBit
-* Description    : Clears the RNG interrupt pending bit(s).
-* Input          : RNG_IT: specifies the RNG interrupt pending bit(s) to clear.
-*                    RNG_IT_CEI: Clock Error Interrupt.
-*                    RNG_IT_SEI: Seed Error Interrupt.
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      RNG_ClearITPendingBit
+ *
+ * @brief   Clears the RNG interrupt pending bit(s).
+ *
+ * @param   RNG_IT - specifies the RNG interrupt pending bit(s) to clear.
+ *            RNG_IT_CEI - Clock Error Interrupt.
+ *            RNG_IT_SEI - Seed Error Interrupt.
+ *
+ * @return  None
+ */
 void RNG_ClearITPendingBit(uint8_t RNG_IT)
 {
   RNG->SR = (uint8_t)~RNG_IT;

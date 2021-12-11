@@ -45,15 +45,17 @@ u8 RTC_Get(void);
 u8 RTC_Get_Week(u16 year,u8 month,u8 day);
 u8 RTC_Set(u16 syear,u8 smon,u8 sday,u8 hour,u8 min,u8 sec);
 
-/*******************************************************************************
-* Function Name  : RTC_NVIC_Config
-* Description    : Initializes RTC Int.
-* Input          : None
-* Return         : None
-*******************************************************************************/
+
+/*********************************************************************
+ * @fn      RTC_NVIC_Config
+ *
+ * @brief   Initializes RTC Int.
+ *
+ * @return  none
+ */
 static void RTC_NVIC_Config(void)
 {
-  NVIC_InitTypeDef NVIC_InitStructure;
+  NVIC_InitTypeDef NVIC_InitStructure={0};
 	NVIC_InitStructure.NVIC_IRQChannel = RTC_IRQn;
 	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0;
 	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;
@@ -61,13 +63,14 @@ static void RTC_NVIC_Config(void)
 	NVIC_Init(&NVIC_InitStructure);
 }
 
-/*******************************************************************************
-* Function Name  : RTC_Init
-* Description    : Initializes RTC collection.
-* Input          : None
-* Return         : 1:Init Fail
-*                  0:Init Success
-*******************************************************************************/
+/*********************************************************************
+ * @fn      RTC_Init
+ *
+ * @brief   Initializes RTC collection.
+ *
+ * @return  1 - Init Fail
+ *          0 - Init Success
+ */
 u8 RTC_Init(void)
 {
 	u8 temp=0;
@@ -114,13 +117,16 @@ u8 RTC_Init(void)
 	return 0;
 }
 
-/*******************************************************************************
-* Function Name  : Is_Leap_Year
-* Description    : Judging whether it is a leap year.
-* Input          : year
-* Return         : 1:Yes
-*                  0:No
-*******************************************************************************/
+/*********************************************************************
+ * @fn      Is_Leap_Year
+ *
+ * @brief   Judging whether it is a leap year.
+ *
+ * @param   year
+ *
+ * @return  1 - Yes
+ *          0 - No
+ */
 u8 Is_Leap_Year(u16 year)
 {
 	if(year%4==0)
@@ -133,13 +139,16 @@ u8 Is_Leap_Year(u16 year)
 	}else return 0;
 }
 
-/*******************************************************************************
-* Function Name  : RTC_Set
-* Description    : Set Time.
-* Input          : Struct of _calendar_obj
-* Return         : 1:error
-*                  0:success
-*******************************************************************************/
+/*********************************************************************
+ * @fn      RTC_Set
+ *
+ * @brief   Set Time.
+ *
+ * @param   Struct of _calendar_obj
+ *
+ * @return  1 - error
+ *          0 - success
+ */
 u8 RTC_Set(u16 syear,u8 smon,u8 sday,u8 hour,u8 min,u8 sec)
 {
 	u16 t;
@@ -168,13 +177,16 @@ u8 RTC_Set(u16 syear,u8 smon,u8 sday,u8 hour,u8 min,u8 sec)
 	return 0;
 }
 
-/*******************************************************************************
-* Function Name  : RTC_Alarm_Set
-* Description    : Set Alarm Time.
-* Input          : Struct of _calendar_obj
-* Return         : 1:error
-*                  0:success
-*******************************************************************************/
+/*********************************************************************
+ * @fn      RTC_Alarm_Set
+ *
+ * @brief   Set Alarm Time.
+ *
+ * @param   Struct of _calendar_obj
+ *
+ * @return  1 - error
+ *          0 - success
+ */
 u8 RTC_Alarm_Set(u16 syear,u8 smon,u8 sday,u8 hour,u8 min,u8 sec)
 {
 	u16 t;
@@ -204,13 +216,14 @@ u8 RTC_Alarm_Set(u16 syear,u8 smon,u8 sday,u8 hour,u8 min,u8 sec)
 	return 0;
 }
 
-/*******************************************************************************
-* Function Name  : RTC_Get
-* Description    : Get current time.
-* Input          : None
-* Return         : 1:error
-*                  0:success
-*******************************************************************************/
+/*********************************************************************
+ * @fn      RTC_Get
+ *
+ * @brief   Get current time.
+ *
+ * @return  1 - error
+ *          0 - success
+ */
 u8 RTC_Get(void)
 {
 	static u16 daycnt=0;
@@ -260,13 +273,15 @@ u8 RTC_Get(void)
 	return 0;
 }
 
-
-/*******************************************************************************
-* Function Name  : RTC_Get_Week
-* Description    : Get the current day of the week.
-* Input          : year/month/day
-* Return         : week
-*******************************************************************************/
+/*********************************************************************
+ * @fn      RTC_Get_Week
+ *
+ * @brief   Get the current day of the week.
+ *
+ * @param   year/month/day
+ *
+ * @return  week
+ */
 u8 RTC_Get_Week(u16 year,u8 month,u8 day)
 {
 	u16 temp2;
@@ -281,12 +296,13 @@ u8 RTC_Get_Week(u16 year,u8 month,u8 day)
 	return(temp2%7);
 }
 
-/*******************************************************************************
-* Function Name  : main
-* Description    : Main program.
-* Input          : None
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      main
+ *
+ * @brief   Main program.
+ *
+ * @return  none
+ */
 int main(void)
 {
 	NVIC_PriorityGroupConfig(NVIC_PriorityGroup_2);

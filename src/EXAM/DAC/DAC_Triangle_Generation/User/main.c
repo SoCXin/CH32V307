@@ -23,16 +23,17 @@
 u16 DAC_Value[Num]={64,128,256,512,1024,2048,4095};   
 
 
-/*******************************************************************************
-* Function Name  : Dac_Init
-* Description    : Initializes DAC collection.
-* Input          : None
-* Return         : None
-*******************************************************************************/ 
+/*********************************************************************
+ * @fn      Dac_Init
+ *
+ * @brief   Initializes DAC collection.
+ *
+ * @return  none
+ */
 void Dac_Init(void)
 {
-	GPIO_InitTypeDef GPIO_InitStructure;
-	DAC_InitTypeDef DAC_InitType;
+	GPIO_InitTypeDef GPIO_InitStructure={0};
+	DAC_InitTypeDef DAC_InitType={0};
 	
 	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA, ENABLE );
 	RCC_APB1PeriphClockCmd(RCC_APB1Periph_DAC, ENABLE );
@@ -55,28 +56,27 @@ void Dac_Init(void)
 	DAC_SetChannel1Data(DAC_Align_12b_R, 0);
 }
 
-
-/*******************************************************************************
-* Function Name  : DAC1_Triangle_Gen_Test
-* Description    : Triangle wava generation test.
-* Input          : None
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      DAC1_Triangle_Gen_Test
+ *
+ * @brief   Triangle wava generation test.
+ *
+ * @return  none
+ */
 void DAC1_Triangle_Gen_Test(void)
 {
   DAC->SWTR |= 0x01;                   /* Set by software, Reset by hardware */
   __asm volatile("nop");
-  __asm volatile("nop");
-  __asm volatile("nop");
  // printf("DOR1=0x%04x\r\n",DAC->DOR1); 
 }
 
-/*******************************************************************************
-* Function Name  : main
-* Description    : Main program.
-* Input          : None
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      main
+ *
+ * @brief   Main program.
+ *
+ * @return  none
+ */
 int main(void)
 {
   Delay_Init();

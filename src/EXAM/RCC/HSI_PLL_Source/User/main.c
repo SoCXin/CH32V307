@@ -23,12 +23,13 @@
 #define PLL_Source   HSI
 //#define PLL_Source   HSI_1_2
 
-/*******************************************************************************
-* Function Name  : main
-* Description    : Main program.
-* Input          : None
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      main
+ *
+ * @brief   Main program.
+ *
+ * @return  none
+ */
 int main(void)
 {
     NVIC_PriorityGroupConfig(NVIC_PriorityGroup_4);

@@ -41,16 +41,17 @@ WRITE EERPOM£ºStart + 0xA0 + 8bit Data Address + Write Data + Stop.
 const u8 TEXT_Buffer[]={"CH32F10x I2C TEST"};
 
 
-/*******************************************************************************
-* Function Name  : IIC_Init
-* Description    : Initializes the IIC peripheral.
-* Input          : None
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      IIC_Init
+ *
+ * @brief   Initializes the IIC peripheral.
+ *
+ * @return  none
+ */
 void IIC_Init( u32 bound, u16 address )
 {
-	GPIO_InitTypeDef GPIO_InitStructure;
-	I2C_InitTypeDef I2C_InitTSturcture;
+	GPIO_InitTypeDef GPIO_InitStructure={0};
+	I2C_InitTypeDef I2C_InitTSturcture={0};
 
 	RCC_APB2PeriphClockCmd( RCC_APB2Periph_GPIOB, ENABLE );
 	RCC_APB1PeriphClockCmd( RCC_APB1Periph_I2C2, ENABLE );
@@ -78,23 +79,27 @@ void IIC_Init( u32 bound, u16 address )
 	I2C_AcknowledgeConfig( I2C2, ENABLE );
 }
 
-/*******************************************************************************
-* Function Name  : AT24CXX_Init
-* Description    : Initializes AT24xx EEPROM.
-* Input          : None
-* Return         : None
-********************************************************************************/
+/*********************************************************************
+ * @fn      AT24CXX_Init
+ *
+ * @brief   Initializes AT24xx EEPROM.
+ *
+ * @return  none
+ */
 void AT24CXX_Init(void)
 {
 	IIC_Init( 100000, 0xA0);
 }
 
-/*******************************************************************************
-* Function Name  : AT24CXX_ReadOneByte
-* Description    : Read one data from EEPROM.
-* Input          : ReadAddr: Read frist address.
-* Return         : temp: Read data.
-********************************************************************************/
+/*********************************************************************
+ * @fn      AT24CXX_ReadOneByte
+ *
+ * @brief   Read one data from EEPROM.
+ *
+ * @param   ReadAddr - Read frist address.
+ *
+ * @return  temp - Read data.
+ */
 u8 AT24CXX_ReadOneByte(u16 ReadAddr)
 {
 	u8 temp=0;
@@ -135,12 +140,15 @@ u8 AT24CXX_ReadOneByte(u16 ReadAddr)
 	return temp;
 }
 
-/*******************************************************************************
-* Function Name  : AT24CXX_WriteOneByte
-* Description    : Write one data to EEPROM.
-* Input          : WriteAddr: Write frist address.
-* Return         : DataToWrite: Write data.
-********************************************************************************/
+/*********************************************************************
+ * @fn      AT24CXX_WriteOneByte
+ *
+ * @brief   Write one data to EEPROM.
+ *
+ * @param   WriteAddr - Write frist address.
+ *
+ * @return  DataToWrite - Write data.
+ */
 void AT24CXX_WriteOneByte(u16 WriteAddr,u8 DataToWrite)
 {
 	while( I2C_GetFlagStatus( I2C2, I2C_FLAG_BUSY ) != RESET );
@@ -173,14 +181,17 @@ void AT24CXX_WriteOneByte(u16 WriteAddr,u8 DataToWrite)
 	I2C_GenerateSTOP( I2C2, ENABLE );
 }
 
-/*******************************************************************************
-* Function Name  : AT24CXX_Read
-* Description    : Read multiple data from EEPROM.
-* Input          : ReadAddr: Read frist address. (AT24c02: 0~255)
-*                  pBuffer: Read data.
-*                  NumToRead: Data number.
-* Return         : None
-********************************************************************************/
+/*********************************************************************
+ * @fn      AT24CXX_Read
+ *
+ * @brief   Read multiple data from EEPROM.
+ *
+ * @param   ReadAddr - Read frist address. (AT24c02: 0~255)
+ *          pBuffer - Read data.
+ *          NumToRead - Data number.
+ *
+ * @return  none
+ */
 void AT24CXX_Read(u16 ReadAddr,u8 *pBuffer,u16 NumToRead)
 {
 	while(NumToRead)
@@ -190,14 +201,17 @@ void AT24CXX_Read(u16 ReadAddr,u8 *pBuffer,u16 NumToRead)
 	}
 }
 
-/*******************************************************************************
-* Function Name  : AT24CXX_Write
-* Description    : Write multiple data to EEPROM.
-* Input          : WriteAddr: Write frist address. (AT24c02: 0~255)
-*                  pBuffer: Write data.
-*                  NumToWrite: Data number.
-* Return         : None
-********************************************************************************/
+/*********************************************************************
+ * @fn      AT24CXX_Write
+ *
+ * @brief   Write multiple data to EEPROM.
+ *
+ * @param   WriteAddr - Write frist address. (AT24c02: 0~255)
+ *          pBuffer - Write data.
+ *          NumToWrite - Data number.
+ *
+ * @return  none
+ */
 void AT24CXX_Write(u16 WriteAddr,u8 *pBuffer,u16 NumToWrite)
 {
 	while(NumToWrite--)
@@ -209,12 +223,13 @@ void AT24CXX_Write(u16 WriteAddr,u8 *pBuffer,u16 NumToWrite)
 	}
 }
 
-/*******************************************************************************
-* Function Name  : main
-* Description    : Main program.
-* Input          : None
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      main
+ *
+ * @brief   Main program.
+ *
+ * @return  none
+ */
 int main(void)
 {
 	u8 data[SIZE];

@@ -29,19 +29,22 @@
 //#define OutCompare_MODE OutCompare_Inactive
 #define OutCompare_MODE OutCompare_Toggle
 
-/*******************************************************************************
-* Function Name  : TIM1_OutCompare_Init
-* Description    : Initializes TIM1 output compare.
-* Input          : arr: the period value.
-*                  psc: the prescaler value.
-*									 ccp: the pulse value.
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      TIM1_OutCompare_Init
+ *
+ * @brief   Initializes TIM1 output compare.
+ *
+ * @param   arr - the period value.
+ *          psc - the prescaler value.
+ *          ccp - the pulse value.
+ *
+ * @return  none
+ */
 void TIM1_OutCompare_Init( u16 arr, u16 psc, u16 ccp )
 {
-	GPIO_InitTypeDef GPIO_InitStructure;
-	TIM_OCInitTypeDef TIM_OCInitStructure;
-	TIM_TimeBaseInitTypeDef TIM_TimeBaseInitStructure;
+	GPIO_InitTypeDef GPIO_InitStructure={0};
+	TIM_OCInitTypeDef TIM_OCInitStructure={0};
+	TIM_TimeBaseInitTypeDef TIM_TimeBaseInitStructure={0};
 
 	RCC_APB2PeriphClockCmd( RCC_APB2Periph_GPIOA | RCC_APB2Periph_TIM1, ENABLE );
 
@@ -81,12 +84,13 @@ void TIM1_OutCompare_Init( u16 arr, u16 psc, u16 ccp )
 	TIM_Cmd( TIM1, ENABLE );
 }
 
-/*******************************************************************************
-* Function Name  : main
-* Description    : Main program.
-* Input          : None
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      main
+ *
+ * @brief   Main program.
+ *
+ * @return  none
+ */
 int main(void)
 {
 	USART_Printf_Init(115200);

@@ -21,15 +21,16 @@
 /* Global Variable */
 
 
-/*******************************************************************************
-* Function Name  : GPIO_Toggle_INIT
-* Description    : Initializes GPIOA.0
-* Input          : None
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      GPIO_Toggle_INIT
+ *
+ * @brief   Initializes GPIOA.0
+ *
+ * @return  none
+ */
 void GPIO_Toggle_INIT(void)
 {
-  GPIO_InitTypeDef  GPIO_InitStructure;
+  GPIO_InitTypeDef  GPIO_InitStructure={0};
 
   RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA,ENABLE);
 	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_0;
@@ -38,12 +39,13 @@ void GPIO_Toggle_INIT(void)
   GPIO_Init(GPIOA, &GPIO_InitStructure);
 }
 
-/*******************************************************************************
-* Function Name  : main
-* Description    : Main program.
-* Input          : None
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      main
+ *
+ * @brief   Main program.
+ *
+ * @return  none
+ */
 int main(void)
 {
 	u8 i=0;

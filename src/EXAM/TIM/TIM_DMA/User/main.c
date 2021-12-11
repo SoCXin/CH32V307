@@ -22,19 +22,23 @@
 /* Private variables */
 u16 pbuf[3] = { 10, 50, 80 };
 
-/*******************************************************************************
-* Function Name  : TIM1_PWMOut_Init
-* Description    : Initializes TIM1 PWM output.
-* Input          : arr: the period value.
-*                  psc: the prescaler value.
-*									 ccp: the pulse value.
-* Return         : None
-*******************************************************************************/
+
+/*********************************************************************
+ * @fn      TIM1_PWMOut_Init
+ *
+ * @brief   Initializes TIM1 PWM output.
+ *
+ * @param   arr - the period value.
+ *          psc - the prescaler value.
+ *          ccp - the pulse value.
+ *
+ * @return  none
+ */
 void TIM1_PWMOut_Init( u16 arr, u16 psc, u16 ccp )
 {
-	GPIO_InitTypeDef GPIO_InitStructure;
-	TIM_OCInitTypeDef TIM_OCInitStructure;
-	TIM_TimeBaseInitTypeDef TIM_TimeBaseInitStructure;
+	GPIO_InitTypeDef GPIO_InitStructure={0};
+	TIM_OCInitTypeDef TIM_OCInitStructure={0};
+	TIM_TimeBaseInitTypeDef TIM_TimeBaseInitStructure={0};
 
 	RCC_APB2PeriphClockCmd( RCC_APB2Periph_GPIOA | RCC_APB2Periph_TIM1, ENABLE );
 
@@ -60,19 +64,22 @@ void TIM1_PWMOut_Init( u16 arr, u16 psc, u16 ccp )
 	TIM_ARRPreloadConfig( TIM1, ENABLE );
 }
 
-/*******************************************************************************
-* Function Name  : TIM1_DMA_Init
-* Description    : Initializes the TIM DMAy Channelx configuration.
-* Input          : DMA_CHx:
-*                    x can be 1 to 7.
-*                  ppadr; Peripheral base address.
-*                  memadr: Memory base address.
-*                  bufsize: DMA channel buffer size.
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      TIM1_DMA_Init
+ *
+ * @brief   Initializes the TIM DMAy Channelx configuration.
+ *
+ * @param   DMA_CHx -
+ *            x can be 1 to 7.
+ *          ppadr - Peripheral base address.
+ *          memadr - Memory base address.
+ *          bufsize - DMA channel buffer size.
+ *
+ * @return  none
+ */
 void TIM1_DMA_Init( DMA_Channel_TypeDef* DMA_CHx, u32 ppadr, u32 memadr, u16 bufsize)
 {
-	DMA_InitTypeDef DMA_InitStructure;
+	DMA_InitTypeDef DMA_InitStructure={0};
 
 	RCC_AHBPeriphClockCmd( RCC_AHBPeriph_DMA1, ENABLE );
 
@@ -80,7 +87,7 @@ void TIM1_DMA_Init( DMA_Channel_TypeDef* DMA_CHx, u32 ppadr, u32 memadr, u16 buf
 	DMA_InitStructure.DMA_PeripheralBaseAddr = ppadr;
 	DMA_InitStructure.DMA_MemoryBaseAddr = memadr;
 	DMA_InitStructure.DMA_DIR = DMA_DIR_PeripheralDST;
-  DMA_InitStructure.DMA_BufferSize = bufsize;
+    DMA_InitStructure.DMA_BufferSize = bufsize;
 	DMA_InitStructure.DMA_PeripheralInc = DMA_PeripheralInc_Disable;
 	DMA_InitStructure.DMA_MemoryInc = DMA_MemoryInc_Enable;
 	DMA_InitStructure.DMA_PeripheralDataSize = DMA_PeripheralDataSize_HalfWord;
@@ -93,12 +100,13 @@ void TIM1_DMA_Init( DMA_Channel_TypeDef* DMA_CHx, u32 ppadr, u32 memadr, u16 buf
 	DMA_Cmd( DMA_CHx, ENABLE );
 }
 
-/*******************************************************************************
-* Function Name  : main
-* Description    : Main program.
-* Input          : None
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      main
+ *
+ * @brief   Main program.
+ *
+ * @return  none
+ */
 int main(void)
 {
 	USART_Printf_Init(115200);

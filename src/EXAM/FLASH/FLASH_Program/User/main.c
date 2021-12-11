@@ -12,10 +12,11 @@
    包括标准擦除和编程、快速擦除和编程。
 
    注意：擦除成功部分读非0xFF：
-                  字读——0xe339e339
+              字读——0xe339e339
               半字读——0xe339
               字节读——0x39
-
+              偶地址字节读——0x39
+              奇地址字节读——0xe3
 */
 
 #include "debug.h"
@@ -43,13 +44,13 @@ volatile TestStatus MemoryProgramStatus = PASSED;
 volatile TestStatus MemoryEraseStatus = PASSED;
 
 
-
-/*******************************************************************************
-* Function Name  : Flash_Test
-* Description    : Flash Program Test.
-* Input          : None
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      Flash_Test
+ *
+ * @brief   Flash Program Test.
+ *
+ * @return  none
+ */
 void Flash_Test(void)
 {
     printf("FLASH Test\n");
@@ -105,12 +106,13 @@ void Flash_Test(void)
 
 }
 
-/*******************************************************************************
-* Function Name  : Flash_Test_Fast
-* Description    : Flash Fast Program Test.
-* Input          : None
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      Flash_Test_Fast
+ *
+ * @brief   Flash Fast Program Test.
+ *
+ * @return  none
+ */
 void Flash_Test_Fast(void)
 {
 	u16 i,j,flag;
@@ -192,12 +194,13 @@ void Flash_Test_Fast(void)
 
 }
 
-/*******************************************************************************
-* Function Name  : main
-* Description    : Main program.
-* Input          : None
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      main
+ *
+ * @brief   Main program.
+ *
+ * @return  none
+ */
 int main(void)
 {
 	NVIC_PriorityGroupConfig(NVIC_PriorityGroup_2);

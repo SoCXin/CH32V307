@@ -31,15 +31,17 @@ Hyperterminal communication using hardware flow control\n\r";
 u8 RxBuffer[TxSize]={0};
 u8 TxCnt = 0, RxCnt = 0;
 
-
-/*******************************************************************************
-* Function Name  : Buffercmp
-* Description    : Compares two buffers
-* Input          : Buf1,Buf2:buffers to be compared
-*                  BufferLength: buffer's length
-* Return         : PASSED: Buf1 identical to Buf2
-*                  FAILED: Buf1 differs from Buf2
-*******************************************************************************/
+/*********************************************************************
+ * @fn      Buffercmp
+ *
+ * @brief   Compares two buffers
+ *
+ * @param   Buf1,Buf2 - buffers to be compared
+ *          BufferLength - buffer's length
+ *
+ * @return  PASSED - Buf1 identical to Buf
+ *          FAILED - Buf1 differs from Buf2
+ */
 TestStatus Buffercmp(uint8_t* Buf1, uint8_t* Buf2, uint16_t BufLength)
 {
   while(BufLength--)
@@ -54,16 +56,17 @@ TestStatus Buffercmp(uint8_t* Buf1, uint8_t* Buf2, uint16_t BufLength)
   return PASSED;
 }
 
-/*******************************************************************************
-* Function Name  : USART1_ReCFG
-* Description    : Reinitialize the USART1.
-* Input          : None
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      USART1_ReCFG
+ *
+ * @brief   Reinitialize the USART1.
+ *
+ * @return  none
+ */
 void USART1_ReCFG(void)
 {
-  GPIO_InitTypeDef  GPIO_InitStructure;
-	USART_InitTypeDef USART_InitStructure;
+  GPIO_InitTypeDef  GPIO_InitStructure={0};
+	USART_InitTypeDef USART_InitStructure={0};
 
 	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA |RCC_APB2Periph_USART1 , ENABLE);
 
@@ -93,12 +96,13 @@ void USART1_ReCFG(void)
 
 }
 
-/*******************************************************************************
-* Function Name  : main
-* Description    : Main program.
-* Input          : None
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      main
+ *
+ * @brief   Main program.
+ *
+ * @return  none
+ */
 int main(void)
 {
 	NVIC_PriorityGroupConfig(NVIC_PriorityGroup_2);

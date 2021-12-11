@@ -13,7 +13,7 @@
 #define  delay_ms(x)  Delay_Ms(x)
 
 
-//SDIO flag
+/*SDIO flag*/
 #define SDIO_FLAG_CCRCFAIL                  ((uint32_t)0x00000001)
 #define SDIO_FLAG_DCRCFAIL                  ((uint32_t)0x00000002)
 #define SDIO_FLAG_CTIMEOUT                  ((uint32_t)0x00000004)
@@ -96,7 +96,7 @@ typedef enum
     SD_OK = 0
 } SD_Error;
 
-//SD——CSD
+/*SD——CSD*/
 typedef struct
 {
     u8  CSDStruct;
@@ -138,7 +138,7 @@ typedef struct
     u8  Reserved4;
 } SD_CSD;   
 
-//SD——CID
+/*SD——CID*/
 typedef struct
 {
     u8  ManufacturerID;
@@ -320,7 +320,7 @@ extern SD_CardInfo SDCardInfo;
 #define SD_CCCC_WRITE_PROT              ((u32)0x00000040)
 #define SD_CCCC_ERASE                   ((u32)0x00000020)
 
-//CMD8
+/*CMD8*/
 #define SDIO_SEND_IF_COND               ((u32)0x00000008)
 
 SD_Error SD_Init(void);

@@ -17,12 +17,13 @@
 #include "ch32v30x_usbhs_device.h"
 #include "debug.h"
 
-/*******************************************************************************
-* Function Name  : main
-* Description    : Main program.
-* Input          : None
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      main
+ *
+ * @brief   Main program.
+ *
+ * @return  none
+ */
 int main(void)
 {
 	Delay_Init();

@@ -30,12 +30,14 @@ u32  SRC_BUF[Buf_Size]={0x01020304,0x05060708,0x090A0B0C,0x0D0E0F10,
                         0x71727374,0x75767778,0x797A7B7C,0x7D7E7F80};
 
 u32 CRCValue = 0;
-/*******************************************************************************
-* Function Name  : main
-* Description    : Main program.
-* Input          : None
-* Return         : None
-*******************************************************************************/
+
+/*********************************************************************
+ * @fn      main
+ *
+ * @brief   Main program.
+ *
+ * @return  none
+ */
 int main(void)
 {
 	NVIC_PriorityGroupConfig(NVIC_PriorityGroup_2);
