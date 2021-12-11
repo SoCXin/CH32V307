@@ -25,6 +25,7 @@
 * [参考资源](src/)
 * [参考文档](docs/)
 * [参考工程](project/)
+* [Xin文档](https://docs.soc.xin/CH32V307)
 
 ### [选型建议](https://github.com/SoCXin)
 
@@ -33,6 +34,7 @@
 * LQFP64M
 * LQFP100
 
-[![sites](docs/diff.png)](http://www.wch.cn/products/CH32V307.html)
+#### 相关开发板
+
 
 ### [探索芯世界 www.SoC.xin](http://www.SoC.Xin)

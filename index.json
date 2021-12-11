@@ -1,8 +1,8 @@
 {
-    "type":"MCU",
+    "type":"SoC",
     "name":"CH32V307",
-    "title": "WCH MCU CH32V307",
-    "description":"WCH RISC-V CH32V307 MCU",
+    "title": "WCH ETH CH32V307 SoC",
+    "description":"WCH RISC-V CH32V307 SoC",
     "version":"1.0.0",
     "price":[12,16],
     "Core": {
@@ -20,7 +20,7 @@
         "type": "git",
         "url": "https://github.com/SoCXin/CH32V307.git"
     },
-    "series":["CH32V307","CH32V305"],
+    "series":["CH32V307","CH32V305","CH32V303"],
     "package":["LQFP64M","LQFP100"],
     "peripheral": ["TIM","ADC","USB","UART","SPI","LDO","PWM"],
     "PWR": {
