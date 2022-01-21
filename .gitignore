@@ -1,6 +1,7 @@
 *.pyc
 *.hex
 *.log
-*.xml
+# *.xml
 .pio/
 .vscode/
+obj/
