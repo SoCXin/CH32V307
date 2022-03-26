@@ -1,6 +1,6 @@
 ﻿# [CH32V307](https://github.com/SoCXin/CH32V307)
 
-[![sites](http://182.61.61.133/link/resources/SoC.png)](http://www.SoC.Xin)
+[![sites](http://182.61.61.133/link/resources/SoC.png)](https://docs.soc.xin/CH32V307)
 
 * [WCH](http://www.wch.cn/)：[RISC-V4F](https://github.com/SoCXin/RISC-V)
 * [L4R4](https://github.com/SoCXin/Level)：144 MHz
@@ -19,22 +19,27 @@
 * 3个USART接口和5个UART接口
 * 2个CAN接口（2.0B主动）
 * 千兆以太网控制器ETH（内置10M PHY）
+* 2组18路通用DMA
+* 4组运放比较器
+* 2组12位DAC转换
+* 2单元16通道12位ADC转换，16路触摸按键TouchKey
+* 10组定时器
+* SDIO接口、FSMC接口、DVP数字图像接口
+* 2组IIC接口、3组SPI接口、2组IIS接口
+
 
 ### [资源收录](https://github.com/SoCXin)
 
 * [参考资源](src/)
 * [参考文档](docs/)
 * [参考工程](project/)
-* [Xin文档](https://docs.soc.xin/CH32V307)
 
 ### [选型建议](https://github.com/SoCXin)
 
-[CH32V307](https://github.com/SoCXin/CH32V307)
+[CH32V307](https://github.com/SoCXin/CH32V307) 封装规格
 
 * LQFP64M
 * LQFP100
-
-#### 相关开发板
 
 
 ### [探索芯世界 www.SoC.xin](http://www.SoC.Xin)
