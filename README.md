@@ -1,6 +1,5 @@
-﻿# [CH32V307](https://github.com/SoCXin/CH32V307)
+﻿# [CH32V307](https://docs.soc.xin/CH32V307)
 
-[![sites](http://182.61.61.133/link/resources/SoC.png)](https://docs.soc.xin/CH32V307)
 
 * [WCH](http://www.wch.cn/)：[RISC-V4F 青稞](https://github.com/SoCXin/RISC-V)
 * [L3R3](https://github.com/SoCXin/Level)：144 MHz
@@ -40,6 +39,5 @@
 
 * LQFP64M
 * LQFP100
-
 
 ### [www.SoC.xin](http://www.SoC.Xin)
