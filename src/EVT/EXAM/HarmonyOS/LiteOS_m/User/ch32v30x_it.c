@@ -4,12 +4,14 @@
 * Version            : V1.0.0
 * Date               : 2021/06/06
 * Description        : Main Interrupt Service Routines.
+* Copyright (c) 2021 Nanjing Qinheng Microelectronics Co., Ltd.
+* SPDX-License-Identifier: Apache-2.0
 *******************************************************************************/
 #include "ch32v30x_it.h"
 #include "los_interrupt.h"
 
-void NMI_Handler(void) __attribute__((interrupt(/*"WCH-Interrupt-fast"*/)));
-void HardFault_Handler(void) __attribute__((interrupt(/*"WCH-Interrupt-fast"*/)));
+void NMI_Handler(void) __attribute__((interrupt("WCH-Interrupt-fast")));
+void HardFault_Handler(void) __attribute__((interrupt("WCH-Interrupt-fast")));
 
 /*********************************************************************
  * @fn      NMI_Handler

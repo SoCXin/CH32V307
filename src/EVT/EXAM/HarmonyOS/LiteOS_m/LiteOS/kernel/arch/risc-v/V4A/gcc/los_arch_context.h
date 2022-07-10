@@ -42,6 +42,8 @@ extern "C" {
 #endif /* __cplusplus */
 #endif /* __cplusplus */
 
+//#define ARCH_RISCV_FPU
+
 /**
  * @ingroup los_hw
  */
@@ -80,7 +82,40 @@ typedef struct {
     STACK_TYPE t6;         /* x31 - t6     - temporary register 6                */
 #endif
     STACK_TYPE mstatus;    /*              - machine status register             */
-
+#ifdef ARCH_RISCV_FPU
+    STACK_TYPE  f0;
+    STACK_TYPE  f1;
+    STACK_TYPE  f2;
+    STACK_TYPE  f3;
+    STACK_TYPE  f4;
+    STACK_TYPE  f5;
+    STACK_TYPE  f6;
+    STACK_TYPE  f7;
+    STACK_TYPE  f8;
+    STACK_TYPE  f9;
+    STACK_TYPE  f10;
+    STACK_TYPE  f11;
+    STACK_TYPE  f12;
+    STACK_TYPE  f13;
+    STACK_TYPE  f14;
+    STACK_TYPE  f15;
+    STACK_TYPE  f16;
+    STACK_TYPE  f17;
+    STACK_TYPE  f18;
+    STACK_TYPE  f19;
+    STACK_TYPE  f20;
+    STACK_TYPE  f21;
+    STACK_TYPE  f22;
+    STACK_TYPE  f23;
+    STACK_TYPE  f24;
+    STACK_TYPE  f25;
+    STACK_TYPE  f26;
+    STACK_TYPE  f27;
+    STACK_TYPE  f28;
+    STACK_TYPE  f29;
+    STACK_TYPE  f30;
+    STACK_TYPE  f31;
+#endif
 } TaskContext;
 
 extern VOID HalStartToRun(VOID);

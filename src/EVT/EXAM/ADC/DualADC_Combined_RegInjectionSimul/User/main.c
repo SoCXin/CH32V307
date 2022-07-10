@@ -4,6 +4,8 @@
 * Version            : V1.0.0
 * Date               : 2021/06/06
 * Description        : Main program body.
+* Copyright (c) 2021 Nanjing Qinheng Microelectronics Co., Ltd.
+* SPDX-License-Identifier: Apache-2.0
 *******************************************************************************/
 
 /*
@@ -161,7 +163,7 @@ void DMA_Tx_Init( DMA_Channel_TypeDef* DMA_CHx, u32 ppadr, u32 memadr, u16 bufsi
 u16 Get_ConversionVal1(s16 val)
 {
 	if((val+Calibrattion_Val1)<0) return 0;
-	if((Calibrattion_Val1+val)>4095) return 4095;
+	if((Calibrattion_Val1+val)>4095||val==4095) return 4095;
 	return (val+Calibrattion_Val1);
 }
 
@@ -177,7 +179,7 @@ u16 Get_ConversionVal1(s16 val)
 u16 Get_ConversionVal2(s16 val)
 {
     if((val+Calibrattion_Val2)<0) return 0;
-    if((Calibrattion_Val2+val)>4095) return 4095;
+    if((Calibrattion_Val2+val)>4095||val==4095) return 4095;
     return (val+Calibrattion_Val2);
 }
 
@@ -211,15 +213,15 @@ int main(void)
         if(Injected_IT_Flag==1)
         {
             Injected_IT_Flag=0;
-            printf( "JADC1 ch3=%04d\r\n", Get_ConversionVal1(ADC_Val1+Calibrattion_Val1));
-            printf( "JADC2 ch5=%04d\r\n", Get_ConversionVal2(ADC_Val2+Calibrattion_Val2));
+            printf( "JADC1 ch3=%04d\r\n", Get_ConversionVal1(ADC_Val1));
+            printf( "JADC2 ch5=%04d\r\n", Get_ConversionVal2(ADC_Val2));
         }
 
         if(DMA_IT_Flag==1)
         {
             DMA_IT_Flag=0;
-            printf("ADC1 ch2=%d\r\n",Get_ConversionVal1(Adc_Val[0]+Calibrattion_Val1));
-            printf("ADC2 ch4=%d\r\n",Get_ConversionVal2(Adc_Val[1]+Calibrattion_Val2));
+            printf("ADC1 ch2=%d\r\n",Get_ConversionVal1(Adc_Val[0]));
+            printf("ADC2 ch4=%d\r\n",Get_ConversionVal2(Adc_Val[1]));
         }
         Delay_Ms(1000);
 	}

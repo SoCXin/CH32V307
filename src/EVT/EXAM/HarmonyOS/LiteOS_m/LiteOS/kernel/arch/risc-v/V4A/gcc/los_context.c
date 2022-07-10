@@ -31,7 +31,7 @@
 
 extern VOID HalHwiInit(VOID);
 
-#define INITIAL_MSTATUS                 0x7888 //( MSTATUS_MPP | MSTATUS_MPIE | MSTATUS_FS_INITIAL)
+#define INITIAL_MSTATUS                 0x7880 //( MSTATUS_MPP | MSTATUS_MPIE | MSTATUS_FS_INITIAL)
 
 #define ALIGN_DOWN(size, align)         ((size) & ~((align) - 1))
 

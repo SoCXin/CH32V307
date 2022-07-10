@@ -5,6 +5,8 @@
 * Date               : 2021/06/06
 * Description        : This file contains all the functions prototypes for the USB 
 *                      Host firmware library.
+* Copyright (c) 2021 Nanjing Qinheng Microelectronics Co., Ltd.
+* SPDX-License-Identifier: Apache-2.0
 *******************************************************************************/ 
 #ifndef __CH32V30x_USBHS_HOST_H
 #define __CH32V30x_USBHS_HOST_H
@@ -111,6 +113,7 @@ typedef volatile unsigned long  *PUINT32V;
 #define USB_PID_IN              0x09
 #define USB_PID_OUT             0x01
 #define USB_PID_ACK             0x02
+#define USB_PID_NYET            0x06
 #define USB_PID_NAK             0x0A
 #define USB_PID_STALL           0x0E
 #define USB_PID_DATA0           0x03
@@ -254,7 +257,7 @@ typedef volatile unsigned long  *PUINT32V;
 #define DEFAULT_ENDP0_SIZE      8       /* default maximum packet size for endpoint 0 */
 #endif
 #ifndef MAX_PACKET_SIZE
-#define MAX_PACKET_SIZE         64      /* maximum packet size */
+#define MAX_PACKET_SIZE         512      /* maximum packet size */
 #endif
 #ifndef USB_BO_CBW_SIZE
 #define USB_BO_CBW_SIZE         0x1F
@@ -394,6 +397,7 @@ typedef struct __PACKED _UDISK_BOC_CSW {/* status of BulkOnly USB-FlashDisk */
 
 
 /******************************************************************************/
+#if 0
 /* USBOTG_FS DEVICE USB_CONTROL */
 /* BASE USB_CTRL */
 //#define USBHD_BASE_CTRL     (*((PUINT32V)(0x50000000))) // USB control & interrupt enable & device address
@@ -660,7 +664,7 @@ typedef struct __PACKED _UDISK_BOC_CSW {/* status of BulkOnly USB-FlashDisk */
 #define     USB_OTG_SR_SESS_END       0x04               // usb otg status,会话结束电平有效标志
 #define     USB_OTG_SR_ID_DIG         0x08               // usb otg status,ID电平
 
-
+#endif
 /* USBHS PHY Clock Config (RCC_CFGR2) 使用USBHS PHY时钟的情况下，需要用到这些宏定义 */
 #ifndef  USBHS_EXIST
 #define USB_48M_CLK_SRC_MASK   (1<<31)
@@ -713,17 +717,6 @@ typedef struct __PACKED _UDISK_BOC_CSW {/* status of BulkOnly USB-FlashDisk */
  /*******************RCC_AHBEBR***********************/
  #define USBHS_CLK_EN        (1<<11)
 
- /*******************TRANSFER STATUS***********************/
-#define ERR_SUCCESS           (0x00)
-#define ERR_USB_CONNECT       (0x15)
-#define ERR_USB_DISCON        (0x16)
-#define ERR_USB_BUF_OVER      (0x17)
-#define ERR_USB_DISK_ERR      (0x1F)
-#define ERR_USB_TRANSFER      (0x20)
-#define ERR_USB_UNSUPPORT     (0xFB)
-#define ERR_USB_UNKNOWN       (0xFE)
-#define ERR_AOA_PROTOCOL      (0x41)
-#define ERR_TIME_OUT          (0xFF)
 
 /******************************************************************************/
 /*                         USB HD Host Mode Peripheral Register map                              */
@@ -867,7 +860,6 @@ typedef struct __PACKED _UDISK_BOC_CSW {/* status of BulkOnly USB-FlashDisk */
 #define ERR_USB_UNSUPPORT     (0xFB)
 #define ERR_USB_UNKNOWN       (0xFE)
 #define ERR_AOA_PROTOCOL      (0x41)
-#define ERR_TIME_OUT          (0xFF)
 #endif
 
 typedef struct
@@ -875,14 +867,14 @@ typedef struct
     UINT16  OutEndpMaxSize;
     UINT16  InEndpMaxSize;          // IN  端点最大包大小
     UINT8   InEndpNum;              // IN  端点号
-    UINT8   Intog;                  // IN  端点号
-    UINT8   InEndpCount;              // IN  端点号              // IN 同步标
+    UINT8   Intog;                  // IN  端点同步标志位
+    UINT8   InEndpCount;            // IN  端点数量
     UINT8   OutEndpNum;             // OUT 端点号
-    UINT8   Outtog;                  // IN  端点号
-    UINT8   OutEndpCount;              // IN  端点号
+    UINT8   Outtog;                 // OUT 端点同步标志位
+    UINT8   OutEndpCount;           // OUT 端点数量
 }DEVENDP;
 
-typedef struct  USB_STATUS
+typedef struct  __attribute__((packed))  _DEV_INFO
 {
      DEVENDP DevEndp;
      UINT8   DeviceStatus;           // 设备状态,0-无设备,1-有设备但尚未初始化,2-有设备但初始化枚举失败,3-有设备且初始化枚举成功
@@ -891,39 +883,49 @@ typedef struct  USB_STATUS
      UINT8   DeviceType;             // 设备类型：08-磁盘   0x30-HID  0x31-KEYBOARD  0x32-MOUSE
      UINT8   DeviceEndp0Size;        // USB0设备的端点0的最大包尺寸
      UINT8   DeviceCongValue;        // 设备配置值
- }USBHS_HOST,*PUSBHS_HOST;
+ }USBDEV_INFO,*pUSBDEV_INFO;
 
 /*****************************变量外扩****************************/
- extern UINT8 FoundNewDev;
- extern UINT8 DevEnum;
+
+
+ extern UINT8   FoundNewDev;
+ extern UINT8   DevEnum;
+ extern UINT8   Endp0MaxSize ;
+ extern UINT8   UsbDevEndp0Size;
+ extern __attribute__ ((aligned(4))) UINT8   endpTxBuf[  ];  // OUT, must even address
+ extern __attribute__ ((aligned(4))) UINT8   endpRxBuf[  ];  // OUT, must even address
+
+ #define pSetupReq       ((PUSB_SETUP_REQ)endpTXbuf)
+ #define USB_HIGH_SPEED   1
+
  extern const UINT8 GetDevDescrptor[];     //get device descriptor
  extern const UINT8 GetConfigDescrptor[];  //get configuration descriptor
  extern const UINT8 SetAddress[];          //set address of device
  extern const UINT8 SetConfig[];           //set configuration of device
  extern const UINT8 Clear_EndpStall[];     //clear stall
- extern __attribute__ ((aligned(16))) UINT8 endpRXbuff[USBHS_MAX_PACK_SIZE]; //端点1数据收发缓冲区
- extern __attribute__ ((aligned(16))) UINT8 endpTXbuff[USBHS_MAX_PACK_SIZE]; //端点3数据收发缓冲区
+
+ extern __attribute__ ((aligned(4))) UINT8   endpTXbuf[ MAX_PACKET_SIZE ];  // OUT, must even address
+ extern __attribute__ ((aligned(4))) UINT8   endpRXbuf[ MAX_PACKET_SIZE ];  // OUT, must even addres
  /*****************************函数外扩****************************/
- void   user2mem_copy( UINT8 *usrbuf, UINT32 addr, UINT16 bytes );
+ void   CopySetupReqPkg( const UINT8 *pReqPkt );
  void   USB20_RCC_Init( void );
  void   USBHS_HostInit (FunctionalState sta);
  void   USBHS_CurrentAddr( UINT8 address );
- void   Analysis_Descr(PUSBHS_HOST pusbdev,PUINT8 pdesc, UINT16 l);
+ void   Analysis_Descr(pUSBDEV_INFO pusbdev,PUINT8 pdesc, UINT16 l);
  void   SetBusReset(void);
 
- UINT8  USBHS_HostEnum(void);
- UINT8  CtrlGetDevDescr(PUSBHS_HOST pdev,UINT8 *buf);
- UINT8  CtrlGetConfigDescr(PUSBHS_HOST pdev,UINT8 *buf);
- UINT8  CtrlSetAddress(PUSBHS_HOST pdev,UINT8 *buf,UINT8 addr);
- UINT8  CtrlSetConfig(PUSBHS_HOST pdev,UINT8 *buf );
-
- UINT8 USBHS_SetupTransact(void);
- UINT8 USBHS_INTransact( UINT8 endp_num ,UINT8 toggle);
- UINT8 USBHS_OUTTransact( UINT8 endp_num, UINT16 tx_len,UINT8 toggle );
- UINT8 USBHS_INTransact_ISO( UINT8 endp_num , UINT8 toggle );
- UINT8 USBHS_OUTTransact_ISO( UINT8 endp_num, UINT16 tx_len, UINT8 toggle);
- UINT8 USBHS_HostCtrlTransfer(UINT8 *databuf,PUINT16 len);
- UINT8 USBHS_Transact(UINT8 endp_pid,UINT8 toggle,UINT32 timeout);
+ UINT8  USBHS_HostEnum( UINT8 *Databuf );
+ UINT8  CtrlGetDevDescr(UINT8 *Databuf);
+ UINT8  CtrlGetConfigDescr(UINT8 *Databuf);
+ UINT8  CtrlSetAddress(UINT8 addr);
+ UINT8  CtrlSetUsbConfig(UINT8 cfg_val);
+ UINT8  CtrlClearEndpStall( UINT8 endp );
+ UINT8  CtrlSetUsbIntercace( UINT8 cfg );
+ UINT8  HubGetPortStatus( UINT8 HubPortIndex );
+ UINT8  HubSetPortFeature( UINT8 HubPortIndex, UINT8 FeatureSelt );
+ UINT8  HubClearPortFeature( UINT8 HubPortIndex, UINT8 FeatureSelt );
+ UINT8  HostCtrlTransfer(PUINT8 databuf,PUINT8 len);
+ UINT8  USBHostTransact(UINT8 endp_pid,UINT8 toggle,UINT32 timeout);
 #ifdef __cplusplus
 }
 #endif

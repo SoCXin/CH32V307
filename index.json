@@ -1,7 +1,7 @@
 {
     "type":"SoC",
     "name":"CH32V307",
-    "title": "WCH ETH CH32V307 SoC",
+    "title": "WCH ETH SoC CH32V307",
     "description":"WCH RISC-V CH32V307 SoC",
     "version":"1.0.0",
     "price":[12,16],

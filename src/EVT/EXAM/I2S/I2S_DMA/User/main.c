@@ -4,6 +4,8 @@
 * Version            : V1.0.0
 * Date               : 2020/04/30
 * Description        : Main program body.
+* Copyright (c) 2021 Nanjing Qinheng Microelectronics Co., Ltd.
+* SPDX-License-Identifier: Apache-2.0
 *******************************************************************************/
 
 /*
@@ -29,7 +31,7 @@
 /* Global Variable */
 #define  Len    10
 
-u16 I2S2_Tx[Len] = { 0x1111, 0x2222, 0x3333, 0x4444, 0x5555, 0x6666, 0x7777, 0x88888, 0x9999, 0xAAAA };
+u16 I2S2_Tx[Len] = { 0x1111, 0x2222, 0x3333, 0x4444, 0x5555, 0x6666, 0x7777, 0x8888, 0x9999, 0xAAAA };
 u16 I2S3_Rx[Len];
 
 

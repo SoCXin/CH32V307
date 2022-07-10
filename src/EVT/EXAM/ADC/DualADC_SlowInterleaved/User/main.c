@@ -4,6 +4,8 @@
 * Version            : V1.0.0
 * Date               : 2021/06/06
 * Description        : Main program body.
+* Copyright (c) 2021 Nanjing Qinheng Microelectronics Co., Ltd.
+* SPDX-License-Identifier: Apache-2.0
 *******************************************************************************/
 
 /*
@@ -106,7 +108,7 @@ void  ADC_Function_Init(void)
 u16 Get_ConversionVal1(s16 val)
 {
 	if((val+Calibrattion_Val1)<0) return 0;
-	if((Calibrattion_Val1+val)>4095) return 4095;
+	if((Calibrattion_Val1+val)>4095||val==4095) return 4095;
 	return (val+Calibrattion_Val1);
 }
 
@@ -122,7 +124,7 @@ u16 Get_ConversionVal1(s16 val)
 u16 Get_ConversionVal2(s16 val)
 {
     if((val+Calibrattion_Val2)<0) return 0;
-    if((Calibrattion_Val2+val)>4095) return 4095;
+    if((Calibrattion_Val2+val)>4095||val==4095) return 4095;
     return (val+Calibrattion_Val2);
 }
 
@@ -165,8 +167,8 @@ void ADC1_2_IRQHandler()
         Adc_Val[0]=temp&0xffff;
         Adc_Val[1]=(temp>>16)&0xffff;
 #if 0
-        printf("\r\nADC1 ch2=%d\r\n",Get_ConversionVal1(Adc_Val[0]+Calibrattion_Val1));
-        printf("\r\nADC2 ch2=%d\r\n",Get_ConversionVal2(Adc_Val[1]+Calibrattion_Val2));
+        printf("\r\nADC1 ch2=%d\r\n",Get_ConversionVal1(Adc_Val[0]));
+        printf("\r\nADC2 ch2=%d\r\n",Get_ConversionVal2(Adc_Val[1]));
 #endif
     }
     ADC_ClearITPendingBit( ADC1, ADC_IT_EOC);

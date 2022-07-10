@@ -4,6 +4,8 @@
 * Version            : V1.0.0
 * Date               : 2021/06/06
 * Description        : RISC-V Core Peripheral Access Layer Header File for CH32V30x
+* Copyright (c) 2021 Nanjing Qinheng Microelectronics Co., Ltd.
+* SPDX-License-Identifier: Apache-2.0
 *******************************************************************************/
 #ifndef __CORE_RISCV_H__
 #define __CORE_RISCV_H__
@@ -356,21 +358,11 @@ extern uint32_t __get_MCAUSE(void);
 extern void __set_MCAUSE(uint32_t value);
 extern uint32_t __get_MTVAL(void);
 extern void __set_MTVAL(uint32_t value);
-extern uint32_t __get_MIP(void);
-extern void __set_MIP(uint32_t value);
-extern uint32_t __get_MCYCLE(void);
-extern void __set_MCYCLE(uint32_t value);
-extern uint32_t __get_MCYCLEH(void);
-extern void __set_MCYCLEH(uint32_t value);
-extern uint32_t __get_MINSTRET(void);
-extern void __set_MINSTRET(uint32_t value);
-extern uint32_t __get_MINSTRETH(void);
-extern void __set_MINSTRETH(uint32_t value);
 extern uint32_t __get_MVENDORID(void);
 extern uint32_t __get_MARCHID(void);
 extern uint32_t __get_MIMPID(void);
 extern uint32_t __get_MHARTID(void);
-
+extern uint32_t __get_SP(void);
 
 
 #endif

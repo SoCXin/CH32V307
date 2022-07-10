@@ -4,6 +4,8 @@
 * Version            : V1.0.0
 * Date               : 2021/06/06
 * Description        : USBOTG full speed host operation function.
+* Copyright (c) 2021 Nanjing Qinheng Microelectronics Co., Ltd.
+* SPDX-License-Identifier: Apache-2.0
 *******************************************************************************/
 #include <ch32vf30x_usbfs_host.h>
 
@@ -25,8 +27,7 @@ __attribute__ ((aligned(16))) UINT8 endpTXbuff[1024];   //主机端点数据收发缓冲区
 #define pSetupReq    ((PUSB_SETUP_REQ)endpTXbuff)
 
 UINT8 UsbDevEndp0Size = 64;
-USBHS_HOST ThisUsbDev;
-PUSBHS_HOST pOTGHost;
+USBFS_HOST ThisUsbDev;
 UINT8 FoundNewDev=0;
 
 /*********************************************************************
@@ -38,12 +39,20 @@ UINT8 FoundNewDev=0;
  */
 void OTG_RCC_Init(void)
 {
-    /* usb20_phy时钟 */
-    RCC->CFGR2 |= USB_48M_CLK_SRC_PHY;                                              //usbotg 时钟选择 0 = systick，1 = usb20_phy
-    RCC->CFGR2 |= USBHS_PLL_SRC_HSE | USBHS_PLL_SRC_PRE_DIV2 | USBHS_PLL_CKREF_4M;  //PLL REF = HSE/2 = 4MHz
-    RCC->CFGR2 |= USB_48M_CLK_SRC_PHY | USBHS_PLL_ALIVE;
-    RCC->AHBPCENR |= RCC_AHBPeriph_USBHS;                                           //usbhs时钟使能
-    RCC->AHBPCENR |= RCC_AHBPeriph_OTG_FS;                                          //usbotg时钟使能
+#ifdef CH32V30x_D8C
+    RCC_USBCLK48MConfig( RCC_USBCLK48MCLKSource_USBPHY );
+    RCC_USBHSPLLCLKConfig( RCC_HSBHSPLLCLKSource_HSE );
+    RCC_USBHSConfig( RCC_USBPLL_Div2 );
+    RCC_USBHSPLLCKREFCLKConfig( RCC_USBHSPLLCKREFCLK_4M );
+    RCC_USBHSPHYPLLALIVEcmd( ENABLE );
+    RCC_AHBPeriphClockCmd( RCC_AHBPeriph_USBHS, ENABLE );
+
+#else
+    RCC_OTGFSCLKConfig(RCC_OTGFSCLKSource_PLLCLK_Div3);;
+
+#endif
+
+    RCC_AHBPeriphClockCmd( RCC_AHBPeriph_OTG_FS, ENABLE );
 }
 
 /*********************************************************************
@@ -162,10 +171,10 @@ UINT8 AnalyzeRootHub(void)
  *
  * @return  none
  */
-void SetHostUsbAddr( PUSBHS_HOST pdev, UINT8 addr )
+void SetHostUsbAddr( UINT8 addr )
 {
     USBOTG_H_FS->DEV_ADDR = (USBOTG_H_FS->DEV_ADDR & USBHD_UDA_GP_BIT) | (addr & USBHD_USB_ADDR_MASK);
-    pdev->DeviceAddress = addr;
+    ThisUsbDev.DeviceAddress = addr;
 }
 
 #ifndef FOR_ROOT_UDISK_ONLY
@@ -202,7 +211,7 @@ void SetUsbSpeed( UINT8 FullSpeed )
 void ResetRootHubPort( void )
 {
     UsbDevEndp0Size = DEFAULT_ENDP0_SIZE;
-    SetHostUsbAddr(pOTGHost, 0x00 );
+    SetHostUsbAddr( 0x00 );
     USBOTG_H_FS->HOST_CTRL &= ~USBHD_UH_PORT_EN;
     SetUsbSpeed( 1 );
     USBOTG_H_FS->HOST_CTRL = (USBOTG_H_FS->HOST_CTRL & ~USBHD_UH_LOW_SPEED) | USBHD_UH_BUS_RESET;
@@ -483,7 +492,7 @@ UINT8 CtrlGetDeviceDescr( PUINT8 DataBuf )
  *
  * @return  Error state
  */
-UINT8 CtrlGetConfigDescr(PUSBHS_HOST pdev, PUINT8 DataBuf )
+UINT8 CtrlGetConfigDescr( PUINT8 DataBuf )
 {
     UINT8   s;
     UINT8  len;
@@ -500,8 +509,8 @@ UINT8 CtrlGetConfigDescr(PUSBHS_HOST pdev, PUINT8 DataBuf )
     if ( s != ERR_SUCCESS )                return( s );
     if( len < pSetupReq->wLength )         return( ERR_USB_BUF_OVER );
 
-    Analysis_Descr(pdev, DataBuf, pSetupReq ->wLength);
-    pdev->DeviceCongValue = ((PUSB_CFG_DESCR)DataBuf)->bConfigurationValue;   //记录设备配置值
+    Analysis_Descr(&ThisUsbDev, DataBuf, pSetupReq ->wLength);
+    ThisUsbDev.DeviceCongValue = ((PUSB_CFG_DESCR)DataBuf)->bConfigurationValue;   //记录设备配置值
     return( ERR_SUCCESS );
 }
 
@@ -514,7 +523,7 @@ UINT8 CtrlGetConfigDescr(PUSBHS_HOST pdev, PUINT8 DataBuf )
  *
  * @return  Error state
  */
-UINT8 CtrlSetUsbAddress( PUSBHS_HOST pdev,UINT8 addr )
+UINT8 CtrlSetUsbAddress( UINT8 addr )
 {
     UINT8   s;
 
@@ -522,7 +531,7 @@ UINT8 CtrlSetUsbAddress( PUSBHS_HOST pdev,UINT8 addr )
     pSetupReq -> wValue = addr;
     s = HostCtrlTransfer( NULL, NULL );
     if ( s != ERR_SUCCESS ) return( s );
-    SetHostUsbAddr( pdev , addr);             //设置主机操作地址
+    SetHostUsbAddr( addr );             //设置主机操作地址
     Delay_Ms( 10 );
 
     return( ERR_SUCCESS );
@@ -583,7 +592,7 @@ UINT8 CtrlSetUsbIntercace( UINT8 cfg )
  *
  * @return  Error state
  */
-UINT8 USBOTG_HostEnum(PUSBHS_HOST pdev)
+UINT8 USBOTG_HostEnum(UINT8 *buf)
 {
     UINT8  i, s;
 
@@ -604,30 +613,30 @@ UINT8 USBOTG_HostEnum(PUSBHS_HOST pdev)
         DisableRootHubPort( );
         return( ERR_USB_DISCON );
     }
-    SetUsbSpeed( pdev->DeviceSpeed );  //设置当前主机速度与设备一致
+    SetUsbSpeed( ThisUsbDev.DeviceSpeed );  //设置当前主机速度与设备一致
 
-    s = CtrlGetDeviceDescr( endpRXbuff ); //获取设备描述符
+    s = CtrlGetDeviceDescr( buf ); //获取设备描述符
     if(s !=ERR_SUCCESS)
     {
-       printf("get error\n");
+       printf("get device descriptor error\n");
     }
 
-    s = CtrlSetUsbAddress( pdev,((PUSB_SETUP_REQ)SetupSetUsbAddr)->wValue );  //设置设备地址
+    s = CtrlSetUsbAddress( ((PUSB_SETUP_REQ)SetupSetUsbAddr)->wValue );  //设置设备地址
     if(s !=ERR_SUCCESS)
     {
-       printf("set error\n");
+       printf("set address error\n");
     }
 
-    s = CtrlGetConfigDescr( pdev,endpRXbuff );             //获取配置描述符
+    s = CtrlGetConfigDescr( buf );             //获取配置描述符
     if(s !=ERR_SUCCESS)
     {
-       printf("get error\n");
+       printf("get configuration descriptor error\n");
     }
 
-    s = CtrlSetUsbConfig( pdev->DeviceCongValue );  //设置配置
+    s = CtrlSetUsbConfig( ThisUsbDev.DeviceCongValue );  //设置配置
     if(s !=ERR_SUCCESS)
     {
-       printf("set error\n");
+       printf("set configuration error\n");
     }
 
     return( s );
@@ -684,7 +693,7 @@ UINT8   HubClearPortFeature( UINT8 HubPortIndex, UINT8 FeatureSelt )
  *
  * @return  none
  */
-void Analysis_Descr(PUSBHS_HOST pusbdev, PUINT8 pdesc, UINT16 l)
+void Analysis_Descr(PUSBFS_HOST pusbdev, PUINT8 pdesc, UINT16 l)
 {
     UINT16 i,EndPMaxSize;
     for(i=0;i<l;i++)                                                //分析描述符

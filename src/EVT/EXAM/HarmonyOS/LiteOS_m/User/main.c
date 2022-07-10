@@ -55,7 +55,7 @@ UINT32 g_VlaueSp=0;
 VOID taskSampleEntry2(VOID)
 {
     while(1) {
-      LOS_TaskDelay(10000);
+      LOS_TaskDelay(5000);
       printf("taskSampleEntry2 running,task2 SP:%08x\n",__get_SP());
     }
 }
@@ -70,7 +70,7 @@ VOID taskSampleEntry2(VOID)
 VOID taskSampleEntry1(VOID)
 {
     while(1) {
-      LOS_TaskDelay(2000);
+      LOS_TaskDelay(1000);
       printf("taskSampleEntry1 running,task1 SP:%08x\n",__get_SP());
     }
 
@@ -172,7 +172,7 @@ LITE_OS_SEC_TEXT_INIT int main(void)
     }
 
 }
-void EXTI0_IRQHandler(void) __attribute__((interrupt(/*"WCH-Interrupt-fast"*/)));
+
 
 /*********************************************************************
  * @fn      EXTI0_IRQHandler
@@ -181,6 +181,7 @@ void EXTI0_IRQHandler(void) __attribute__((interrupt(/*"WCH-Interrupt-fast"*/)))
  *
  * @return  none
  */
+void EXTI0_IRQHandler(void) __attribute__((interrupt("WCH-Interrupt-fast")));
 void EXTI0_IRQHandler(void)
 {
   /* 中断栈使用的是原来调用main设置的值，将中断栈和线程栈分开，这样线程跳中断，中断函数如果嵌套深度较大，不至于

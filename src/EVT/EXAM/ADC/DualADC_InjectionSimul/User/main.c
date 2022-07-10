@@ -4,12 +4,14 @@
 * Version            : V1.0.0
 * Date               : 2021/06/06
 * Description        : Main program body.
+* Copyright (c) 2021 Nanjing Qinheng Microelectronics Co., Ltd.
+* SPDX-License-Identifier: Apache-2.0
 *******************************************************************************/
 
 /*
  *@Note 
   双ADC同步注入采样例程：
- ADC1通道2(PA2),ADC2通道2(PA3)。
+ ADC1通道1(PA1),ADC2通道2(PA3)。
 */
 
 #include "debug.h"
@@ -36,7 +38,7 @@ void  ADC_Function_Init(void)
     RCC_APB2PeriphClockCmd(RCC_APB2Periph_ADC2  , ENABLE );
     RCC_ADCCLKConfig(RCC_PCLK2_Div4);
 
-    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_2 |GPIO_Pin_3;
+    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_1 |GPIO_Pin_3;
     GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AIN;
     GPIO_Init(GPIOA, &GPIO_InitStructure);
 
@@ -55,7 +57,7 @@ void  ADC_Function_Init(void)
     ADC_Init(ADC1, &ADC_InitStructure);
 
     ADC_InjectedSequencerLengthConfig(ADC1, 1);
-    ADC_InjectedChannelConfig(ADC1, ADC_Channel_2, 1, ADC_SampleTime_239Cycles5 );
+    ADC_InjectedChannelConfig(ADC1, ADC_Channel_1, 1, ADC_SampleTime_239Cycles5 );
 
     ADC_DMACmd(ADC1, ENABLE);
     ADC_Cmd(ADC1, ENABLE);
@@ -98,7 +100,7 @@ void  ADC_Function_Init(void)
 u16 Get_ConversionVal1(s16 val)
 {
 	if((val+Calibrattion_Val1)<0) return 0;
-	if((Calibrattion_Val1+val)>4095) return 4095;
+	if((Calibrattion_Val2+val)>4095||val==4095) return 4095;
 	return (val+Calibrattion_Val1);
 }
 
@@ -114,7 +116,7 @@ u16 Get_ConversionVal1(s16 val)
 u16 Get_ConversionVal2(s16 val)
 {
     if((val+Calibrattion_Val2)<0) return 0;
-    if((Calibrattion_Val2+val)>4095) return 4095;
+    if((Calibrattion_Val2+val)>4095||val==4095) return 4095;
     return (val+Calibrattion_Val2);
 }
 
@@ -146,8 +148,8 @@ int main(void)
         ADC_val1 = ADC_GetInjectedConversionValue(ADC1, ADC_InjectedChannel_1);
         ADC_val2 = ADC_GetInjectedConversionValue(ADC2, ADC_InjectedChannel_1);
 
-        printf( "JADC1 ch2=%04d\r\n", Get_ConversionVal1(ADC_val1+Calibrattion_Val1));
-        printf( "JADC2 ch3=%04d\r\n", Get_ConversionVal2(ADC_val2+Calibrattion_Val2));
+        printf( "JADC1 ch2=%04d\r\n", Get_ConversionVal1(ADC_val1));
+        printf( "JADC2 ch3=%04d\r\n", Get_ConversionVal2(ADC_val2));
 	}
 }
 

@@ -4,52 +4,27 @@
 * Version            : V1.0.0
 * Date               : 2021/06/06
 * Description        : This file provides all the USB firmware functions.
+* Copyright (c) 2021 Nanjing Qinheng Microelectronics Co., Ltd.
+* SPDX-License-Identifier: Apache-2.0
 *******************************************************************************/ 
 #include "ch32v30x_usbhs_host.h"
 
-
-/******************************** HOST DEVICE **********************************/
-UINT8  FoundNewDev=0;;
+UINT8  FoundNewDev = 0;
 UINT8  Endp0MaxSize = 0;
-UINT16V EndpnMaxSize = 512;
-PUSBHS_HOST Host_Status;
+UINT8  UsbDevEndp0Size = 0;
+UINT16 EndpnMaxSize = 0;
+USBDEV_INFO  thisUsbDev;
 
-__attribute__ ((aligned(4))) const UINT8  GetDevDescrptor[]={USB_REQ_TYP_IN, USB_GET_DESCRIPTOR, 0x00, USB_DESCR_TYP_DEVICE, 0x00, 0x00, 8, 0x00};
+PUINT8  pHOST_RX_RAM_Addr;
+PUINT8  pHOST_TX_RAM_Addr;
+/******************************** HOST DEVICE **********************************/
+__attribute__ ((aligned(4))) const UINT8  GetDevDescrptor[]={USB_REQ_TYP_IN, USB_GET_DESCRIPTOR, 0x00, USB_DESCR_TYP_DEVICE, 0x00, 0x00, 0x12, 0x00};
 __attribute__ ((aligned(4))) const UINT8  GetConfigDescrptor[]= {USB_REQ_TYP_IN, USB_GET_DESCRIPTOR, 0x00, USB_DESCR_TYP_CONFIG, 0x00, 0x00, 0x04, 0x00};
 __attribute__ ((aligned(4))) const UINT8  SetAddress[]={USB_REQ_TYP_OUT, USB_SET_ADDRESS, USB_DEVICE_ADDR, 0x00, 0x00, 0x00, 0x00, 0x00};
 __attribute__ ((aligned(4))) const UINT8  SetConfig[]={USB_REQ_TYP_OUT, USB_SET_CONFIGURATION, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
 __attribute__ ((aligned(4))) const UINT8  Clear_EndpStall[]={USB_REQ_RECIP_INTERF, USB_SET_INTERFACE, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
-
-__attribute__ ((aligned(4))) UINT8 endpRXbuff[USBHS_MAX_PACK_SIZE]; //端点1数据收发缓冲区
-__attribute__ ((aligned(4))) UINT8 endpTXbuff[USBHS_MAX_PACK_SIZE]; //端点3数据收发缓冲区
-
-#define pSetupReq         ((PUSB_SETUP_REQ)endpTXbuff)
-
-#define FULL_SPEED_TYPE   0
-#define HIGH_SPEED_TYPE   1
-#define LOW_SPEED_TYPE    2
-
-/*********************************************************************
- * @fn      user2mem_copy
- *
- * @brief   copy the contents of the buffer to another address.
- *
- * @param   usrbuf - buffer address
- *          addr - target address
- *          bytes - length
- *
- * @return  none
- */
-void user2mem_copy( UINT8 *usrbuf, UINT32 addr, UINT16 bytes )
-{
-    UINT16  i;
-    UINT8 *p8 = usrbuf;
-    UINT8 *p8_ = (UINT8 *)addr;
-    for( i=0;i<bytes;i++)
-    {
-        *p8_++ = *p8++;
-    }
-}
+__attribute__ ((aligned(4))) const UINT8  SetupSetUsbInterface[] = { USB_REQ_RECIP_INTERF, USB_SET_INTERFACE, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
+__attribute__ ((aligned(4))) const UINT8  SetupClrEndpStall[] = { USB_REQ_TYP_OUT | USB_REQ_RECIP_ENDP, USB_CLEAR_FEATURE, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
 
 /*********************************************************************
  * @fn      USB20_RCC_Init
@@ -69,22 +44,6 @@ void USB20_RCC_Init( void )
 }
 
 /*********************************************************************
- * @fn      SetBusReset
- *
- * @brief   Reset USB bus
- *
- * @return  none
- */
-void  SetBusReset(void)
-{
-    USBHSH->HOST_CTRL |= SEND_BUS_RESET;                              //bus reset
-    Delay_Ms(15);
-    USBHSH->HOST_CTRL &= ~SEND_BUS_RESET;
-    while( !(USBHSH->HOST_CTRL & UH_SOFT_FREE) );                     //wait bus idle;
-    USBHSH->HOST_CTRL |= SEND_SOF_EN;                                 //sof enable
-}
-
-/*********************************************************************
  * @fn      USBHS_HostInit
  *
  * @brief   USB host mode initialized.
@@ -99,25 +58,12 @@ void USBHS_HostInit (FunctionalState sta)  // USBHS host initial
     {
         USB20_RCC_Init();
 
-#if   HIGH_SPEED_TYPE
-
         USBHSH->CONTROL =  INT_BUSY_EN | DMA_EN | HIGH_SPEED | HOST_MODE;
-
-#elif FULL_SPEED_TYPE
-
-        USBHSH->CONTROL =  INT_BUSY_EN | DMA_EN | FULL_SPEED | HOST_MODE;
-
-#else
-
-        USBHSH->CONTROL =  INT_BUSY_EN | DMA_EN | LOW_SPEED | HOST_MODE;
-
-#endif
-
         USBHSH->HOST_CTRL = PHY_SUSPENDM | SEND_SOF_EN;
         USBHSH->HOST_EP_CONFIG = HOST_TX_EN | HOST_RX_EN ;                // send enable, receive enable
-        USBHSH->HOST_RX_MAX_LEN = EndpnMaxSize;                           // receive max length
-        USBHSH->HOST_TX_DMA = (UINT32)&endpTXbuff[0];                     // set host TX DMA address
-        USBHSH->HOST_RX_DMA = (UINT32)&endpRXbuff[0];                     // set host RX DMA address
+        USBHSH->HOST_RX_MAX_LEN = 512;                                    // receive max length
+        USBHSH->HOST_RX_DMA = (UINT32)endpRXbuf;
+        USBHSH->HOST_TX_DMA = (UINT32)endpTXbuf;
     }
     else
     {
@@ -126,114 +72,47 @@ void USBHS_HostInit (FunctionalState sta)  // USBHS host initial
 }
 
 /*********************************************************************
- * @fn      CtrlGetDevDescr
+ * @fn      SetBusReset
  *
- * @brief   Get device descrptor
+ * @brief   Reset USB bus
  *
- * @param   dev - host status variable
- *          buf - request command buffer
- *
- * @return  Error state
+ * @return  none
  */
-UINT8 CtrlGetDevDescr(PUSBHS_HOST pdev,UINT8 *buf)
+void  SetBusReset(void)
 {
-    UINT8 rxlen;
-    UINT16 len;
-    Endp0MaxSize = 8;
-    user2mem_copy(buf,(UINT32)&endpTXbuff[0],8);
-    rxlen = USBHS_HostCtrlTransfer(endpRXbuff,&len);
-    if( rxlen != ERR_SUCCESS )         return  ERR_SUCCESS;
-    if( len < Endp0MaxSize )           return  ERR_USB_BUF_OVER;
+    USBHSH->HOST_CTRL |= SEND_BUS_RESET;                              //bus reset
+    Delay_Ms(15);
+    USBHSH->HOST_CTRL &= ~SEND_BUS_RESET;
+    while( !(USBHSH->HOST_CTRL & UH_SOFT_FREE) );                     //wait bus idle;
+    USBHSH->HOST_CTRL |= SEND_SOF_EN;                                 //sof enable
+    if( (USBHSH->SPEED_TYPE & USBSPEED_MASK ) == 1 )   thisUsbDev.DeviceSpeed = USB_HIGH_SPEED;
 
-    pdev->DeviceEndp0Size = ((PUSB_DEV_DESCR)endpRXbuff)->bMaxPacketSize0;
-    Endp0MaxSize = ((PUSB_DEV_DESCR)endpRXbuff)->bMaxPacketSize0;
-    return  rxlen;
 }
 
 /*********************************************************************
- * @fn      CtrlGetConfigDescr
+ * @fn      CopySetupReqPkg
  *
- * @brief   Get configration descrptor.
+ * @brief   copy the contents of the buffer to send buffer.
  *
- * @param   pdev - host status variable
- *          buf - request command buffer
+ * @param   pReqPkt - target buffer address
  *
- * @return  Error state
+ * @return  none
  */
-UINT8 CtrlGetConfigDescr(PUSBHS_HOST pdev,UINT8 *buf)
+void CopySetupReqPkg( const UINT8 *pReqPkt )
 {
-    UINT32 rxlen;
-    UINT16 reallen,len;
+    UINT8 i;
 
-    user2mem_copy(buf,(UINT32)&endpTXbuff[0],8);
-    rxlen = USBHS_HostCtrlTransfer((UINT8 *)endpRXbuff,&len);
-    if(rxlen != ERR_SUCCESS)      return   ERR_SUCCESS;
-    if(len < pSetupReq->wLength )  return  ERR_USB_BUF_OVER;
-
-    reallen = ((PUSB_CFG_DESCR)endpRXbuff)->wTotalLength;             //解析全部配置描述符的长度
-
-    user2mem_copy(buf,(UINT32)&endpTXbuff[0],8);
-    pSetupReq->wLength = reallen;
-    rxlen = USBHS_HostCtrlTransfer((UINT8 *)endpRXbuff,&len);         //获取全部配置描述符
-    if(rxlen != ERR_SUCCESS)      return  ERR_SUCCESS;
-    if(len < pSetupReq->wLength)  return ERR_USB_BUF_OVER;
-
-    pdev->DeviceCongValue = ((PUSB_CFG_DESCR)endpRXbuff)->bConfigurationValue;
-    Analysis_Descr(pdev,(UINT8 *)endpRXbuff,pSetupReq->wLength);
-    return  rxlen;
+    for ( i = 0; i != sizeof( USB_SETUP_REQ ); i ++ )
+    {
+        ((PUINT8)pSetupReq)[ i ] = *pReqPkt;
+        pReqPkt++;
+    }
 }
 
 /*********************************************************************
- * @fn      CtrlSetUsbAddress
+ * @fn      USBHostTransact
  *
- * @brief   Set USB device address.
- *
- * @param   pdev - host status variable
- *          buf - request command buffer
- *          addr - Device address.
- *
- * @return  Error state
- */
-UINT8 CtrlSetAddress(PUSBHS_HOST pdev,UINT8 *buf,UINT8 addr)
-{
-    UINT8 rxlen;
-
-    user2mem_copy(buf,(UINT32)&endpTXbuff[0],8);
-    pSetupReq->wValue = addr;
-    rxlen = USBHS_HostCtrlTransfer(NULL,NULL);
-    if(rxlen != ERR_SUCCESS)  return  ERR_SUCCESS;
-
-    USBHS_CurrentAddr(addr);
-    pdev->DeviceAddress = addr ;
-    return  ERR_SUCCESS;
-}
-
-/*********************************************************************
- * @fn      CtrlSetUsbConfig
- *
- * @brief   Set usb configration.
- *
- * @param   pdev - host status variable.
- *          buf - request command buffer.
- *
- * @return  Error state
- */
-UINT8 CtrlSetConfig(PUSBHS_HOST pdev,UINT8 *buf )
-{
-    UINT32 rxlen;
-
-    user2mem_copy(buf,(UINT32)&endpTXbuff[0],8);
-    pSetupReq->wValue = pdev->DeviceCongValue;
-    rxlen=USBHS_HostCtrlTransfer(NULL,NULL);
-    if(rxlen != ERR_SUCCESS)  return  ERR_SUCCESS;
-
-    return  ERR_SUCCESS;
-}
-
-/*********************************************************************
- * @fn      USBHS_Transact
- *
- * @brief   Host transaction
+ * @brief   General host transaction
  *
  * @param   endp_pid - PID of the transaction  and the number of endpoint
  *          toggle - sync  trigger bit
@@ -241,9 +120,10 @@ UINT8 CtrlSetConfig(PUSBHS_HOST pdev,UINT8 *buf )
  *
  * @return  Error state
  */
-UINT8 USBHS_Transact(UINT8 endp_pid,UINT8 toggle,UINT32 timeout)
+UINT8 USBHostTransact(UINT8 endp_pid,UINT8 toggle,UINT32 timeout)  //general
 {
     UINT8   TransRetry,r;
+    UINT8   s;
     UINT32  i;
 
     USBHSH->HOST_TX_CTRL = USBHSH->HOST_RX_CTRL = toggle;
@@ -259,46 +139,45 @@ UINT8 USBHS_Transact(UINT8 endp_pid,UINT8 toggle,UINT32 timeout)
         USBHSH->HOST_EP_PID = 0x00;
         if ( (USBHSH->INT_FG & USBHS_ACT_FLAG) == 0 )  return( ERR_USB_UNKNOWN );
 
-        if( USBHSH->INT_FG & USBHS_DETECT_FLAG )                                //当前设备被拔除
+        s  = USBHSH->INT_FG ;
+        if( s & USBHS_DETECT_FLAG )                                             //当前设备被拔除
         {
             USBHSH->INT_FG = USBHS_DETECT_FLAG;
+            Delay_Us(200);
             if( USBHSH->MIS_ST & USBHS_ATTCH )
             {
                 if(USBHSH->HOST_CTRL & SEND_SOF_EN)    return ( ERR_USB_CONNECT );
             }
             else    return ( ERR_USB_DISCON );
         }
-
-        if ( USBHSH->INT_FG & USBHS_ACT_FLAG )                                  //数据包传输成功
+        else if ( s & USBHS_ACT_FLAG )                                                        //数据包传输成功
         {
             r = USBHSH->INT_ST & USBHS_HOST_RES;
             if((endp_pid >> 4) == USB_PID_IN )
             {
-                if ( USBHSH->INT_ST & USBHS_TOGGLE_OK )  return( ERR_SUCCESS );  //数据包令牌匹配
+                if ( (USBHSH->INT_ST & USBHS_TOGGLE_OK) )         return( ERR_SUCCESS );             //数据包令牌匹配
             }
             else
             {
-                if ( r == USB_PID_ACK )                  return( ERR_SUCCESS );  //setup/out包等待设备响应ACK
+                if ( (r == USB_PID_ACK)||(r == USB_PID_NYET) )  return( ERR_SUCCESS );                //setup/out包等待设备响应ACK
             }
-            if ( r == USB_PID_STALL )                    return( r | ERR_USB_TRANSFER );              //设备响应STALL
+            if ( r == USB_PID_STALL )                    return( r | ERR_USB_TRANSFER );       //设备响应STALL
 
-            if ( r == USB_PID_NAK )
+            if ( r == USB_PID_NAK )                              //设备响应NAK 超时
             {
-                if ( timeout == 0 )                      return( r | ERR_USB_TRANSFER );                 //设备响应NAK 超时
+                if ( timeout == 0 )                      return( r | ERR_USB_TRANSFER );
                 if ( timeout < 0xFFFF ) timeout --;
                 -- TransRetry;
             }
             else switch ( endp_pid >> 4  )
             {
                 case USB_PID_SETUP:
-                    break;
-                case USB_PID_OUT:
-                    if ( r ) return( r | ERR_USB_TRANSFER );          //
-                    break;
-                case USB_PID_IN:                           //2b
-                    if ( (r == USB_PID_DATA0) || (r == USB_PID_DATA1) )
-                    {
 
+                case USB_PID_OUT:
+                    if ( r ) return( r | ERR_USB_TRANSFER );           //
+                    break;
+                case USB_PID_IN:                                        //2b
+                    if ( (r == USB_PID_DATA0) || (r == USB_PID_DATA1) ){
                     }
                     else if ( r ) return( r | ERR_USB_TRANSFER );
                     break;
@@ -307,80 +186,87 @@ UINT8 USBHS_Transact(UINT8 endp_pid,UINT8 toggle,UINT32 timeout)
             }
         }
         else {
-            USBHSH->INT_FG = 0xFF;
+            USBHSH->INT_FG = 0x3F;
         }
         Delay_Us( 15 );
-    } while ( ++ TransRetry < 3 );    //尝试超过三次未成功
+    } while ( ++ TransRetry < 3 );
 
     return( ERR_USB_TRANSFER );
 }
 
+
 /*********************************************************************
- * @fn      USBHS_HostCtrlTransfer
+ * @fn      HostCtrlTransfer
  *
  * @brief   Host control transfer.
  *
- * @param   DataBuf - Receive or send data buffer.
+ * @param   databuf - Receiving or send data buffer.
  *          RetLen - Data length.
  *
  * @return  Error state
  */
-UINT8 USBHS_HostCtrlTransfer(UINT8 *databuf,PUINT16 len)
+UINT8 HostCtrlTransfer(PUINT8 databuf,PUINT8 len)
 {
-    UINT32  rxlen;
-    UINT16  ReLen;
-    PUINT16 pLen;
     UINT8   ret;
+    UINT8   tog = 1;
     PUINT8  pBuf;
-    UINT8   Ttog=1;
+    UINT16  relen;
+    PUINT8  pLen;
+    UINT32  rxlen;
+
     pBuf = databuf;
     pLen = len;
-    ReLen = pSetupReq->wLength;
 
     if( pLen )  *pLen = 0;
+    Delay_Us( 100 );
     USBHSH->HOST_TX_LEN = 8;
-    ret = USBHS_Transact((USB_PID_SETUP<<4)|DEF_ENDP_0, 0, 200000);
-    if(ret != ERR_SUCCESS)      return ret;                     //error
+    ret = USBHostTransact( (USB_PID_SETUP<<4)|DEF_ENDP_0, 0, 200000 );
+    if(ret != ERR_SUCCESS)      return ( ret );                     //error
 
-    if(ReLen && pBuf)                                           //data stage
+    relen = pSetupReq->wLength;
+
+    if(relen && pBuf)                                           //data stage
     {
-       if(pSetupReq->bRequestType == USB_REQ_TYP_IN)            //device to host
+       if( (pSetupReq->bRequestType) & USB_REQ_TYP_IN )            //device to host
        {
-           while(ReLen)
+           while(relen)
            {
-               Delay_Us( 100 );
-               USBHSH->HOST_RX_DMA = (UINT32)pBuf + *pLen;
-               ret = USBHS_Transact((USB_PID_IN<<4)| DEF_ENDP_0, Ttog<<3, 20000);
-               if(ret != ERR_SUCCESS)                return ret;
-
-               rxlen =(USBHSH->RX_LEN >= ReLen) ? ReLen : USBHSH->RX_LEN;
-               ReLen -= rxlen;
-               Ttog ^=1;
+               if( thisUsbDev.DeviceSpeed != USB_HIGH_SPEED )
+                   Delay_Us( 100 );
+               USBHSH->HOST_RX_DMA = (UINT32)databuf + *pLen;
+               ret = USBHostTransact( (USB_PID_IN<<4)| DEF_ENDP_0, tog<<3, 20000 );
+               if(ret != ERR_SUCCESS)                return ( ret );
+               tog ^=1;
+               rxlen = (USBHSH->RX_LEN < relen) ? USBHSH->RX_LEN : relen;
+               relen -= rxlen;
                if(pLen)  *pLen += rxlen;
-               if( ( USBHSH->RX_LEN == 0 ) || (USBHSH->RX_LEN & ( Endp0MaxSize - 1 )))  break;
+               if( ( USBHSH->RX_LEN == 0 ) || (USBHSH->RX_LEN & ( UsbDevEndp0Size - 1 )))  break;
             }
             USBHSH->HOST_TX_LEN = 0 ;
          }
        else
-       {                                             // host to device
-          while(ReLen)
+       {                                                           // host to device
+          while(relen)
           {
-               Delay_Us( 100 );
-               USBHSH->HOST_TX_DMA = (UINT32)pBuf + *pLen;
-               USBHSH->HOST_TX_LEN = (ReLen > Endp0MaxSize)? Endp0MaxSize : ReLen;
+              if( thisUsbDev.DeviceSpeed != USB_HIGH_SPEED )
+                  Delay_Us( 100 );
+               USBHSH->HOST_TX_DMA = (UINT32)databuf + *pLen;
+               USBHSH->HOST_TX_LEN = (relen >= UsbDevEndp0Size)? UsbDevEndp0Size : relen;
 
-               ret = USBHS_Transact((USB_PID_OUT<<4)|DEF_ENDP_0, Ttog<<3,  20000);
-               if(ret != ERR_SUCCESS)               return  ret;
-               ReLen -= USBHSH->HOST_TX_LEN;
-               Ttog ^=1;
+               ret = USBHostTransact((USB_PID_OUT<<4)|DEF_ENDP_0,  tog<<3,  20000);
+               if(ret != ERR_SUCCESS)               return  ( ret );
+               tog ^=1;
+               relen -= USBHSH->HOST_TX_LEN;
                if( pLen )  *pLen += USBHSH->HOST_TX_LEN;
           }
         }
     }
-    Delay_Us( 100 );
-    ret = USBHS_Transact(((USBHSH->HOST_TX_LEN) ? USB_PID_IN<<4|DEF_ENDP_0 : USB_PID_OUT<<4|DEF_ENDP_0), 1<<3, 20000);
+    if( thisUsbDev.DeviceSpeed != USB_HIGH_SPEED )
+        Delay_Us( 100 );
+    ret = USBHostTransact( ((USBHSH->HOST_TX_LEN) ? USB_PID_IN<<4|DEF_ENDP_0 : USB_PID_OUT<<4|DEF_ENDP_0),
+            UH_R_TOG_1|UH_T_TOG_1, 20000 );
 
-    if(ret != ERR_SUCCESS)            return ret;
+    if(ret != ERR_SUCCESS)            return( ret );
 
     if ( USBHSH->HOST_TX_LEN == 0 )   return( ERR_SUCCESS );    //status stage is out, send a zero-length packet.
 
@@ -390,45 +276,241 @@ UINT8 USBHS_HostCtrlTransfer(UINT8 *databuf,PUINT16 len)
 }
 
 /*********************************************************************
+ * @fn      CtrlGetDevDescr
+ *
+ * @brief   Get device descrptor
+ *
+ * @return  Error state
+ */
+UINT8 CtrlGetDevDescr( UINT8 *Databuf )
+{
+    UINT8 ret;
+    UINT8 len;
+    UsbDevEndp0Size = 8;
+    CopySetupReqPkg( GetDevDescrptor );
+    pSetupReq->wLength = UsbDevEndp0Size;
+    ret = HostCtrlTransfer( Databuf,&len );
+    if( ret != ERR_SUCCESS )                     return  ( ret );
+    if( len < UsbDevEndp0Size )                  return  ERR_USB_BUF_OVER;
+    UsbDevEndp0Size = ((PUSB_DEV_DESCR)Databuf)->bMaxPacketSize0;
+
+    CopySetupReqPkg( GetDevDescrptor );                               //获取全部设备描述符
+    ret = HostCtrlTransfer( Databuf,&len );
+    if( ret != ERR_SUCCESS )                     return  ( ret );
+    return( ERR_SUCCESS );
+}
+
+/*********************************************************************
+ * @fn      CtrlGetConfigDescr
+ *
+ * @brief   Get configuration descriptor.
+ *
+ * @return  Error state
+ */
+UINT8 CtrlGetConfigDescr( UINT8 *Databuf )
+{
+    UINT8  ret;
+    UINT8  len;
+    UINT16 reallen;
+
+    CopySetupReqPkg( GetConfigDescrptor );
+    ret = HostCtrlTransfer( Databuf, &len );
+    if(ret != ERR_SUCCESS)             return  ( ret );
+    if(len < ( pSetupReq->wLength ) )  return  ERR_USB_BUF_OVER;
+
+    reallen = ((PUSB_CFG_DESCR)Databuf)-> wTotalLength;             //解析全部配置描述符的长度
+
+    CopySetupReqPkg( GetConfigDescrptor );
+    pSetupReq->wLength = reallen;
+    ret = HostCtrlTransfer( (UINT8 *)Databuf, &len );              //获取全部配置描述符
+    if( ret != ERR_SUCCESS )           return  ( ret );
+
+    thisUsbDev.DeviceCongValue = ( (PUSB_CFG_DESCR)Databuf )-> bConfigurationValue;
+    Analysis_Descr( &thisUsbDev, (UINT8 *)Databuf, pSetupReq->wLength );
+
+    return( ERR_SUCCESS );
+}
+
+/*********************************************************************
+ * @fn      CtrlSetUsbAddress
+ *
+ * @brief   Set USB device address.
+ *
+ * @param   addr - Device address.
+ *
+ * @return  Error state
+ */
+UINT8 CtrlSetAddress(UINT8 addr)
+{
+    UINT8 ret;
+
+    CopySetupReqPkg( SetAddress );
+    pSetupReq->wValue = addr;
+    ret = HostCtrlTransfer( NULL, NULL );
+    if(ret != ERR_SUCCESS)  return  ( ret );
+    USBHS_CurrentAddr( addr );
+    Delay_Ms(5);
+    return  ERR_SUCCESS;
+}
+
+/*********************************************************************
+ * @fn      CtrlSetUsbConfig
+ *
+ * @brief   Set usb configration.
+ *
+ * @param   cfg_val - device configuration value
+ *
+ * @return  Error state
+ */
+UINT8 CtrlSetUsbConfig( UINT8 cfg_val)
+{
+    CopySetupReqPkg( SetConfig );
+    pSetupReq->wValue = cfg_val;
+    return( HostCtrlTransfer( NULL, NULL ));
+}
+
+/*********************************************************************
+ * @fn      CtrlClearEndpStall
+ *
+ * @brief   clear endpoint stall status.
+ *
+ * @param   endp - number of endpoint
+ *
+ * @return  Error state
+ */
+UINT8 CtrlClearEndpStall( UINT8 endp )
+{
+    CopySetupReqPkg( SetupClrEndpStall );
+    pSetupReq -> wIndex = endp;
+    return( HostCtrlTransfer( NULL, NULL ) );
+}
+
+/*********************************************************************
+ * @fn      CtrlSetUsbIntercace
+ *
+ * @brief   Set USB Interface configuration.
+ *
+ * @param   cfg - configuration value
+ *
+ * @return  Error state
+ */
+UINT8 CtrlSetUsbIntercace( UINT8 cfg )
+{
+    CopySetupReqPkg( SetupSetUsbInterface );
+    pSetupReq -> wValue = cfg;
+    return( HostCtrlTransfer( NULL, NULL ) );
+}
+
+/*********************************************************************
+ * @fn      HubGetPortStatus
+ *
+ * @brief   Check the port of hub,and return the port's status
+ *
+ * @param   HubPortIndex - index of the hub port index
+ *
+ * @return  Error state
+ */
+UINT8   HubGetPortStatus( UINT8 HubPortIndex )
+{
+    UINT8   s;
+    UINT8  len;
+
+    pSetupReq -> bRequestType = HUB_GET_PORT_STATUS;
+    pSetupReq -> bRequest = HUB_GET_STATUS;
+    pSetupReq -> wValue = 0x0000;
+    pSetupReq -> wIndex = 0x0000|HubPortIndex;
+    pSetupReq -> wLength = 0x0004;
+    s = HostCtrlTransfer( endpRXbuf, &len );         // 执行控制传输
+    if ( s != ERR_SUCCESS )
+    {
+        return( s );
+    }
+    if ( len < 4 )
+    {
+        return( ERR_USB_BUF_OVER );                  // 描述符长度错误
+    }
+
+    return( ERR_SUCCESS );
+}
+
+/*********************************************************************
+ * @fn      HubSetPortFeature
+ *
+ * @brief   set the port feature of hub
+ *
+ * @param   HubPortIndex - index of the hub port index
+ *          FeatureSelt - feature selector
+ *
+ * @return  Error state
+ */
+UINT8   HubSetPortFeature( UINT8 HubPortIndex, UINT8 FeatureSelt )
+{
+    pSetupReq -> bRequestType = HUB_SET_PORT_FEATURE;
+    pSetupReq -> bRequest = HUB_SET_FEATURE;
+    pSetupReq -> wValue = 0x0000|FeatureSelt;
+    pSetupReq -> wIndex = 0x0000|HubPortIndex;
+    pSetupReq -> wLength = 0x0000;
+    return( HostCtrlTransfer( NULL, NULL ) );     // 执行控制传输
+}
+
+/*********************************************************************
+ * @fn      HubClearPortFeature
+ *
+ * @brief   clear the port feature of hub
+ *
+ * @param   HubPortIndex - index of the hub port index
+ *          FeatureSelt - feature selector
+ *
+ * @return  Error state
+ */
+UINT8   HubClearPortFeature( UINT8 HubPortIndex, UINT8 FeatureSelt )
+{
+    pSetupReq -> bRequestType = HUB_CLEAR_PORT_FEATURE;
+    pSetupReq -> bRequest = HUB_CLEAR_FEATURE;
+    pSetupReq -> wValue = 0x0000|FeatureSelt;
+    pSetupReq -> wIndex = 0x0000|HubPortIndex;
+    pSetupReq -> wLength = 0x0000;
+    return( HostCtrlTransfer( NULL, NULL ) );     // 执行控制传输
+}
+
+/*********************************************************************
  * @fn      USBOTG_HostEnum
  *
  * @brief   Host enumerated device.
  *
  * @return  Error state
  */
-UINT8 USBHS_HostEnum( void )
+UINT8 USBHS_HostEnum( UINT8 *Databuf )
 {
   UINT8 ret;
 
-  ret = CtrlGetDevDescr(Host_Status,(UINT8 *)GetDevDescrptor);
+  SetBusReset();
+  Delay_Ms(10);
+  ret = CtrlGetDevDescr( Databuf );
+  if( ret != ERR_SUCCESS )
+  {
+      printf("get device descriptor:%02x\n",ret);
+      return( ret );
+  }
+  ret = CtrlSetAddress( ((PUSB_SETUP_REQ)SetAddress)->wValue );
   if(ret != ERR_SUCCESS)
   {
-      printf("error1\n");
-      return  ret;
+      printf("set address:%02x\n",ret);
+      return( ret );
   }
-
-  ret = CtrlSetAddress(Host_Status,(UINT8 *)SetAddress,8);
+  ret = CtrlGetConfigDescr( Databuf );
   if(ret != ERR_SUCCESS)
   {
-      printf("error2\n");
-      return  ret;
+      printf("get configuration descriptor:%02x\n",ret);
+      return( ret );
   }
-
-  ret = CtrlGetConfigDescr(Host_Status,(UINT8 *)GetConfigDescrptor);
-  if(ret != ERR_SUCCESS)
+  ret = CtrlSetUsbConfig( thisUsbDev.DeviceCongValue );
+  if( ret != ERR_SUCCESS )
   {
-      printf("error3\n");
-      return  ret;
+      printf("set configuration:%02x\n",ret);
+      return( ret );
   }
-
-  ret = CtrlSetConfig(Host_Status,(UINT8 *)SetConfig);
-  if(ret != ERR_SUCCESS)
-  {
-      printf("error4\n");
-      return  ret;
-  }
-
-  return ERR_SUCCESS;
+  return( ERR_SUCCESS );
 }
 
 /*********************************************************************
@@ -442,8 +524,8 @@ UINT8 USBHS_HostEnum( void )
  */
 void USBHS_CurrentAddr( UINT8 address )
 {
-    USBHSH->DEV_AD &= 0x00;
-    USBHSH->DEV_AD |= address; // SET ADDRESS
+    USBHSH->DEV_AD = address;                  // SET ADDRESS
+    thisUsbDev.DeviceAddress = address ;
 }
 
 /*********************************************************************
@@ -451,24 +533,24 @@ void USBHS_CurrentAddr( UINT8 address )
  *
  * @brief   Descriptor analysis.
  *
- * @param   pusbdev - host status variable.
+ * @param   pusbdev - device information variable.
  *          pdesc - descriptor buffer to analyze
  *          l - length
  *
  * @return  none
  */
-void Analysis_Descr(PUSBHS_HOST pusbdev,PUINT8 pdesc, UINT16 l)
+void Analysis_Descr(pUSBDEV_INFO pusbdev,PUINT8 pdesc, UINT16 l)
 {
     UINT16 i;
-    for(i=0;i<l;i++)                                                //分析描述符
+    for( i=0; i<l; i++ )                                                //分析描述符
     {
-     if((pdesc[i]==0x09)&&(pdesc[i+1]==0x02))
-        {
-            printf("bNumInterfaces:%02x \n",pdesc[i+4]);            //配置描述符里的接口数-第5个字节
-        }
+         if((pdesc[i]==0x09)&&(pdesc[i+1]==0x02))
+         {
+                printf("bNumInterfaces:%02x \n",pdesc[i+4]);            //配置描述符里的接口数-第5个字节
+         }
 
-     if((pdesc[i]==0x07)&&(pdesc[i+1]==0x05))
-        {
+         if((pdesc[i]==0x07)&&(pdesc[i+1]==0x05))
+         {
             if((pdesc[i+2])&0x80)
             {
                  printf("endpIN:%02x \n",pdesc[i+2]&0x0f);              //取in端点号
@@ -488,7 +570,7 @@ void Analysis_Descr(PUSBHS_HOST pusbdev,PUINT8 pdesc, UINT16 l)
                 printf("Out_endpmaxsize:%02x \n",EndpnMaxSize);
             }
         }
-    }
+  }
 }
 
 

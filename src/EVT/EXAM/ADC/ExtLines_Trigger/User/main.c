@@ -4,6 +4,8 @@
 * Version            : V1.0.0
 * Date               : 2021/06/06
 * Description        : Main program body.
+* Copyright (c) 2021 Nanjing Qinheng Microelectronics Co., Ltd.
+* SPDX-License-Identifier: Apache-2.0
 *******************************************************************************/
 
 /*
@@ -112,7 +114,7 @@ void EXTI_Event_Init(void)
 u16 Get_ConversionVal(s16 val)
 {
 	if((val+Calibrattion_Val)<0) return 0;
-	if((Calibrattion_Val+val)>4095) return 4095;
+	if((Calibrattion_Val+val)>4095||val==4095) return 4095;
 	return (val+Calibrattion_Val);
 }
 
@@ -152,7 +154,7 @@ void ADC1_2_IRQHandler()
 		ADC_val = ADC_GetInjectedConversionValue(ADC1, ADC_InjectedChannel_1);
 #if 0
 		printf("ADC Extline trigger conversion...\r\n");
-		printf( "JADC%04d\r\n", Get_ConversionVal(ADC_val+Calibrattion_Val));
+		printf( "JADC%04d\r\n", Get_ConversionVal(ADC_val));
 #endif
 	}
 

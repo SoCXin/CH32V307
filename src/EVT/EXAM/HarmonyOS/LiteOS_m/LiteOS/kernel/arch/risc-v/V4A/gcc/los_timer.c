@@ -62,8 +62,8 @@ WEAK UINT32 HalTickStart(OS_TICK_HANDLER handler)
 
     NVIC_EnableIRQ(SysTicK_IRQn);
     NVIC_EnableIRQ(Software_IRQn);
-    NVIC_SetPriority(SysTicK_IRQn,0xff);
-    NVIC_SetPriority(Software_IRQn,0xff);
+    NVIC_SetPriority(SysTicK_IRQn,0xf0);
+    NVIC_SetPriority(Software_IRQn,0xf0);
     systick_handler = handler;
 
     SysTick->SR=0;
@@ -76,7 +76,7 @@ WEAK UINT32 HalTickStart(OS_TICK_HANDLER handler)
 
 
 
-void SysTick_Handler(void) __attribute__((interrupt(/*"WCH-Interrupt-fast"*/)));
+void SysTick_Handler(void) __attribute__((interrupt("WCH-Interrupt-fast")));
 #define HalTickSysTickHandler  SysTick_Handler
 
 void HalTickSysTickHandler( void )

@@ -30,6 +30,7 @@
 
 #include "riscv_encoding.h"
 
+//#define ARCH_RISCV_FPU
 
 #ifndef __riscv_32e
 #define portRegNum          30
@@ -37,25 +38,27 @@
 #define portRegNum          14
 #endif
 
+#ifdef  ARCH_RISCV_FPU
+#define portFloatRegNum     32
+#endif
 
 #define portCONTEXT_SIZE    ( portRegNum * REGBYTES )
 
     .section .text,"ax",@progbits
-    .align 4
-
+    .align 2
     .type HalIntLock, %function
     .global HalIntLock
 HalIntLock:
-    csrr    a0, mstatus           /* return value */
-    li      t0, MSTATUS_MIE       /* mie*/
+    csrr    a0, mstatus  /* return value */
+    li      t0, (MSTATUS_MIE|MSTATUS_MPIE) /* mie|mpie */
     csrrc   zero, mstatus, t0
     ret
 
     .type HalIntUnLock, %function
     .global HalIntUnLock
 HalIntUnLock:
-    csrr    a0, mstatus           /* return value*/
-    li      t0, MSTATUS_MIE       /* mie*/
+    csrr    a0, mstatus  /* return value*/
+    li      t0, (MSTATUS_MIE|MSTATUS_MPIE) /* mie|mpie */
     csrrs   zero, mstatus, t0
     ret
 
@@ -72,19 +75,20 @@ HalIntRestore:
     for lazy saving of FPU registers. */
     .type HalStartToRun, %function
     .global HalStartToRun
-    .align 3
+    .align 2
 HalStartToRun:
     /* Setup Interrupt Stack using
        The stack that was used by main()
        before the scheduler is started is
        no longer required after the scheduler is started.
        Interrupt stack pointer is stored in CSR_MSCRATCH */
-    la t0, _eusrstack      /* 以后用作中断栈，中断栈和线程栈分开  */
+    la t0, _eusrstack
+    addi t0,t0,-512
     csrw CSR_MSCRATCH, t0
     /* get stack pointer */
     la t0, g_losTask
     LOAD t1, 0x0(t0)
-    LOAD      sp, 0(t1)    /* 当前TCB.sp->sp */
+    LOAD      sp, 0(t1)    /* TCB.sp->sp */
 
     /* Pop PC from stack and set MEPC */
     LOAD t0,  0  * REGBYTES(sp)
@@ -123,10 +127,44 @@ HalStartToRun:
     LOAD x29, 26 * REGBYTES(sp)
     LOAD x30, 27 * REGBYTES(sp)
     LOAD x31, 28 * REGBYTES(sp)
-
 #endif
-
     addi sp, sp, portCONTEXT_SIZE
+
+#ifdef ARCH_RISCV_FPU
+    FPLOAD   f0, 0 * FPREGBYTES(sp)
+    FPLOAD   f1, 1 * FPREGBYTES(sp)
+    FPLOAD   f2, 2 * FPREGBYTES(sp)
+    FPLOAD   f3, 3 * FPREGBYTES(sp)
+    FPLOAD   f4, 4 * FPREGBYTES(sp)
+    FPLOAD   f5, 5 * FPREGBYTES(sp)
+    FPLOAD   f6, 6 * FPREGBYTES(sp)
+    FPLOAD   f7, 7 * FPREGBYTES(sp)
+    FPLOAD   f8, 8 * FPREGBYTES(sp)
+    FPLOAD   f9, 9 * FPREGBYTES(sp)
+    FPLOAD   f10, 10 * FPREGBYTES(sp)
+    FPLOAD   f11, 11 * FPREGBYTES(sp)
+    FPLOAD   f12, 12 * FPREGBYTES(sp)
+    FPLOAD   f13, 13 * FPREGBYTES(sp)
+    FPLOAD   f14, 14 * FPREGBYTES(sp)
+    FPLOAD   f15, 15 * FPREGBYTES(sp)
+    FPLOAD   f16, 16 * FPREGBYTES(sp)
+    FPLOAD   f17, 17 * FPREGBYTES(sp)
+    FPLOAD   f18, 18 * FPREGBYTES(sp)
+    FPLOAD   f19, 19 * FPREGBYTES(sp)
+    FPLOAD   f20, 20 * FPREGBYTES(sp)
+    FPLOAD   f21, 21 * FPREGBYTES(sp)
+    FPLOAD   f22, 22 * FPREGBYTES(sp)
+    FPLOAD   f23, 23 * FPREGBYTES(sp)
+    FPLOAD   f24, 24 * FPREGBYTES(sp)
+    FPLOAD   f25, 25 * FPREGBYTES(sp)
+    FPLOAD   f26, 26 * FPREGBYTES(sp)
+    FPLOAD   f27, 27 * FPREGBYTES(sp)
+    FPLOAD   f28, 28 * FPREGBYTES(sp)
+    FPLOAD   f29, 29 * FPREGBYTES(sp)
+    FPLOAD   f30, 30 * FPREGBYTES(sp)
+    FPLOAD   f31, 31 * FPREGBYTES(sp)
+    addi    sp, sp, portFloatRegNum * FPREGBYTES
+#endif
 
     mret
 
@@ -134,9 +172,46 @@ HalStartToRun:
 .extern HalTaskSwitch
 
 .section    .text.vector_handler, "ax", @progbits
-.global SW_handler /* 进程切换  */
-.align 6
-SW_handler:
+.global SW_Handler
+.align 2
+SW_Handler:
+
+#ifdef ARCH_RISCV_FPU
+    addi    sp, sp, -portFloatRegNum * FPREGBYTES
+    FPSTORE  f0, 0 * FPREGBYTES(sp)
+    FPSTORE  f1, 1 * FPREGBYTES(sp)
+    FPSTORE  f2, 2 * FPREGBYTES(sp)
+    FPSTORE  f3, 3 * FPREGBYTES(sp)
+    FPSTORE  f4, 4 * FPREGBYTES(sp)
+    FPSTORE  f5, 5 * FPREGBYTES(sp)
+    FPSTORE  f6, 6 * FPREGBYTES(sp)
+    FPSTORE  f7, 7 * FPREGBYTES(sp)
+    FPSTORE  f8, 8 * FPREGBYTES(sp)
+    FPSTORE  f9, 9 * FPREGBYTES(sp)
+    FPSTORE  f10, 10 * FPREGBYTES(sp)
+    FPSTORE  f11, 11 * FPREGBYTES(sp)
+    FPSTORE  f12, 12 * FPREGBYTES(sp)
+    FPSTORE  f13, 13 * FPREGBYTES(sp)
+    FPSTORE  f14, 14 * FPREGBYTES(sp)
+    FPSTORE  f15, 15 * FPREGBYTES(sp)
+    FPSTORE  f16, 16 * FPREGBYTES(sp)
+    FPSTORE  f17, 17 * FPREGBYTES(sp)
+    FPSTORE  f18, 18 * FPREGBYTES(sp)
+    FPSTORE  f19, 19 * FPREGBYTES(sp)
+    FPSTORE  f20, 20 * FPREGBYTES(sp)
+    FPSTORE  f21, 21 * FPREGBYTES(sp)
+    FPSTORE  f22, 22 * FPREGBYTES(sp)
+    FPSTORE  f23, 23 * FPREGBYTES(sp)
+    FPSTORE  f24, 24 * FPREGBYTES(sp)
+    FPSTORE  f25, 25 * FPREGBYTES(sp)
+    FPSTORE  f26, 26 * FPREGBYTES(sp)
+    FPSTORE  f27, 27 * FPREGBYTES(sp)
+    FPSTORE  f28, 28 * FPREGBYTES(sp)
+    FPSTORE  f29, 29 * FPREGBYTES(sp)
+    FPSTORE  f30, 30 * FPREGBYTES(sp)
+    FPSTORE  f31, 31 * FPREGBYTES(sp)
+#endif
+
     addi sp, sp, -portCONTEXT_SIZE
     STORE x1,  1  * REGBYTES(sp)    /* RA */
     STORE x5,  2  * REGBYTES(sp)
@@ -168,6 +243,10 @@ SW_handler:
     STORE x30, 27 * REGBYTES(sp)
     STORE x31, 28 * REGBYTES(sp)
 #endif
+
+    li   t0,    0x20
+	csrs 0x804, t0
+
     /* Push mstatus to stack */
     csrr t0, CSR_MSTATUS
     STORE t0,  (portRegNum - 1)  * REGBYTES(sp)
@@ -229,6 +308,43 @@ SW_handler:
     LOAD x30, 27 * REGBYTES(sp)
     LOAD x31, 28 * REGBYTES(sp)
 #endif
-
     addi sp, sp, portCONTEXT_SIZE
+
+#ifdef ARCH_RISCV_FPU
+    FPLOAD   f0, 0 * FPREGBYTES(sp)
+    FPLOAD   f1, 1 * FPREGBYTES(sp)
+    FPLOAD   f2, 2 * FPREGBYTES(sp)
+    FPLOAD   f3, 3 * FPREGBYTES(sp)
+    FPLOAD   f4, 4 * FPREGBYTES(sp)
+    FPLOAD   f5, 5 * FPREGBYTES(sp)
+    FPLOAD   f6, 6 * FPREGBYTES(sp)
+    FPLOAD   f7, 7 * FPREGBYTES(sp)
+    FPLOAD   f8, 8 * FPREGBYTES(sp)
+    FPLOAD   f9, 9 * FPREGBYTES(sp)
+    FPLOAD   f10, 10 * FPREGBYTES(sp)
+    FPLOAD   f11, 11 * FPREGBYTES(sp)
+    FPLOAD   f12, 12 * FPREGBYTES(sp)
+    FPLOAD   f13, 13 * FPREGBYTES(sp)
+    FPLOAD   f14, 14 * FPREGBYTES(sp)
+    FPLOAD   f15, 15 * FPREGBYTES(sp)
+    FPLOAD   f16, 16 * FPREGBYTES(sp)
+    FPLOAD   f17, 17 * FPREGBYTES(sp)
+    FPLOAD   f18, 18 * FPREGBYTES(sp)
+    FPLOAD   f19, 19 * FPREGBYTES(sp)
+    FPLOAD   f20, 20 * FPREGBYTES(sp)
+    FPLOAD   f21, 21 * FPREGBYTES(sp)
+    FPLOAD   f22, 22 * FPREGBYTES(sp)
+    FPLOAD   f23, 23 * FPREGBYTES(sp)
+    FPLOAD   f24, 24 * FPREGBYTES(sp)
+    FPLOAD   f25, 25 * FPREGBYTES(sp)
+    FPLOAD   f26, 26 * FPREGBYTES(sp)
+    FPLOAD   f27, 27 * FPREGBYTES(sp)
+    FPLOAD   f28, 28 * FPREGBYTES(sp)
+    FPLOAD   f29, 29 * FPREGBYTES(sp)
+    FPLOAD   f30, 30 * FPREGBYTES(sp)
+    FPLOAD   f31, 31 * FPREGBYTES(sp)
+    addi    sp, sp, portFloatRegNum * FPREGBYTES
+#endif
+
     mret
+

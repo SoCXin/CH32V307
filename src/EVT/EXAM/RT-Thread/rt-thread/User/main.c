@@ -4,6 +4,8 @@
 * Version            : V1.0.0
 * Date               : 2020/04/30
 * Description        : Main program body.
+* Copyright (c) 2021 Nanjing Qinheng Microelectronics Co., Ltd.
+* SPDX-License-Identifier: Apache-2.0
 *******************************************************************************/
 #include "ch32v30x.h"
 #include <rtthread.h>
@@ -41,7 +43,7 @@ void LED1_BLINK_INIT(void)
  *
  * @brief   main只是一个线程之一，除此之外还有tshell,idle
  *          本main只是一个LED闪烁，main线程的注册在rtthread_startup中，tshell使用了串口
- *          接收中断，中断栈和线程栈使用分开，注意进中断时候16caller寄存器需要压入线程栈中
+ *          接收中断，中断栈和线程栈使用分开.
  *
  * @return  none
  */
