@@ -4,8 +4,10 @@
 * Version            : V1.0
 * Date               : 2022/05/10
 * Description        : uart cfg.
-* Copyright (c) 2022 Nanjing Qinheng Microelectronics Co., Ltd.
-* SPDX-License-Identifier: Apache-2.0
+*********************************************************************************
+* Copyright (c) 2021 Nanjing Qinheng Microelectronics Co., Ltd.
+* Attention: This software (modified or not) and binary are used for 
+* microcontroller manufactured by Nanjing Qinheng Microelectronics.
 *******************************************************************************/
 #include "bsp_uart.h"
 
@@ -20,11 +22,7 @@ u16 UART2_TX_Buf_Length[UART_TX_BUF_NUM] = {0};
 /**********************************************************************
  *  @fn      UART_GPIO_Init
  *
- *  @brief   initialize uart2 io
- *
- *           UART2  TX-->PA2   RX-->PA3
- *
- *  @param   none
+ *  @brief   initialize uart2 GPIO
  *
  *  @return  none
  * */
@@ -47,10 +45,6 @@ void UART_GPIO_Init(void)
  *  @fn      UART_DMA_Init
  *
  *  @brief   initialize uart2 DMA
- *
- *           UART2  TX-->DMA1_Channel7   RX-->DMA1_Channel6
- *
- *  @param   none
  *
  *  @return  none
  * */
@@ -93,12 +87,6 @@ void UART_DMA_Init(void)
  *
  *  @brief   initialize uart2 interrupt
  *
- *           TX -- enable  DMA_IT_TC
- *           RX -- enable  DMA_IT_HT
- *           enable  USARTx_IRQn-->USART_IT_IDLE
- *
- *  @param   none
- *
  *  @return  none
  * */
 void UART_Interrupt_Init(void)
@@ -118,9 +106,7 @@ void UART_Interrupt_Init(void)
 /**********************************************************************
  *  @fn      BSP_Uart_Init
  *
- *  @brief   initialize uart1~uart8
- *
- *  @param   none
+ *  @brief   initialize uart2
  *
  *  @return  none
  * */
@@ -131,16 +117,17 @@ void BSP_Uart_Init(void)
     UART_GPIO_Init();
 
     /* USART2 TX-->PA2   RX-->PA3 */
-    uart_data_t.RX_buffer = &UART2_RX_DMA_DataBuf[0];
+    uart_data_t.RX_buffer = UART2_RX_DMA_DataBuf;
     uart_data_t.TX_buffer = &UART2_TX_DMA_DataBuf[0];
-    uart_data_t.TX_data_length = &UART2_TX_Buf_Length[0];
+    uart_data_t.TX_data_length = UART2_TX_Buf_Length;
     uart_data_t.rx_read = 0;
     uart_data_t.rx_write = 0;
     uart_data_t.last_RX_DMA_length = UART_RX_DMA_SIZE;
     uart_data_t.RX_data_length = 0;
     uart_data_t.tx_read = 0;
-    uart_data_t.rx_write = 0;
-    uart_data_t.uart_tx_dma_state = IDEL;
+    uart_data_t.tx_write = 0;
+    uart_data_t.tx_remainBuffNum = UART_TX_BUF_NUM;
+    uart_data_t.uart_tx_dma_state = IDLE;
 
     RCC_APB1PeriphClockCmd(RCC_APB1Periph_USART2, ENABLE);
 

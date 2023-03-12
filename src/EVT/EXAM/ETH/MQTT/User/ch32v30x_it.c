@@ -4,10 +4,12 @@
 * Version            : V1.0.0
 * Date               : 2022/01/18
 * Description        : Main Interrupt Service Routines.
+*********************************************************************************
 * Copyright (c) 2021 Nanjing Qinheng Microelectronics Co., Ltd.
-* SPDX-License-Identifier: Apache-2.0
+* Attention: This software (modified or not) and binary are used for 
+* microcontroller manufactured by Nanjing Qinheng Microelectronics.
 *******************************************************************************/
-#include <WCHNET.h>
+#include <wchnet.h>
 #include "eth_driver.h"
 #include "ch32v30x_it.h"
 
@@ -16,7 +18,6 @@ void HardFault_Handler(void) __attribute__((interrupt("WCH-Interrupt-fast")));
 void ETH_IRQHandler(void) __attribute__((interrupt("WCH-Interrupt-fast")));
 void TIM2_IRQHandler(void) __attribute__((interrupt("WCH-Interrupt-fast")));
 void EXTI9_5_IRQHandler(void) __attribute__((interrupt()));
-
 u8 publishValid = 0;
 u16 timeCnt = 0;
 /*********************************************************************
@@ -56,7 +57,7 @@ void HardFault_Handler(void)
  */
 void EXTI9_5_IRQHandler(void)
 {
-    ETH_PHYLink( );
+    // ETH_PHYLink( );
     EXTI_ClearITPendingBit(EXTI_Line7);     /* Clear Flag */
 }
 
@@ -81,7 +82,7 @@ void ETH_IRQHandler(void)
  */
 void TIM2_IRQHandler(void)
 {
-    if(!publishValid){            //每隔20s置一下publishValid标志
+    if(!publishValid){            //Set the publishValid flag every 20s
         timeCnt += 10;
         if(timeCnt > 20000){
             publishValid = 1;

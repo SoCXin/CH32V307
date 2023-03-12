@@ -1,17 +1,17 @@
-﻿# [CH32V307](https://docs.soc.xin/CH32V307)
+﻿# [CH32V307](https://doc.soc.xin/CH32V307)
 
-
-* [WCH](http://www.wch.cn/)：[RISC-V4F 青稞](https://github.com/SoCXin/RISC-V)
-* [L3R3](https://github.com/SoCXin/Level)：144 MHz
+* [WCH](http://www.wch.cn/)：[RISC-V4C](https://github.com/SoCXin/RISC-V)
+* [L2R3](https://github.com/SoCXin/Level)：144 MHz , [￥14.63](https://item.szlcsc.com/3443981.html)
 
 ## [简介](https://github.com/SoCXin/CH32V307/wiki)
 
-[CH32V307](https://github.com/SoCXin/CH32V307) 系列是基于32位RISC-V设计的互联型微控制器，配备了硬件堆栈区、快速中断入口，在标准RISC-V基础上大大提高了中断响应速度。加入单精度浮点指令集，扩充堆栈区，具有更高的运算性能。扩展串口U(S)ART数量到8组，电机定时器到4组。提供USB2.0高速接口（480Mbps）并内置了PHY收发器，以太网MAC升级到千兆并集成了10M-PHY模块。
+[CH32V307](https://www.wch.cn/products/CH32V307.html) 系列是基于32位RISC-V设计的互联型微控制器，配备了硬件堆栈区、快速中断入口，在标准RISC-V基础上大大提高了中断响应速度。加入单精度浮点指令集，扩充堆栈区，具有更高的运算性能。扩展串口U(S)ART数量到8组，电机定时器到4组。提供USB2.0高速接口（480Mbps）并内置了PHY收发器，以太网MAC升级到千兆并集成了10M-PHY模块。
 
 [![sites](docs/CH32V307.png)](http://www.wch.cn/products/CH32V307.html)
 
 ### 关键特性
 
+* 144MHz RISC-V4C Core（青稞）
 * 64KB SRAM，256KB Flash
 * USB2.0全速OTG接口
 * USB2.0高速主机/设备接口（480Mbps 内置PHY）
@@ -27,17 +27,14 @@
 * 2组IIC接口、3组SPI接口、2组IIS接口
 
 
-### [资源收录](https://github.com/SoCXin)
+## [资源收录](https://github.com/SoCXin)
 
 * [参考资源](src/)
 * [参考文档](docs/)
 * [参考工程](project/)
 
-### [选型建议](https://github.com/SoCXin)
+## [选型建议](https://github.com/SoCXin)
 
-[CH32V307](https://github.com/SoCXin/CH32V307) 封装规格
+[CH32V307](https://github.com/SoCXin/CH32V307) 封装规格较大，外设资源较多，适用于复杂应用。
 
-* LQFP64M
-* LQFP100
-
-### [www.SoC.xin](http://www.SoC.Xin)
+去掉以太网等外设的版本[CH32V305RBT6](https://item.szlcsc.com/5860927.html)价格更低。

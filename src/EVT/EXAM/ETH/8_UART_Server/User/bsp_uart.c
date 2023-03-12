@@ -4,13 +4,13 @@
 * Version            : V1.0.0
 * Date               : 2022/01/16
 * Description        : uart init.
-* Copyright (c) 2022 Nanjing Qinheng Microelectronics Co., Ltd.
-* SPDX-License-Identifier: Apache-2.0
+*********************************************************************************
+* Copyright (c) 2021 Nanjing Qinheng Microelectronics Co., Ltd.
+* Attention: This software (modified or not) and binary are used for 
+* microcontroller manufactured by Nanjing Qinheng Microelectronics.
 *******************************************************************************/
 
 #include "bsp_uart.h"
-
-#define BAUD_RATE  115200
 
 /* Global Variable */
 
@@ -59,13 +59,8 @@ uint8_t  UART8_RX_DMA_DataBuf[UART_RX_DMA_SIZE]= {0};
 uint8_t  UART8_TX_DMA_DataBuf[UART_TX_BUF_NUM][ETH_RECEIVE_SIZE] = {0};
 uint16_t UART8_TX_Buf_Length[UART_TX_BUF_NUM] = {0};
 
-
-
-
 /* Global typedef */
 typedef enum { FAILED = 0, PASSED = !FAILED} TestStatus;
-
-
 
 /**********************************************************************
  *  @fn      UART_GPIO_Init

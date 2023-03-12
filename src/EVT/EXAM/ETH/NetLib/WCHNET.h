@@ -1,12 +1,14 @@
 /********************************** (C) COPYRIGHT *******************************
-* File Name        : WCHNET.H
-* Author           : WCH
-* Version          : V1.30
-* Date             : 2022/06/01
-* Description      : This file contains the headers of 
+ * File Name          : wchnet.h
+ * Author             : WCH
+ * Version            : V1.70
+ * Date               : 2023/02/27
+ * Description        : This file contains the headers of 
 *                    the Ethernet protocol stack library.
+*********************************************************************************
 * Copyright (c) 2021 Nanjing Qinheng Microelectronics Co., Ltd.
-* SPDX-License-Identifier: Apache-2.0
+* Attention: This software (modified or not) and binary are used for 
+* microcontroller manufactured by Nanjing Qinheng Microelectronics.
 *******************************************************************************/
 #ifndef __WCHNET_H__
 #define __WCHNET_H__
@@ -19,7 +21,7 @@
 extern "C" {
 #endif
 
-#define WCHNET_LIB_VER                  0x13              //the library version number
+#define WCHNET_LIB_VER                  0x17              //the library version number
 #define WCHNET_CFG_VALID                0x12345678        //Configuration value valid flag
 
 /* LED state @LED_STAT */
@@ -126,7 +128,7 @@ extern "C" {
 #define WCHNET_SIZE_MEM                0x08               //sizeof(struct mem)
 #define WCHNET_SIZE_ARP_TABLE          0x18               //sizeof ARP table
 
-#define WCHNET_SIZE_POOL_BUF           WCHNET_MEM_ALIGN_SIZE(WCHNET_TCP_MSS + 40 + 14)          //pbuf size
+#define WCHNET_SIZE_POOL_BUF           WCHNET_MEM_ALIGN_SIZE(WCHNET_TCP_MSS + 40 + 14 + 4)          //pbuf size
 #define WCHNET_MEMP_SIZE               ((WCHNET_MEM_ALIGNMENT - 1) +                                    \
                           (WCHNET_NUM_IPRAW * WCHNET_MEM_ALIGN_SIZE(WCHNET_SIZE_IPRAW_PCB)) +           \
                           (WCHNET_NUM_UDP * WCHNET_MEM_ALIGN_SIZE(WCHNET_SIZE_UDP_PCB)) +               \
@@ -163,11 +165,11 @@ typedef void (*dns_callback)( const char *name, uint8_t *ipaddr, void *callback_
 typedef uint8_t (*dhcp_callback)( uint8_t status, void * );
 
 /* socket receive callback type */
-struct _SCOK_INF;
-typedef void (*pSockRecv)( struct _SCOK_INF *, uint32_t, uint16_t, uint8_t *, uint32_t);
+struct _SOCK_INF;
+typedef void (*pSockRecv)( struct _SOCK_INF *, uint32_t, uint16_t, uint8_t *, uint32_t);
 
-/* sokcet陓洘桶 */
-typedef struct _SCOK_INF
+/* Socket information struct */
+typedef struct _SOCK_INF
 {
     uint32_t IntStatus;                       //interrupt state
     uint32_t SockIndex;                       //Socket index value
@@ -177,7 +179,7 @@ typedef struct _SCOK_INF
     uint32_t RecvReadPoint;                   //The read pointer of the receive buffer
     uint32_t RecvRemLen;                      //Remaining length of receive buffer
     uint32_t ProtoType;                       //protocol type
-    uint32_t ScokStatus;                      //Low byte Socket state, the next low byte is TCP state, only meaningful in TCP mode
+    uint32_t SockStatus;                      //Low byte Socket state, the next low byte is TCP state, only meaningful in TCP mode
     uint32_t DesPort;                         //destination port
     uint32_t SourPort;                        //Source port, protocol type in IPRAW mode
     uint8_t  IPAddr[4];                       //Socket destination IP address
@@ -200,11 +202,14 @@ struct _WCH_CFG
   uint32_t MiscConfig1;                       //Miscellaneous Configuration 1
   /* Bits 0-7 Number of Sockets*/
   /* Bits 8-12 Reserved */
-  /* Bit 13 PING enable, 1: On 0: Off  */
+  /* Bit  13 PING enable, 1: On 0: Off  */
   /* Bits 14-18 TCP retransmission times  */
   /* Bits 19-23 TCP retransmission period, in 50 milliseconds  */
-  /* bit 25 send failed retry, 1: enable, 0: disable */
-  /* Bits 26-31 Reserved */
+  /* bit  25 send failed retry, 1: enable, 0: disable */
+  /* bit  26 Select whether to perform IPv4 checksum check on
+   *         the TCP/UDP/ICMP header of the received frame payload by hardware,
+   *         and calculate and insert the checksum of the IP header and payload of the sent frame by hardware.*/
+  /* Bits 27-31 Reserved */
   led_callback led_link;                      //PHY Link Status Indicator
   led_callback led_data;                      //Ethernet communication indicator
   eth_tx_set net_send;                        //Ethernet send
@@ -455,10 +460,10 @@ uint8_t WCHNET_SocketUdpSendTo( uint8_t socketid, uint8_t *buf, uint32_t *slen, 
 /**
  * @brief   Convert ASCII address to network address. 
  *
- * @param       *cp - ASCII address to be converted, such as ※192.168.1.2§
+ * @param       *cp - ASCII address to be converted, such as "192.168.1.2"
  * @param(in)   *addr - First address of the memory stored in the converted network address 
  * @param(out)  *addr -  Converted network address, such as 0xC0A80102 
- * @return  0 每 Success.   Others 每 Failure. 
+ * @return  0 - Success.   Others - Failure. 
  */
 uint8_t WCHNET_Aton(const char *cp, uint8_t *addr);
 
@@ -526,7 +531,7 @@ uint8_t WCHNET_DHCPStop( void );
  *
  * @param   *name - First address of DHCP host name 
  *
- * @return  0 每 Success.    Others 每 Failure. 
+ * @return  0 - Success.    Others - Failure. 
  */
 uint8_t WCHNET_DHCPSetHostname(char *name);
 

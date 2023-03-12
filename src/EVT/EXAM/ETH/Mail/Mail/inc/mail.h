@@ -1,10 +1,14 @@
-/********************************** (C) COPYRIGHT *********************************
+/********************************** (C) COPYRIGHT *******************************
 * File Name          : mail.h
 * Author             : WCH
-* Version            : V1.0
-* Date               : 2020/05/07
-* Description        : Define for mail.c
-**********************************************************************************/
+* Version            : V1.0.0
+* Date               : 2022/01/18
+* Description        : Definition for mail.c.
+*********************************************************************************
+* Copyright (c) 2021 Nanjing Qinheng Microelectronics Co., Ltd.
+* Attention: This software (modified or not) and binary are used for 
+* microcontroller manufactured by Nanjing Qinheng Microelectronics.
+*******************************************************************************/
 #ifndef __MAIL_H__
 #define __MAIL_H__
 
@@ -12,134 +16,136 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "debug.h"
-#include "WCHNET.h"
+#include "wchnet.h"
 #include "eth_driver.h"
 #include "mailcmd.h"
 
 /* ********************************************************************************************************************
-* ¹¤×÷ÀàĞÍ
+* work mode:
 *
-*  1  Ö»·¢ËÍÓÊ¼ş£¬·¢ËÍÍê³ÉºóÍË³öµÇÂ½²¢¹Ø±ÕsocketÁ¬½Ó£»
-*  2  Ö»½ÓÊÕÓÊ¼ş£¬½ÓÊÕÍê³É¡¾»ñÈ¡ÓÊ¼şÁĞ±í¡¿ºóÍË³öµÇÂ½²¢¹Ø±ÕsocketÁ¬½Ó£»
-*  3  Ö»½ÓÊÕÓÊ¼ş£¬½ÓÊÕÍê³É¡¾¶ÁÈ¡ÓÊ¼şºóÉ¾³ı¡¿ºóÍË³öµÇÂ½²¢¹Ø±ÕsocketÁ¬½Ó£»
-*  4  ·¢ËÍÓÊ¼şÇÒ½ÓÊÜÓÊ¼ş£¬·¢ËÍÍê³Éºó¿ªÊ¼½ÓÊÕÓÊ¼ş£¬½ÓÊÕÍê³ÉºóÍË³öµÇÂ½;
-*  5  ·¢ËÍÓÊ¼şÇÒ½ÓÊÜÓÊ¼ş£¬½ÓÊÕÍê³Éºó»Ø¸´ÓÊ¼ş£¬·¢ËÍÍê³Éºó·¢ËÍÍË³öµÇÂ½£¬É¾³ıÓÊ¼şºóÍË³öÊÕÓÊ¼şµÇÂ½¡£
-*  ËµÃ÷£º´Ë´úÂë½ÓÊÕÓë·¢ËÍÓÃµÄÁ½¸ö¶ÀÁ¢µÄsocketÁ¬½Ó£»
-*         Èç¹û»¹Ğè½øĞĞÆäËûµÄ²Ù×÷£¬eg£º·¢ËÍÍê½ÓÊÕ£¬½ÓÊÕÍê¼ÌĞø·¢ËÍ²Ù×÷
-*                                     Ö»ĞèÔÚmail.c´úÂëÖĞµÄCheck_Response£¨£©
-*                                     ×Ó³ÌĞòÖĞ½ÓÊÕÍê³Éºó£¬½«ÃüÁîºÅÖÃÎª SMTP_SEND_START£»
+*  1  Only send mail, log out after sending and close the socket connection;
+*  2  Only receive mail, log out and close the socket connection after receiving
+*     [Get mail list];
+*  3  Only receive email, log out after receiving [delete after reading emails]
+*     and close the socket connection;
+*  4  Send email and receive email, start receiving email after sending, and
+*     log out after receiving them;
+*  5  Send email and receive email, reply email after receiving them, exit
+*     SMTP after sending them, and exit POP after deleting email.
+*  Description: This code receives and sends two independent socket connections;
 ***********************************************************************************************************************/
 #ifndef    mail_work_mode
     #define  mail_work_mode             1
 #endif
 #if   (mail_work_mode == 1)
-    #define send_mail                   1         // ·¢ËÍÓÊ¼ş
-    #define    send_over_quit           1         // ·¢ËÍÍê³ÉÍË³ö
+    #define send_mail                   1         // send email
+    #define    send_over_quit           1         // send completed and sign out
 #elif (mail_work_mode == 2)
-    #define receive_mail                1         // ½ÓÊÕÓÊ¼ş
-    #define    receive_over_quit        1         // ¶ÁÈ¡ÓÊ¼şºóÍË³ö
+    #define receive_mail                1         // receive email
+    #define    receive_over_quit        1         // Exit after reading mail
 #elif (mail_work_mode == 3)
-    #define receive_mail                1         // ½ÓÊÕÓÊ¼ş
-    #define    receive_dele_quit        1         // ¶ÁÍêÓÊ¼şºóÉ¾³ı²¢ÍË³ö
+    #define receive_mail                1         // receive email
+    #define    receive_dele_quit        1         // Delete and log out after reading the message
 #elif (mail_work_mode == 4)
-    #define send_mail                   1         // ·¢ËÍÓÊ¼ş
-    #define send_over_receive           1         // ·¢ËÍÍê½ÓÊÕ
-    #define receive_mail                0         // ½ÓÊÕÓÊ¼ş
-    #define receive_over_quit           1         // ¶ÁÈ¡ÓÊ¼şºóÍË³ö
+    #define send_mail                   1         // send email
+    #define send_over_receive           1         // send completed and reading mail
+    #define receive_mail                0         // receive email,According to the program flow, here should be set to 0
+    #define receive_over_quit           1         // Exit after reading mail
 #elif (mail_work_mode == 5)
-    #define receive_mail                1         // ½ÓÊÕÓÊ¼ş
-    #define receive_over_reply          1         // ¶ÁÈ¡ÓÊ¼şºó»Ø¸´ÓÊ¼ş
-    #define send_mail                   0         // ·¢ËÍÓÊ¼ş
-    #define send_over_quit              1         // ·¢ËÍÍêÍË³ö
+    #define receive_mail                1         // receive email
+    #define receive_over_reply          1         // Reply to mails after reading them
+    #define send_mail                   0         // send email,According to the program flow, here should be set to 0
+    #define send_over_quit              1         // send completed and sign out
 #endif
 
 //================================================================================
-extern  u8 OrderType;                             //    ÃüÁîÀàĞÍ
+extern  u8 OrderType;                             //Command type
 extern  u8 CheckType;
-extern  u8 ReceDatFlag;                           //    ÊÕµ½Êı¾İ±êÖ¾Î»
+extern  u8 ReceDatFlag;                           //received data flag
 extern  u16 ReceLen;
 //=================================================================================
-#define attach_max_len           512              // ·¢ËÍ¸½¼ş×î´ó³¤¶È£¬Ä¬ÈÏÎª512
-#define POP3_SERVER_PORT         110              // ÊÕÓÊ¼şÄ¿µÄ¶ËµãºÅ
-#define SMTP_SERVER_PORT         25               // ·¢ÓÊ¼şÄ¿µÄ¶ËµãºÅ
-#define DIALOG                    0               // 1 ´òÓ¡µ÷ÊÔĞÅÏ¢  0 ¹Ø±Õµ÷ÊÔĞÅÏ¢
-#define POP3_LOG_EN               1               //½«»ñÈ¡µÄÎÄ¼şÔÚ´®¿ÚÊä³ö
+#define attach_max_len           512              //The maximum length of the attachment to send, the default is 512
+#define POP3_SERVER_PORT         110              //The destination port  for receiving mails
+#define SMTP_SERVER_PORT         25               //SMTP port
+#define DIALOG                    0               //1 print debug information 0 close debug information
+#define POP3_LOG_EN               1               //Output the obtained file on the serial port
+
 typedef struct
 {
     u8 Socket;
-    u8 g_MIME;                                    // ÓĞÎŞ¸½¼ş±êÖ¾Î»
-    char  m_strFile[48];                          // ¸½¼şÃû×Ö
-    char  m_strSendFrom[48];                      // ·¢¼şÈËµØÖ·
-    char  m_strSendTo[48];                        // ÊÕ¼şÈËµØÖ·
-    char  m_strSMTPServer[32];                    // ·şÎñÆ÷Ãû³Æ
-    char  m_strUSERID[32];                        // ÓÃ»§Ãû
-    char  m_strPASSWD[32];                        // ÃÜÂë
-    char  m_strSubject[32];                       // Ö÷Ìâ
-    char  m_strSenderName[32];                    // ·¢ËÍÈËÃû×Ö
+    u8 g_MIME;                                    //Attachment flag
+    char  m_strFile[48];                          //attachment name
+    char  m_strSendFrom[48];                      //sender address
+    char  m_strSendTo[48];                        //receiver's address
+    char  m_strSMTPServer[32];                    //server name
+    char  m_strUSERID[32];                        //user name
+    char  m_strPASSWD[32];                        //password
+    char  m_strSubject[32];                       //subject
+    char  m_strSenderName[32];                    //sender name
 }SMTP;
+
 typedef struct
 {
     u8 Socket;
-    u8 EncodeType;                                // ÓÊ¼şÊ¹ÓÃµÄ±àÂë·½Ê½
-    u8 AnalyMailDat;                              // ·ÖÎöÓÊ¼ş½áÊø±êÖ¾Î»
-    u8 identitycheck;                             // ÑéÖ¤¸½¼şÄÚÈİ±êÖ¾Î»
-    u8 RefreshTime;                               // Ã»ËÑ²éµ½ÓÊ¼ş¼ÌĞøËÑË÷±êÖ¾Î»
+    u8 EncodeType;                                //The encoding used by the mail
+    u8 AnalyMailDat;                              //Analyze the end-of-mail flag
+    u8 identitycheck;                             //Verify Attachment Content Flags
+    u8 RefreshTime;                               //No mail found, continue search flag
     u8 DiscnntFlag;
     u8 ReceFlag;
-    char  sBufTime[40];                           // ±£´æ½ÓÊÕÓÊ¼şµÄÊ±¼ä
-    char  Ccname[48];                             // ³­ËÍµÄÃû×Ö
-    char  DecodeRName[32];                        // ±£´æ½ÓÊÕµ½ÓÊ¼ş½âÂëºóµÄ·¢¼şÈËÃû×Ö
-    char  pPop3Server[32];                        // POP·şÎñÆ÷
-    char  pPop3UserName[32];                      // POPµÇÂ½ÓÃ»§Ãû
-    char  pPop3PassWd[32];                        // POPµÇÂ½ÃÜÂë
+    char  sBufTime[40];                           //Save the time of receiving emails
+    char  Ccname[48];                             //CC name
+    char  DecodeRName[32];                        //Save the sender's name after the received email is decoded
+    char  pPop3Server[32];                        //POP server
+    char  pPop3UserName[32];                      //POP login user name
+    char  pPop3PassWd[32];                        //POP login password
 }POP;
-/* smtp·¢ËÍÓÊ¼şÏà¹Ø²ÎÊı */
-extern const char *m_Server;                      // ·şÎñÆ÷Ãû³Æ
-extern const char *m_UserName;                    // ÓÃ»§Ãû
-extern const char *m_PassWord;                    // ÃÜÂë
-extern const char *m_SendFrom;                    // ·¢¼şÈËµØÖ·
-extern const char *m_SendName;                    // ·¢ËÍÈËÃû×Ö
-extern const char *m_SendTo;                      // ÊÕ¼şÈËµØÖ·
-extern const char *m_Subject;                     // Ö÷Ìâ
-extern const char *m_FileName;                    // ¸½¼şÃû×Ö(Èç¹û²»·¢ËÍ¸½¼ş,ÔòÖÃÎª"\0")
-/* pop½ÓÊÕÓÊ¼şÏà¹Ø */
-extern const char *p_Server;                      // POP·şÎñÆ÷
-extern const char *p_UserName;                    // POPµÇÂ½ÓÃ»§Ãû
-extern const char *p_PassWord;                    // POPµÇÂ½ÃÜÂë
 
-extern u8 MACAddr[6];                             //MACµØÖ·
+/* SMTP send email related parameters */
+extern const char *m_Server;
+extern const char *m_UserName;
+extern const char *m_PassWord;
+extern const char *m_SendFrom;
+extern const char *m_SendName;
+extern const char *m_SendTo;
+extern const char *m_Subject;
+extern const char *m_FileName;
+/* pop receive mail related*/
+extern const char *p_Server;
+extern const char *p_UserName;
+extern const char *p_PassWord;
+
+extern u8 MACAddr[6];
 extern char     AttachmentData[attach_max_len];
 extern POP      *p_pop3;
 extern SMTP     *p_smtp;
 extern char     MailBodyData[128];
 
-/* socketsmtp Ïà¹Ø¶¨Òå,SMTP·¢ËÍÓÊ¼ş    */                                          
-extern const u8  SocketsmtpIP[4];                 // Socket smtpÄ¿µÄIPµØÖ·
-extern const u16  SmtpSourPrt;                    // Socket smtpÔ´¶Ë¿ÚºÅ
+extern const u8  SocketSMTPIP[4];
+extern const u16  SmtpSourPrt;
 
-/* socketpop3 Ïà¹Ø¶¨Òå, POPÊÕÓÊ¼ş*/                                              
-extern const u8  Socketpop3IP[4];                 // Socket pop3Ä¿µÄIPµØÖ·
-extern const u16  Pop3SourPrt;                    // Socket pop3Ô´¶Ë¿ÚºÅ
+extern const u8  SocketPOP3IP[4];
+extern const u16  Pop3SourPrt;
 
 /************************************************************************************************************************
-* POP¿ÉÑ¡ÃüÁî
+* POP optional command
 ************************************************************************************************************************/
 #ifdef receive_mail 
-    #define POP_RTER        1                     // 1 ´¦ÀíserverÓÊ¼şµÄÈ«²¿ÎÄ±¾
-    #define POP_DELE        1                     // 2 ±ê¼ÇÉ¾³ı
-//    #define POP_RSET      1                     // 3 ´¦Àí³·ÏúËùÓĞµÄDELEÃüÁî
-//    #define POP_TOP       1                     // 4 ·µ»ØnºÅÓÊ¼şµÄÇ°mĞĞÄÚÈİ
-//    #define POP_UIDL      1                     // 5 ´¦Àíserver·µ»ØÓÃÓÚ¸ÃÖ¸¶¨ÓÊ¼şµÄÎ¨Ò»±êÊ¶£¬Èç¹ûÃ»ÓĞÖ¸¶¨£¬·µ»ØËùÓĞµÄ¡£
-    #define POP_REFRESH     1                     // ½ÓÊÕÓÊ¼ş¹ı³ÌÖĞÃ»ÊÕµ½ÓÊ¼ş¼ÌĞø²éÑ¯±êÖ¾ 
+    #define POP_RTER        1            // 1 Process the full text of the server's mail
+    #define POP_DELE        1            // 2 Mark for deletion
+//    #define POP_RSET      1            // 3 Cancel all DELE commands
+//    #define POP_TOP       1            // 4 Returns the first m lines of mail number n
+//    #define POP_UIDL      1            // 5 Returns the specified mail, if not specified, returns all.
+    #define POP_REFRESH     1            // Email not received continue query sign
 #endif
 
-#define g_strBoundary    "18ac0781-9ae4-4a2a-b5f7-5479635efb6b"                      /* ±ß½ç */
-#define g_strEncode      "base64"                                                    /* ±àÂë·½Ê½ */
-#define g_strcharset     "gb2312"                                                    /* windows¸ñÊ½ (linux¸ñÊ½"utf-8") */
-#define g_xMailer        "X-Mailer: X-WCH-Mail Client Sender\r\n"                    /* X-MailerÄÚÈİ     */
-#define g_Encoding       "Content-Transfer-Encoding: quoted-printable\r\nReply-To: " /* Encoding ÄÚÈİ */
-#define g_Custom         "X-Program: CSMTPMessageTester"                             /* X-ProgramÄÚÍ¬£¬¿ÉĞŞ¸Ä */
-#define g_FormatMail     "This is a multi-part message in MIME format."              /* ÓÊ¼şÓĞ¶àÖÖÄÚÈİ£¬Ò»°ãÊÇÓĞ¸½¼ş */
+#define g_strBoundary    "18ac0781-9ae4-4a2a-b5f7-5479635efb6b"                      //boundary
+#define g_strEncode      "base64"                                                    //Encoding
+#define g_strcharset     "gb2312"                                                    //windows format (linux format "utf-8")
+#define g_xMailer        "X-Mailer: X-WCH-Mail Client Sender\r\n"                    //X-Mailer Content
+#define g_Encoding       "Content-Transfer-Encoding: quoted-printable\r\nReply-To: " //Encoding content
+#define g_Custom         "X-Program: CSMTPMessageTester"                             //X-Program Content
+#define g_FormatMail     "This is a multi-part message in MIME format."
 #define g_AttachHead     "\r\nContent-Transfer-Encoding: quoted-printable\r\n" 
 #define g_AttachHedType  "text/plain"
 #define g_MailHedType    "multipart/mixed"
@@ -152,106 +158,81 @@ extern char     MacAddr[6];
 extern char     MacAddrC[18];
 #endif
 /************************************************************************************************************************
-* ÃüÁî´úÂë 
-* 0x01-0x0f Îª½ÓÊÕÓÊ¼şÃüÁîÂë
-****************** 0x01-0x07 Îª³£ÓÃÃüÁî
-****************** 0x09-0x0e ÎªP¿ÉÑ¡ÃüÁî
-****************** 0x01-0x02-0x03-0x06 ÎªÈ·ÈÏ×´Ì¬
-****************** 0x04-0x05 0x09-0x0e Îª²Ù×÷×´Ì¬
-* 0x10-0x1f Îª·¢ËÍÓÊ¼şÃüÁîÂë
-****************** 0x10-0x17 Ğè°´Ë³ĞòÖ´ĞĞ
-****************** ºóÃæµÄÎª¿ÉÑ¡Ôñ²Ù×÷
-* 0x00         ²»×öÈÎºÎ²Ù×÷
+* command code
+* 0x01-0x0f Command code for receiving mail
+****************** 0x01-0x07 Common commands
+****************** 0x09-0x0e optional command
+****************** 0x01-0x02-0x03-0x06 confirm status
+****************** 0x04-0x05 0x09-0x0e operating state
+* 0x10-0x1f send mail command code
+****************** 0x10-0x17 need to be executed in order
+****************** The latter is optional
+* 0x00         do nothing
 ************************************************************************************************************************/
 #define COMMAND_UNUSEFULL       0x00
 //POP RECEIVE CODE
-#define POP_RECEIVE_USER        0x01    // ÈÏÖ¤ÓÃ»§
-#define POP_RECEIVE_PASS        0x02    // ÈÏÖ¤ÃÜÂë
-#define POP_RECEIVE_STAT        0x03    // ÓÊÏäÍ³¼Æ×ÊÁÏ
-#define POP_RECEIVE_LIST        0x04    // ·µ»ØÖ¸¶¨ÓÊ¼şµÄ´óĞ¡
-#define POP_RECEIVE_RTER        0x05    // ¶ÁÈ¡ÓÊ¼şµÄÈ«²¿ÎÄ±¾
-#define POP_RECEIVE_QUIT        0x06    // ÍË³öµÇÂ½
-#define POP_CLOSE_SOCKET        0x07    // ¹Ø±ÕpopµÄsocket
-#define POP_RECEIVE_START       0x08    // Æô¶¯½ÓÊÕÓÊ¼ş
-#define POP_RECEIVE_DELE        0x09    // ±ê¼ÇÉ¾³ı
-#define POP_RECEIVE_RSET        0x0a    // ³·ÏúËùÓĞµÄDELEÃüÁî
-#define POP_RECEIVE_TOP         0x0b    // ´¦Àí·µ»ØnºÅÓÊ¼şµÄÇ°mĞĞÄÚÈİ£¬m±ØĞëÊÇ×ÔÈ»Êı
-#define POP_RECEIVE_UIDL        0x0e    // ·µ»ØÓÃÓÚ¸ÃÖ¸¶¨ÓÊ¼şµÄÎ¨Ò»±êÊ¶
-#define POP_ERR_CHECK           0x0F    // POPÎÕÊÖ³ö´íÍË³öµÇÂ½²¢¹Ø±Õsocket
+#define POP_RECEIVE_USER        0x01    //Authenticated user
+#define POP_RECEIVE_PASS        0x02    //Authenticated password
+#define POP_RECEIVE_STAT        0x03    //Mailbox Statistics
+#define POP_RECEIVE_LIST        0x04    //Returns the size of the specified message
+#define POP_RECEIVE_RTER        0x05    //Read the entire text of an email
+#define POP_RECEIVE_QUIT        0x06    //sign out
+#define POP_CLOSE_SOCKET        0x07    //close pop socket
+#define POP_RECEIVE_START       0x08    //Start receiving mail
+#define POP_RECEIVE_DELE        0x09    //Mark for deletion
+#define POP_RECEIVE_RSET        0x0a    //Cancel all DELE commands
+#define POP_RECEIVE_TOP         0x0b    //Returns the content of the first m lines of mail number n
+#define POP_RECEIVE_UIDL        0x0e    //Returns the unique identifier for the specified message
+#define POP_ERR_CHECK           0x0F    //POP handshake error, log out and close socket
 //SMTP SEND CODE
-#define SMTP_SEND_HELO          0x10    // ·¢ËÍhelloÃüÁî
-#define SMTP_SEND_AUTH          0x11    // ·¢ËÍµÇÂ½ÃüÁî
-#define SMTP_SEND_USER          0x12    // ·¢ËÍÓÃ»§Ãû
-#define SMTP_SEND_PASS          0x13    // ·¢ËÍÃÜÂë
-#define SMTP_SEND_MAIL          0x14    // ·¢ËÍ·¢ËÍÕßµØÖ·
-#define SMTP_SEND_RCPT          0x15    // ·¢ËÍ½ÓÊÕÕßµØÖ·
-#define SMTP_SEND_DATA          0x16    // ·¢ËÍ·¢ËÍÊı¾İÃüÁî
-#define SMTP_DATA_OVER          0x17    // ·¢ËÍÓÊ¼şÄÚÈİ
-#define SMTP_SEND_QUIT          0x18    // ÍË³öµÇÂ½
-#define SMTP_CLOSE_SOCKET       0x19    // ¹Ø±ÕsmtpµÄsocket
-#define SMTP_SEND_START         0x1E    // Æô¶¯·¢ËÍÓÊ¼ş
-#define SMTP_ERR_CHECK          0x1F    // smtpÎÕÊÖ³ö´íÍË³öµÇÂ½²¢¹Ø±Õsocket
+#define SMTP_SEND_HELO          0x10    //send hello command
+#define SMTP_SEND_AUTH          0x11    //Send login command
+#define SMTP_SEND_USER          0x12    //send user name
+#define SMTP_SEND_PASS          0x13    //send password
+#define SMTP_SEND_MAIL          0x14    //Send sender address
+#define SMTP_SEND_RCPT          0x15    //Send receiver address
+#define SMTP_SEND_DATA          0x16    //send DATA command
+#define SMTP_DATA_OVER          0x17    //Send email content
+#define SMTP_SEND_QUIT          0x18    //sign out
+#define SMTP_CLOSE_SOCKET       0x19    //close SMTP socket
+#define SMTP_SEND_START         0x1E    //Start sending mail
+#define SMTP_ERR_CHECK          0x1F    //SMTP handshake error, log out and close socket
 /* *********************************************************************************************************************
-* ÎÕÊÖĞÅºÅºË¶Ô´íÎó´úÂë
+* ï¿½ï¿½ï¿½ï¿½ï¿½ÅºÅºË¶Ô´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 ************************************************************************************************************************/
 //POP ERR CHECK CODE
-#define POP_ERR_CNNT            0x20     // popÁ¬½Ó´íÎó--------------¿ÉÄÜÊÇ¶Ë¿ÚºÅ£¬·şÎñÆ÷IPµÈÉèÖÃ´íÎó
-#define POP_ERR_USER            0x21     // ÈÏÖ¤ÓÃ»§Ãû¼ì²â´íÎó-------ÓÃ»§Ãû¸ñÊ½²»¶Ô£¬»òUSERÃüÁîÂë´íÎó£¨ÃüÁîÂë´íÎó½¨Òé²é¿´·¢ËÍµÄÃüÁîÂëºË¶ÔÊÇ·ñÕıÈ·£¬ºóÍ¬£©
-#define POP_ERR_PASS            0x22     // µÇÂ½Ê§°Ü-----------------ÓÃ»§Ãû»òÃÜÂë´íÎó£¬»òPASSÃüÁîÂë´íÎó
-#define POP_ERR_STAT            0x23     // »ñÈ¡ÓÊ¼şĞÅÏ¢´íÎó---------STATÃüÁîÂë´íÎó£¬Èç³öÏÖÊ§°ÜÖØĞÂµÇÂ½£¬Èç»¹ÊÇÊ§°Ü¼ì²éÆäËûÎÊÌâ
-#define POP_ERR_LIST            0x24     // »ñÈ¡ÓÊ¼şĞÅÏ¢ÁĞ±í---------LISTÃüÁîÂë´íÎó
-#define POP_ERR_RETR            0x25     // ¶ÁÈ¡Ö¸¶¨ÓÊ¼şºÅĞÅÏ¢´íÎó---¶ÁÈ¡µÄÓÊ¼ş²»´æÔÚ£¬»òRETRÃüÁîÂë´íÎó£¬»òÊäÈëµÄ²ÎÊı²»ÕıÈ·
-#define POP_ERR_DELE            0x26     // É¾³ıÄ³·âÓÊ¼şÊ§°Ü---------É¾³ıµÄÓÊ¼ş²»´æÔÚ£¬»òRETRÃüÁîÂë´íÎó£¬»òÊäÈëµÄ²ÎÊı²»ÕıÈ·
-#define POP_ERR_QUIT            0x59     // ÍË³öµÇÂ½Ê§°Ü-------------QUITÃüÁîÂë´íÎó
-#define POP_ERR_RSET            0x28     // »Ö¸´É¾³ıµÄÓÊ¼ş-----------RSETÃüÁîÂë´íÎó£¨ÃüÁîĞèÔÚÍË³öÖ®Ç°Ö´ĞĞ²ÅÄÜÓĞĞ§£©
-#define POP_ERR_TOP             0x2B     // ¶ÁÈ¡Ä³·âÓÊ¼şÇ°mĞĞÊ§°Ü----¶ÁÈ¡µÄÓÊ¼ş²»´æÔÚ£¬»òRETRÃüÁîÂë´íÎó£¬»òÊäÈëµÄ²ÎÊı²»ÕıÈ·
-#define POP_ERR_UIDL            0x2C     // »ñÈ¡Ä³·âÓÊ¼şIDÊ§°Ü-------ÓÊ¼ş²»´æÔÚ£¬»òUIDLÃüÁîÂë´íÎó£¬»òÊäÈëµÄ²ÎÊı²»ÕıÈ·
-#define POP_ERR_UNKW            0x2F     // pop´íÎóÎ´Öª--------------´íÎóÎ´Öª
+#define POP_ERR_CNNT            0x20     //pop connection error
+#define POP_ERR_USER            0x21     //Authentication user name error
+#define POP_ERR_PASS            0x22     //Login failed error
+#define POP_ERR_STAT            0x23     //Getting email information error
+#define POP_ERR_LIST            0x24     //Getting email list information error
+#define POP_ERR_RETR            0x25     //Read the specified mail number information error
+#define POP_ERR_DELE            0x26     //Deleting a message failed error
+#define POP_ERR_QUIT            0x59     //Logout failed
+#define POP_ERR_RSET            0x28     //recover deleted messages error
+#define POP_ERR_TOP             0x2B     //Failed to read the first m lines of an email
+#define POP_ERR_UIDL            0x2C     //Failed to get an email ID
+#define POP_ERR_UNKW            0x2F     //pop error unknown
 //SMTP ERR CHECK CODE
-#define SMTP_ERR_CNNT           0x31     // smtpÁ¬½Ó´íÎó-------------¿ÉÄÜÊÇ¶Ë¿ÚºÅ£¬·şÎñÆ÷IPµÈÉèÖÃ´íÎó
-#define SMTP_ERR_HELO           0x32     // ·¢ËÍheloÃüÁîÊ§°Ü---------HELOÃüÁîÂë´íÎó£¬»òÕßÖ÷»úÃû¸ñÊ½´íÎó
-#define SMTP_ERR_AUTH           0x33     // ÇëÇóµÇÂ½ÃüÁîÊ§°Ü---------AUTHÃüÁîÂë´íÎó
-#define SMTP_ERR_USER           0x34     // ·¢ËÍÓÃ»§ÃûÎ´Ê¶±ğ---------ÓÃ»§Ãû¸ñÊ½²»¶Ô£¬»òUSERÃüÁîÂë´íÎó
-#define SMTP_ERR_PASS           0x35     // µÇÂ½Ê§°Ü-----------------ÓÃ»§Ãû»òÃÜÂë´íÎó£¬»òPASSÃüÁîÂë´íÎó
-#define SMTP_ERR_MAIL           0x36     // ·¢¼şÈËµØÖ··¢ËÍÊ§°Ü-------·¢¼şÈËµØÖ·²»ÕıÈ·£¬»òMAILÃüÁîÂë´íÎó
-#define SMTP_ERR_RCPT           0x37     // ·¢ËÍ½ÓÊÕµØÖ·³ö´í---------ÊÕ¼şÈËµØÖ·²»ÕıÈ·£¬»òRCPTÃüÁîÂë´íÎó
-#define SMTP_ERR_DATA           0x38     // ÇëÇó·¢ËÍÊı¾İ-------------DATAÃüÁîÂë´íÎó
-#define SMTP_ERR_DATA_END       0x39     // ·¢ËÍÊı¾İ¹ı³Ì³ö´í
-#define SMTP_ERR_QUIT           0x3A     // ÍË³öµÇÂ½Ê§°Ü
-#define SMTP_ERR_UNKNOW         0x3F     // smtp´íÎóÎ´Öª
+#define SMTP_ERR_CNNT           0x31     //SMTP connection error
+#define SMTP_ERR_HELO           0x32     //Failed to send HELO command
+#define SMTP_ERR_AUTH           0x33     //Failed to request login command
+#define SMTP_ERR_USER           0x34     //Sending user name not recognized
+#define SMTP_ERR_PASS           0x35     //failed to login
+#define SMTP_ERR_MAIL           0x36     //Sender address sending failed
+#define SMTP_ERR_RCPT           0x37     //receiving address sending failed
+#define SMTP_ERR_DATA           0x38     //request to send data
+#define SMTP_ERR_DATA_END       0x39     //sending data error
+#define SMTP_ERR_QUIT           0x3A     //Logout failed
+#define SMTP_ERR_UNKNOW         0x3F     //SMTP unknown error
 //
-#define send_data_timeout       0x10     // ·¢ËÍÊı¾İ³¬Ê±
-#define send_data_success       0x14     // ·¢ËÍÊı¾İ³¬Ê±
-/*******************************************************************************
-* ³£ÓÃÃüÁî´úÂë 
-*******************************************************************************/
-//POP3  CODE
-#define OPEN_SOCKET_RECEIVE       0xA0    // ´ò¿ª½ÓÊÕsocket
-#define LOGIN_MAILBOX_RECEIVE     0xA1    // µÇÂ½½ÓÊÕÓÊÏä
-#define READ_MAIL_STAT            0xA2    // ¶ÁÈ¡ÓÊ¼ş×ÜÁĞ±í
-#define READ_MAIL_LIST            0xA3    // ¶ÁÈ¡ÓÊ¼şÁĞ±í
-#define READ_MAIL_MAILBODYDATA    0xA4    // ¶ÁÈ¡ÓÊ¼şÕıÎÄÄÚÈİ
-#define READ_MAIL_ATTACHMENT      0xA5    // ¶ÁÈ¡ÓÊ¼ş¸½¼şÄÚÈİ
-#define READ_MAIL_ADDRESS         0xA6    // ¶ÁÈ¡·¢¼şÈËµØÖ·
-#define READ_MAIL_TIME            0xA7    // ¶ÁÈ¡·¢ËÍÊ±¼ä
-#define READ_MAIL_SUBJECT         0xA8    // ¶ÁÈ¡ÓÊ¼şÖ÷Ìâ
-#define QUIT_RECEIVE_MAIL         0xA9    // ÍË³öµÇÂ½²¢¹Ø±Õsocket
-//SMTP  CODE
-#define OPEN_SOCKET_SEND          0xB0    // ´ò¿ª·¢ËÍsocket
-#define LOGIN_MAILBOX_SEND        0xB1    // µÇÂ½·¢ËÍÓÊÏä
-#define SEND_MAIL_UNATTACH        0xB2    // ·¢ËÍÓÊ¼ş²»°üº¬¸½¼ş
-#define SEND_MAIL_CONTATTACH      0xB3    // ·¢ËÍÓÊ¼ş°üº¬¸½¼ş
-#define QUIT_SEND_MAIL            0xB4    // ÍË³öµÇÂ½²¢¹Ø±Õsocket
-/*******************************************************************************
-* ºË¶ÔÎÕÊÖĞÅÏ¢µÄ´íÎóÀàĞÍ 
-* ³É¹¦·µ»ØCHECK_SUCCESS¡£²¢ÃüÁî²Ù×÷ÂëÖÃÎªÏÂÒ»ÌõĞè²Ù×÷µÄÃüÁî
-* ´íÎó·µ»Ø¶ÔÓ¦µÄ´íÎó´úÂë 
-* ²¿·ÖÃüÁîÎŞÎÕÊÖĞÅºÅ£¬Ôò²»ĞèÒªºË¶Ô
-*******************************************************************************/
+#define send_data_timeout       0x10     //send data timeout
+#define send_data_success       0x14     //Send data successfully
+
 #define CHECK_SUCCESS             0x00
-#define uncheck                   0x00
+#define UNCHECK                   0x00
 //POP CHECK CODE
-// ¼ì²éÓ¦´ğĞÅÏ¢£¬ÕıÈ··µ»Ø¡°+0k¡± £¬´íÎó·µ»Ø¡°-ERR¡±
+// Check the response information, return "+OK" correctly, return "-ERR" if wrong.
 #define POP_CHECK_CNNT            0x50    
 #define POP_CHECK_USER            0x51    
 #define POP_CHECK_PASS            0x52    
@@ -277,15 +258,15 @@ extern char     MacAddrC[18];
 #define SMTP_CHECK_DATA_END       0x68
 #define SMTP_CHECK_QUIT           0x69
 /******************************************************************************/
-void WCHNET_SendData( char *PSend, u32 Len,u8 type,u8 index  );               /* ·¢ËÍÊı¾İ */
+void WCHNET_SendData( char *PSend, u32 Len,u8 type,u8 index  );
 
-u8 WCHNET_CheckResponse( char *recv_buff,u8 check_type );                     /* ¼ì²éÓ¦´ğĞÅÏ¢ */
+u8 WCHNET_CheckResponse( char *recv_buff,u8 check_type );
 
-void WCHNET_CreatTcpPop3( void );                                             /* ´´½¨pop3Á¬½Ó */
+void WCHNET_CreateTcpPop3( void );
 
-void WCHNET_CreatTcpSmtp( void );                                             /* ´´½¨smtpÁ¬½Ó */
+void WCHNET_CreateTcpSmtp( void );
 
-void WCHNET_ReplyMailBody( void );                                            /* »Ø¸´ÓÊ¼şµÄÕıÎÄÄÚÈİ */
+void WCHNET_ReplyMailBody( void );
 
 void WCHNET_MailQuery( void );
 

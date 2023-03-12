@@ -5,7 +5,8 @@
 * Date               : 2021/06/06
 * Description        : This file provides all the GPIO firmware functions.
 * Copyright (c) 2021 Nanjing Qinheng Microelectronics Co., Ltd.
-* SPDX-License-Identifier: Apache-2.0
+* Attention: This software (modified or not) and binary are used for 
+* microcontroller manufactured by Nanjing Qinheng Microelectronics.
 *******************************************************************************/
 #include "ch32v30x_gpio.h"
 #include "ch32v30x_rcc.h"
@@ -294,8 +295,8 @@ void GPIO_ResetBits(GPIO_TypeDef *GPIOx, uint16_t GPIO_Pin)
  * @param   GPIO_Pin - specifies the port bit to be written.
  *            This parameter can be one of GPIO_Pin_x where x can be (0..15).
  *          BitVal - specifies the value to be written to the selected bit.
- *            Bit_SetL - to clear the port pin.
- *            Bit_SetH - to set the port pin.
+ *            Bit_RESET - to clear the port pin.
+ *            Bit_SET - to set the port pin.
  *
  * @return  none
  */
@@ -405,6 +406,7 @@ void GPIO_EventOutputCmd(FunctionalState NewState)
  *            GPIO_Remap_USART1 - USART1 Alternate Function mapping
  *            GPIO_Remap_USART2 - USART2 Alternate Function mapping
  *            GPIO_PartialRemap_USART3 - USART3 Partial Alternate Function mapping
+ *            GPIO_PartialRemap1_USART3 - USART3 Partial1 Alternate Function mapping
  *            GPIO_FullRemap_USART3 - USART3 Full Alternate Function mapping
  *            GPIO_PartialRemap_TIM1 - TIM1 Partial Alternate Function mapping
  *            GPIO_FullRemap_TIM1 - TIM1 Full Alternate Function mapping
@@ -482,7 +484,7 @@ void GPIO_PinRemapConfig(uint32_t GPIO_Remap, FunctionalState NewState)
         }
         else /* [31:0] 1bit */
         {
-            tmpreg &= ~(tmp << ((GPIO_Remap >> 0x15) * 0x10));
+            tmpreg &= ~(tmp << (((GPIO_Remap & 0x7FFFFFFF)>> 0x15) * 0x10));
         }
     }
     else
@@ -508,7 +510,7 @@ void GPIO_PinRemapConfig(uint32_t GPIO_Remap, FunctionalState NewState)
     /* Set bit */
     if(NewState != DISABLE)
     {
-        tmpreg |= (tmp << ((GPIO_Remap >> 0x15) * 0x10));
+        tmpreg |= (tmp << (((GPIO_Remap & 0x7FFFFFFF)>> 0x15) * 0x10));
     }
 
     if((GPIO_Remap & 0x80000000) == 0x80000000)

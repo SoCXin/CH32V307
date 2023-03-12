@@ -4,11 +4,17 @@
 * Version            : V1.0.0
 * Date               : 2021/06/06
 * Description        : RISC-V Core Peripheral Access Layer Header File for CH32V30x
+*********************************************************************************
 * Copyright (c) 2021 Nanjing Qinheng Microelectronics Co., Ltd.
-* SPDX-License-Identifier: Apache-2.0
+* Attention: This software (modified or not) and binary are used for 
+* microcontroller manufactured by Nanjing Qinheng Microelectronics.
 *******************************************************************************/
 #ifndef __CORE_RISCV_H__
 #define __CORE_RISCV_H__
+
+#ifdef __cplusplus
+ extern "C" {
+#endif
 
 /* IO definitions */
 #ifdef __cplusplus
@@ -60,7 +66,7 @@ typedef int32_t  s32;
 typedef int16_t s16;
 typedef int8_t  s8;
 
-typedef enum {ERROR = 0, SUCCESS = !ERROR} ErrorStatus;
+typedef enum {NoREADY = 0, READY = !NoREADY} ErrorStatus;
 
 typedef enum {DISABLE = 0, ENABLE = !DISABLE} FunctionalState;
 
@@ -76,7 +82,7 @@ typedef struct{
   __IO uint32_t RESERVED;
   __IO uint32_t CFGR;
   __I  uint32_t GISR;
-  uint8_t VTFIDR[4];
+  __IO uint8_t VTFIDR[4];
   uint8_t RESERVED0[12];
   __IO uint32_t VTFADDR[4];
   uint8_t RESERVED1[0x90];
@@ -346,8 +352,6 @@ extern uint32_t __get_MSTATUS(void);
 extern void __set_MSTATUS(uint32_t value);
 extern uint32_t __get_MISA(void);
 extern void __set_MISA(uint32_t value);
-extern uint32_t __get_MIE(void);
-extern void __set_MIE(uint32_t value);
 extern uint32_t __get_MTVEC(void);
 extern void __set_MTVEC(uint32_t value);
 extern uint32_t __get_MSCRATCH(void);
@@ -364,6 +368,9 @@ extern uint32_t __get_MIMPID(void);
 extern uint32_t __get_MHARTID(void);
 extern uint32_t __get_SP(void);
 
+#ifdef __cplusplus
+}
+#endif
 
 #endif
 

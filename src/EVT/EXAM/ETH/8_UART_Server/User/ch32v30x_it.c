@@ -4,8 +4,10 @@
 * Version            : V1.0.0
 * Date               : 2021/06/06
 * Description        : Main Interrupt Service Routines.
+*********************************************************************************
 * Copyright (c) 2021 Nanjing Qinheng Microelectronics Co., Ltd.
-* SPDX-License-Identifier: Apache-2.0
+* Attention: This software (modified or not) and binary are used for 
+* microcontroller manufactured by Nanjing Qinheng Microelectronics.
 *******************************************************************************/
 
 #include "ch32v30x_it.h"
@@ -18,7 +20,6 @@ void HardFault_Handler(void) __attribute__((interrupt("WCH-Interrupt-fast")));
 void ETH_IRQHandler(void) __attribute__((interrupt("WCH-Interrupt-fast")));
 void TIM2_IRQHandler(void)  __attribute__((interrupt("WCH-Interrupt-fast")));
 void EXTI9_5_IRQHandler(void) __attribute__((interrupt()));
-
 /*********************************************************************
  * @fn      NMI_Handler
  *
@@ -68,7 +69,7 @@ void ETH_IRQHandler(void)
  */
 void EXTI9_5_IRQHandler(void)
 {
-    ETH_PHYLink( );
+    // ETH_PHYLink( );
     EXTI_ClearITPendingBit(EXTI_Line7);     /* Clear Flag */
 }
 
@@ -82,7 +83,7 @@ void EXTI9_5_IRQHandler(void)
 void TIM2_IRQHandler(void)
 {
     WCHNET_TimeIsr(WCHNETTIMERPERIOD);
-    TIM_ClearITPendingBit(TIM2, TIM_IT_Update  );
+    TIM_ClearITPendingBit(TIM2, TIM_IT_Update);
 }
 
 #ifndef CH32V307_DEBUG

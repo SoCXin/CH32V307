@@ -5,8 +5,10 @@
 * Date               : 2021/06/06
 * Description        : This file contains all the functions prototypes for UART
 *                      Printf , Delay functions.
+*********************************************************************************
 * Copyright (c) 2021 Nanjing Qinheng Microelectronics Co., Ltd.
-* SPDX-License-Identifier: Apache-2.0
+* Attention: This software (modified or not) and binary are used for 
+* microcontroller manufactured by Nanjing Qinheng Microelectronics.
 *******************************************************************************/
 #include "debug.h"
 
@@ -43,7 +45,8 @@ void Delay_Us(uint32_t n)
     i = (uint32_t)n * p_us;
 
     SysTick->CMP = i;
-    SysTick->CTLR |= (1 << 4) | (1 << 5) | (1 << 0);
+    SysTick->CTLR |= (1 << 4);
+    SysTick->CTLR |= (1 << 5) | (1 << 0);
 
     while((SysTick->SR & (1 << 0)) != (1 << 0))
         ;
@@ -67,7 +70,8 @@ void Delay_Ms(uint32_t n)
     i = (uint32_t)n * p_ms;
 
     SysTick->CMP = i;
-    SysTick->CTLR |= (1 << 4) | (1 << 5) | (1 << 0);
+    SysTick->CTLR |= (1 << 4);
+    SysTick->CTLR |= (1 << 5) | (1 << 0);
 
     while((SysTick->SR & (1 << 0)) != (1 << 0))
         ;
@@ -176,7 +180,7 @@ __attribute__((used)) int _write(int fd, char *buf, int size)
  *
  * @return  size: Data length
  */
-void *_sbrk(ptrdiff_t incr)
+__attribute__((used)) void *_sbrk(ptrdiff_t incr)
 {
     extern char _end[];
     extern char _heap_end[];

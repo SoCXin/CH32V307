@@ -1,11 +1,18 @@
-/********************************** (C) COPYRIGHT ******************************
+/********************************** (C) COPYRIGHT *******************************
 * File Name          : mailcmd.c
 * Author             : WCH
-* Version            : V1.0
+* Version            : V1.0.0
 * Date               : 2020/05/06
-* Description        : ÊÕ·¢ÓÊ¼þÃüÁî´úÂë
+* Description        : Send and receive mail function.
+*********************************************************************************
+* Copyright (c) 2021 Nanjing Qinheng Microelectronics Co., Ltd.
+* Attention: This software (modified or not) and binary are used for 
+* microcontroller manufactured by Nanjing Qinheng Microelectronics.
 *******************************************************************************/
 #include "mailcmd.h"
+
+char send_buff[512];
+char EncodeHostName[32];
 
 #ifdef receive_mail
 const     char base64_decode_map[256] =
@@ -33,45 +40,48 @@ const char base64_map[64] =
 /* SMTP CMD Codes */
 const  char  SMTP_CLIENT_CMD[5][11] =
 {
-    "EHLO",                                                                     /* 0 ÍË³ö */
-    "AUTH LOGIN",                                                               /* 1 µÇÂ½ */
-    "MAIL FROM:",                                                               /* 2 ·¢¼þÈËµØÖ· */
-    "RCPT TO:",                                                                 /* 3 ÊÕ¼þÈËµØÖ· */
-    "DATA",                                                                     /* 4 ¿ªÊ¼·¢ËÍÊý¾ÝÃüÁî */
+    "EHLO",
+    "AUTH LOGIN",
+    "MAIL FROM:",
+    "RCPT TO:",
+    "DATA",
 };
 
 /* POP3 CMD Codes */
 const char  POP3_CLIENT_CMD[12][5] =
 {
     /* basic POP3 commands */
-    "QUIT",                                                                     /* 0 ÍË³ö */
-    "USER",                                                                     /* 1 ÓÃ»§Ãû */
-    "PASS",                                                                     /* 2 ÃÜÂë */
-    "STAT",                                                                     /* 3 ÓÊÏäÍ³¼Æ×ÊÁÏ */
-    "LIST",                                                                     /* 4 ·µ»ØÖ¸¶¨ÓÊ¼þµÄ´óÐ¡ */
-    "RETR",                                                                     /* 5 ÓÊ¼þµÄÈ«²¿ÎÄ±¾ */
-    "DELE",                                                                     /* 6 ±ê¼ÇÉ¾³ý */
-    "RSET",                                                                     /* 7 ³·ÏúËùÓÐµÄDELEÃüÁî */
-    "NOOP",                                                                     /* 8 ·µ»ØÒ»¸ö¿Ï¶¨µÄÏìÓ¦ */
+    "QUIT",
+    "USER",
+    "PASS",
+    "STAT",
+    "LIST",
+    "RETR",
+    "DELE",
+    "RSET",
+    "NOOP",
     /* alternative POP3 commands */
-    "APOP",                                                                     /* 9  ÈÏÖ¤Ò»ÖÖ°²È«´«Êä¿ÚÁîµÄ°ì·¨£¬Ö´ÐÐ³É¹¦µ¼ÖÂ×´Ì¬×ª»» */
-    "TOP" ,                                                                     /* 10 ´¦Àí·µ»ØnºÅÓÊ¼þµÄÇ°mÐÐÄÚÈÝ£¬m±ØÐëÊÇ×ÔÈ»Êý */
-    "UIDL"                                                                      /* 11 ·µ»ØÓÃÓÚ¸ÃÖ¸¶¨ÓÊ¼þµÄÎ¨Ò»±êÊ¶ */
+    "APOP",
+    "TOP" ,
+    "UIDL"
 };
 /******************************************************************************/
 char     R_argv[3][32];
 
 POP      m_pop3;
 SMTP     m_smtp;
-/*******************************************************************************
-* Function Name  : Base64Encode
-* Description    : base64±àÂë
-* Input          : src     -ÐèÒª±àÂëµÄ×Ö·û´®
-                   src_len -ÐèÒª±àÂë×Ö·û´®µÄ³¤¶È
-                   dst     -±àÂëºóµÄ×Ö·û´®
-* Output         : None
-* Return         : None
-*******************************************************************************/
+
+/*********************************************************************
+ * @fn      Base64Encode
+ *
+ * @brief   base64 encoding.
+ *
+ * @param   src - String to be encoded.
+ *          src_len - the length of the encoded string required
+ *          dst - encoded string
+ *
+ * @return  none
+ */
 #ifdef send_mail
 void Base64Encode(char *src, u16 src_len, char *dst)
 {
@@ -100,15 +110,17 @@ void Base64Encode(char *src, u16 src_len, char *dst)
 }
 #endif
 
-/*******************************************************************************
-* Function Name  : Base64Decode
-* Description    : base64½âÂë
-* Input          : src     -ÐèÒª½âÂëµÄ×Ö·û´®
-                   src_len -ÐèÒª½âÂë×Ö·û´®µÄ³¤¶È
-                   dst     -½âÂëºóµÄ×Ö·û´®
-* Output         : None
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      Base64Decode
+ *
+ * @brief   base64 decoding.
+ *
+ * @param   pSrc - String to decode.
+ *          src_len - the length of the string that needs to be decoded
+ *          dst - decoded string
+ *
+ * @return  none
+ */
 #ifdef receive_mail
 void Base64Decode(char *src, u16 src_len, char *dst)
 {
@@ -134,16 +146,18 @@ void Base64Decode(char *src, u16 src_len, char *dst)
 }
 #endif
 
-/*******************************************************************************
-* Function Name  : QuotedPrintableEncode
-* Description    : quoted printable±àÂë
-* Input          : pSrc    -ÐèÒª±àÂëµÄ×Ö·û´®
-                   pDst    -±àÂëºóµÄ×Ö·û´®
-                   nSrcLen -ÐèÒª±àÂë×Ö·û´®µÄ³¤¶È
-                   MaxLine -×î´óÐÐÊý
-* Output         : None
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      QuotedPrintableEncode
+ *
+ * @brief   quoted printable encoding.
+ *
+ * @param   pSrc - String to be encoded.
+ *          pDst - encoded string
+ *          nSrcLen -  data length
+ *          MaxLine - maximum number of lines
+ *
+ * @return  none
+ */
 #ifdef send_mail
 void QuotedPrintableEncode( char *pSrc, char *pDst, u16 nSrcLen, u16 MaxLine )
 {
@@ -174,15 +188,17 @@ void QuotedPrintableEncode( char *pSrc, char *pDst, u16 nSrcLen, u16 MaxLine )
 }
 #endif
 
-/*******************************************************************************
-* Function Name  : QuotedPrintableEncode
-* Description    : quoted printable½âÂë
-* Input          : pSrc    -ÐèÒª½âÂëµÄ×Ö·û´®
-                   nSrcLen -ÐèÒª±àÂë×Ö·û´®µÄ³¤¶È
-                   pDst    -½âÂëºóµÄ×Ö·û´®
-* Output         : None
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      QuotedPrintableDecode
+ *
+ * @brief   quoted printable decoding.
+ *
+ * @param   pSrc - String to decode.
+ *          pDst - decoded string
+ *          nSrcLen -  data length
+ *
+ * @return  none
+ */
 #ifdef receive_mail
 void QuotedPrintableDecode( char *pSrc, char *pDst, u16 nSrcLen )
 {
@@ -196,7 +212,7 @@ void QuotedPrintableDecode( char *pSrc, char *pDst, u16 nSrcLen )
         }
         else{
             if( *pSrc == '=' ){
-                sscanf( pSrc, "=%02x",*pDst);
+                sscanf( pSrc, "=%02x",pDst);
                 pDst++;
                 pSrc += 3;
                 i += 3;
@@ -214,15 +230,17 @@ void QuotedPrintableDecode( char *pSrc, char *pDst, u16 nSrcLen )
 
 /*******************************************************************************/
 #ifdef send_mail
-/*******************************************************************************
-* Function Name  : WCHNET_XToChar
-* Description    : 16½øÖÆ×ª×Ö·û´®
-* Input          : dat -Òª×ª»»µÄÊ®Áù½øÖÆÊý¾Ý
-                   p   -×ª»»ºó¶ÔÓ¦µÄ×Ö·û´®
-                   len -Òª×ª»»µÄ³¤¶È
-* Output         : None
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      WCHNET_XToChar
+ *
+ * @brief   hex to string.
+ *
+ * @param   dat - hex data to convert.
+ *          p - The corresponding string after conversion
+ *          len -  length to convert
+ *
+ * @return  none
+ */
 #ifdef receive_over_reply
 void WCHNET_XToChar( char  *dat,char  *p,char len)
 {
@@ -240,56 +258,57 @@ void WCHNET_XToChar( char  *dat,char  *p,char len)
 }
 #endif //receive_over_reply
 
-/*******************************************************************************
-* Function Name  : WCHNET_SMTPInit
-* Description    : ·¢ËÍÓÊ¼þ³õÊ¼»¯
-* Input          : None
-* Output         : None
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      WCHNET_SMTPInit
+ *
+ * @brief   Email sending initialization.
+ *
+ * @return  none
+ */
 void WCHNET_SMTPInit(void)
 {
     p_smtp = &m_smtp;
     p_smtp->g_MIME = 0;
     memset( p_smtp, '\0', sizeof(SMTP) );
-    strcpy( p_smtp->m_strSMTPServer, m_Server );                                /* ·þÎñÆ÷Ãû³Æ */
-    strcpy( p_smtp->m_strUSERID,m_UserName );                                   /* ÓÃ»§Ãû */
-    strcpy( p_smtp->m_strPASSWD,m_PassWord );                                   /* ÃÜÂë */        
-    strcpy( p_smtp->m_strSendFrom,m_SendFrom );                                 /* ·¢¼þÈËµØÖ· */
-    strcpy( p_smtp->m_strSenderName, m_SendName );                              /* ·¢ËÍÈËÃû×Ö */
+    strcpy( p_smtp->m_strSMTPServer, m_Server );
+    strcpy( p_smtp->m_strUSERID,m_UserName );
+    strcpy( p_smtp->m_strPASSWD,m_PassWord );
+    strcpy( p_smtp->m_strSendFrom,m_SendFrom );
+    strcpy( p_smtp->m_strSenderName, m_SendName );
 #ifdef receive_over_reply
-    strcpy( p_smtp->m_strSendTo,R_argv[0] );                                    /* ÊÕ¼þÈËµØÖ· */
-    strcpy( p_smtp->m_strSubject,R_argv[1] );                                   /* Ö÷Ìâ */
-    strcpy( p_smtp->m_strFile,R_argv[2] );                                      /* ¸½¼þÃû×Ö(Èç¹û²»·¢ËÍ¸½¼þ£¬´Ë´¦²»Ðè³õÊ¼»¯) */
+    strcpy( p_smtp->m_strSendTo,R_argv[0] );
+    strcpy( p_smtp->m_strSubject,R_argv[1] );
+    strcpy( p_smtp->m_strFile,R_argv[2] );
 #else
-    strcpy( p_smtp->m_strSendTo,m_SendTo );                                     /* ÊÕ¼þÈËµØÖ· */
-    strcpy( p_smtp->m_strSubject,m_Subject );                                   /* Ö÷Ìâ    */
-    strcpy( p_smtp->m_strFile,m_FileName );                                     /* ¸½¼þÃû×Ö(Èç¹û²»·¢ËÍ¸½¼þ£¬´Ë´¦²»Ðè³õÊ¼»¯) */
+    strcpy( p_smtp->m_strSendTo,m_SendTo );
+    strcpy( p_smtp->m_strSubject,m_Subject );
+    strcpy( p_smtp->m_strFile,m_FileName );
 #endif // receive_over_reply
 }
 
-/*******************************************************************************
-* Function Name  : WCHNET_SMTPIsMIME
-* Description    : ÅÐ¶ÏÓÐÎÞ¸½¼þ
-* Input          : None
-* Output         : None
-* Return         : 0 - ÎÞ¸½¼þ
-                   1 - ÓÐ¸½¼þ
-*******************************************************************************/
+/*********************************************************************
+ * @fn      WCHNET_SMTPIsMIME
+ *
+ * @brief   Check for attachments.
+ *
+ * @return  none
+ */
 void WCHNET_SMTPIsMIME( void )
 {
     if( strlen(p_smtp->m_strFile) <= 0 ) p_smtp->g_MIME = 0;
     else p_smtp->g_MIME = 1;
 }
 
-/*******************************************************************************
-* Function Name  : WCHNET_SMTPAttachHeader
-* Description    : ÓÃÓÚ×é½¨¸½¼þÐÅ·â 
-* Input          : pFileName     -¸½¼þÃû×Ö
-                   pAttachHeader -×é½¨ºÃµÄÐÅ·âÄÚÈÝ
-* Output         : None
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      WCHNET_SMTPAttachHeader
+ *
+ * @brief   Attachment envelope.
+ *
+ * @param   pFileName - Attachment name.
+ *          pAttachHeader - Envelope Contents
+ *
+ * @return  none
+ */
 void WCHNET_SMTPAttachHeader(  char *pFileName, char *pAttachHeader )
 {
     const char *strContentType = "application/octet-stream";
@@ -297,14 +316,16 @@ void WCHNET_SMTPAttachHeader(  char *pFileName, char *pAttachHeader )
     attachment;\r\n filename=\"%s\"\r\n\r\n", g_strBoundary, strContentType, pFileName,g_AttachHead, pFileName ); 
 }
 
-/*******************************************************************************
-* Function Name  : WCHNET_SMTPAttachEnd
-* Description    : ×é½¨¸½¼þ½áÊøÄÚÈÝ 
-* Input          : EndSize     ·¢ËÍ³¤¶È
-*                  pAttachEnd  ·¢ËÍbuff
-* Output         : None
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      WCHNET_SMTPAttachEnd
+ *
+ * @brief   Form attachment end content.
+ *
+ * @param   EndSize - data length.
+ *          pAttachEnd - data buff
+ *
+ * @return  none
+ */
 void WCHNET_SMTPAttachEnd( u16 *EndSize, char *pAttachEnd )
 {
     strcat( pAttachEnd, "\r\n--" );
@@ -313,13 +334,13 @@ void WCHNET_SMTPAttachEnd( u16 *EndSize, char *pAttachEnd )
     *EndSize = strlen(pAttachEnd);
 }
 
-/*******************************************************************************
-* Function Name  : WCHNET_SMTPMailHeader
-* Description    : ÓÊ¼þÐÅ·â  
-* Input          : None
-* Output         : None
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      WCHNET_SMTPMailHeader
+ *
+ * @brief   mail envelope.
+ *
+ * @return  none
+ */
 void WCHNET_SMTPMailHeader( void )
 {
     // "FROM: "
@@ -342,11 +363,11 @@ void WCHNET_SMTPMailHeader( void )
     strcat( send_buff, "\r\n" );
     //"Date: " 
     strcat( send_buff, "Date: ");
-//    strcat( send_buff, "" );     /* Ê±¼ä    */
+//    strcat( send_buff, "" );     /* Ê±ï¿½ï¿½    */
      strcat( send_buff, "\r\n" );
     /* "X-Mailer: " */
     strcat( send_buff, g_xMailer );
-    /* ÓÐ¸½¼þ */
+    /* ï¿½Ð¸ï¿½ï¿½ï¿½ */
     if( p_smtp->g_MIME == 1 ){
         strcat( send_buff, "MIME-Version: 1.0\r\nContent-Type: " );
         strcat( send_buff, g_MailHedType );
@@ -367,16 +388,16 @@ void WCHNET_SMTPMailHeader( void )
 #if DIALOG
     printf("Mail Header:\n%s\n", send_buff);
 #endif
-    WCHNET_SendData( send_buff, strlen(send_buff),uncheck ,p_smtp->Socket);
+    WCHNET_SendData( send_buff, strlen(send_buff),UNCHECK ,p_smtp->Socket);
 }
 
-/*******************************************************************************
-* Function Name  : WCHNET_SMTPSendAttachData
-* Description    : ·¢ËÍ¸½¼þÄÚÈÝ  
-* Input          : None
-* Output         : None
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      WCHNET_SMTPSendAttachData
+ *
+ * @brief   Send attachment content.
+ *
+ * @return  none
+ */
 void WCHNET_SMTPSendAttachData( void )
 {
     u16  EndSize;
@@ -386,9 +407,9 @@ void WCHNET_SMTPSendAttachData( void )
 #if DIALOG
     printf("Attach Header:\n%s\n", send_buff);
 #endif
-    WCHNET_SendData( send_buff, strlen(send_buff),uncheck ,p_smtp->Socket);   /* Send attached file header */
+    WCHNET_SendData( send_buff, strlen(send_buff),UNCHECK ,p_smtp->Socket);   /* Send attached file header */
 /*****************************************************************************
-*·¢ËÍ¸½¼þÄÚÈÝ 
+*Attachment content
 *****************************************************************************/
 //    GetAttachedFileBody( &FileSize, m_smtp->m_strFile, pAttachedFileBody );
     memset( send_buff, '\0', sizeof(send_buff) );
@@ -396,42 +417,43 @@ void WCHNET_SMTPSendAttachData( void )
 #if DIALOG
     printf("Attach Data send_buff:\n%s\n", send_buff);
 #endif
-    WCHNET_SendData( send_buff, strlen(send_buff),uncheck ,p_smtp->Socket);
+    WCHNET_SendData( send_buff, strlen(send_buff),UNCHECK ,p_smtp->Socket);
     memset( send_buff, '\0', sizeof(send_buff) );
     WCHNET_SMTPAttachEnd( &EndSize, send_buff );
 #if DIALOG
     printf("Attach End :\n%s\n", send_buff);
 #endif
-    WCHNET_SendData( send_buff, strlen(send_buff),uncheck ,p_smtp->Socket);   /* Send attached file end */
+    WCHNET_SendData( send_buff, strlen(send_buff),UNCHECK ,p_smtp->Socket);   /* Send attached file end */
 }
 
-/*******************************************************************************
-* Function Name  : WCHNET_SMTPSendAttachHeader
-* Description    : ·¢ËÍ¸½¼þÐÅ·â  
-* Input          : None
-* Output         : None
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      WCHNET_SMTPSendAttachHeader
+ *
+ * @brief   Send attachment envelope.
+ *
+ * @return  none
+ */
 void WCHNET_SMTPSendAttachHeader( void )
 {
     memset( send_buff, '\0', sizeof(send_buff) );
     sprintf( send_buff, g_FormatMail );
-    WCHNET_SendData( send_buff, strlen(send_buff),uncheck,p_smtp->Socket );
+    WCHNET_SendData( send_buff, strlen(send_buff),UNCHECK,p_smtp->Socket );
     memset( send_buff, '\0', sizeof(send_buff) );
-    sprintf( send_buff, "\r\n--%s\r\nContent-Type: %s;\r\n\tcharset=\"%s\"%s\r\n", g_strBoundary, g_AttachHedType, g_strcharset,g_AttachHead );
+    sprintf( send_buff, "\r\n--%s\r\nContent-Type: %s;\r\n\tcharset=\"%s\"%s\r\n",
+            g_strBoundary, g_AttachHedType, g_strcharset,g_AttachHead );
 #if DIALOG
     printf("MIME Header:\n%s\n", send_buff);
 #endif
-    WCHNET_SendData( send_buff, strlen(send_buff),uncheck,p_smtp->Socket);
+    WCHNET_SendData( send_buff, strlen(send_buff),UNCHECK,p_smtp->Socket);
 }
 
-/*******************************************************************************
-* Function Name  : WCHNET_SMTPEhlo
-* Description    : ½øÈë·¢ËÍÓÊ¼þ×´Ì¬  
-* Input          : None
-* Output         : None
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      WCHNET_SMTPEhlo
+ *
+ * @brief   Send HELLO command.
+ *
+ * @return  none
+ */
 void WCHNET_SMTPEhlo( void )
 {
     memset( EncodeHostName, '\0', sizeof(EncodeHostName) );
@@ -444,13 +466,13 @@ void WCHNET_SMTPEhlo( void )
     WCHNET_SendData( send_buff, strlen(send_buff),SMTP_CHECK_HELO ,p_smtp->Socket);
 }
 
-/*******************************************************************************
-* Function Name  : WCHNET_SMTPAuth
-* Description    : ½øÈë·¢ËÍÓÊ¼þ×´Ì¬  
-* Input          : None
-* Output         : None
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      WCHNET_SMTPAuth
+ *
+ * @brief   send login command.
+ *
+ * @return  none
+ */
 void WCHNET_SMTPAuth( void )
 {
     memset( send_buff, '\0', sizeof(send_buff) );
@@ -462,13 +484,13 @@ void WCHNET_SMTPAuth( void )
     WCHNET_SendData( send_buff, strlen(send_buff),SMTP_CHECK_AUTH ,p_smtp->Socket);
 }
 
-/*******************************************************************************
-* Function Name  : WCHNET_SMTPUser
-* Description    : ÈÏÖ¤ÓÃ»§Ãû   
-* Input          : None
-* Output         : None
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      WCHNET_SMTPUser
+ *
+ * @brief   Authentication user name.
+ *
+ * @return  none
+ */
 void WCHNET_SMTPUser( void )
 {
     memset( send_buff, '\0', sizeof(send_buff) );
@@ -480,13 +502,13 @@ void WCHNET_SMTPUser( void )
     WCHNET_SendData( send_buff, strlen(send_buff),SMTP_CHECK_USER,p_smtp->Socket );
 }
 
-/*******************************************************************************
-* Function Name  : WCHNET_SMTPPass
-* Description    : µÇÂ½ÃÜÂë    
-* Input          : None
-* Output         : None
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      WCHNET_SMTPPass
+ *
+ * @brief   Authentication login password.
+ *
+ * @return  none
+ */
 void WCHNET_SMTPPass( void )
 {
     memset( send_buff, '\0', sizeof(send_buff) );
@@ -498,13 +520,13 @@ void WCHNET_SMTPPass( void )
     WCHNET_SendData( send_buff, strlen(send_buff),SMTP_CHECK_PASS,p_smtp->Socket );
 }
 
-/*******************************************************************************
-* Function Name  : WCHNET_SMTPMail
-* Description    : ·¢ËÍ·¢¼þÈËÃû×Ö  
-* Input          : None
-* Output         : None
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      WCHNET_SMTPMail
+ *
+ * @brief   Send sender name.
+ *
+ * @return  none
+ */
 void WCHNET_SMTPMail( void )
 {
     memset( send_buff, '\0', sizeof(send_buff) );
@@ -515,13 +537,13 @@ void WCHNET_SMTPMail( void )
     WCHNET_SendData( send_buff, strlen(send_buff),SMTP_CHECK_MAIL,p_smtp->Socket );
 }
 
-/*******************************************************************************
-* Function Name  : WCHNET_SMTPRcpt
-* Description    : ÊÕ¼þÈËµØÖ· 
-* Input          : None
-* Output         : None
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      WCHNET_SMTPRcpt
+ *
+ * @brief   receiver's address.
+ *
+ * @return  none
+ */
 void WCHNET_SMTPRcpt( void )
 {
     memset( send_buff, '\0', sizeof(send_buff) );
@@ -532,13 +554,13 @@ void WCHNET_SMTPRcpt( void )
     WCHNET_SendData( send_buff, strlen(send_buff),SMTP_CHECK_RCPT,p_smtp->Socket );
 }
 
-/*******************************************************************************
-* Function Name  : WCHNET_SMTPData
-* Description    : ·¢ËÍdataÃüÁî 
-* Input          : None
-* Output         : None
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      WCHNET_SMTPData
+ *
+ * @brief   send DATA command.
+ *
+ * @return  none
+ */
 void WCHNET_SMTPData( void )
 {
     memset( send_buff, '\0', sizeof(send_buff) );
@@ -549,13 +571,13 @@ void WCHNET_SMTPData( void )
     WCHNET_SendData( send_buff, strlen(send_buff),SMTP_CHECK_DATA,p_smtp->Socket );
 }
 
-/*******************************************************************************
-* Function Name  : WCHNET_SMTPSendMail
-* Description    : ·¢ËÍÓÊ¼þÄÚÈÝ  
-* Input          : None
-* Output         : None
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      WCHNET_SMTPSendMail
+ *
+ * @brief   Send email content.
+ *
+ * @return  none
+ */
 void WCHNET_SMTPSendMail( void )
 {
     WCHNET_SMTPIsMIME( );
@@ -564,7 +586,7 @@ void WCHNET_SMTPSendMail( void )
         WCHNET_SMTPSendAttachHeader(  );                                      /* Send MIME Header */
     }
     else {
-        WCHNET_SendData("\r\n", strlen("\r\n"),uncheck,p_smtp->Socket);
+        WCHNET_SendData("\r\n", strlen("\r\n"),UNCHECK,p_smtp->Socket);
     }
     memset( send_buff, '\0', sizeof(send_buff) );
 #ifdef    receive_over_reply
@@ -575,7 +597,7 @@ void WCHNET_SMTPSendMail( void )
 #if DIALOG
     printf("text data:\n%s\n",send_buff);
 #endif
-    WCHNET_SendData( send_buff, strlen(send_buff),uncheck ,p_smtp->Socket);
+    WCHNET_SendData( send_buff, strlen(send_buff),UNCHECK ,p_smtp->Socket);
     if( 1 == p_smtp->g_MIME ) WCHNET_SMTPSendAttachData( );                   /* Send Attached file */
     memset( send_buff, '\0', sizeof(send_buff) );
     sprintf( send_buff, "\r\n.\r\n" );
@@ -590,29 +612,29 @@ void WCHNET_SMTPSendMail( void )
 #endif // send_mail
 /******************************************************************************/
 #ifdef receive_mail
-/*******************************************************************************
-* Function Name  : WCHNET_POP3Init
-* Description    : ½ÓÊÕÓÊ¼þ³õÊ¼»¯
-* Input          : None
-* Output         : None
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      WCHNET_POP3Init
+ *
+ * @brief   Receive mail initialization.
+ *
+ * @return  none
+ */
 void WCHNET_POP3Init( void )
 {
     p_pop3 = &m_pop3;
     memset( p_pop3, '\0', sizeof(POP) );
-    strcpy( p_pop3->pPop3Server,   p_Server );                                  /* ·þÎñÆ÷Ãû³Æ */
-    strcpy( p_pop3->pPop3UserName, p_UserName );                                /* ÓÃ»§Ãû */
-    strcpy( p_pop3->pPop3PassWd,   p_PassWord );                                /* ÃÜÂë    */
+    strcpy( p_pop3->pPop3Server,   p_Server );
+    strcpy( p_pop3->pPop3UserName, p_UserName );
+    strcpy( p_pop3->pPop3PassWd,   p_PassWord );
 }
 
-/*******************************************************************************
-* Function Name  : WCHNET_POP3User
-* Description    : ÈÏÖ¤ÓÃ»§Ãû  
-* Input          : None
-* Output         : None
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      WCHNET_POP3User
+ *
+ * @brief   Authentication user name.
+ *
+ * @return  none
+ */
 void WCHNET_POP3User( void )
 {
     memset( send_buff, '\0', sizeof(send_buff) );
@@ -623,13 +645,13 @@ void WCHNET_POP3User( void )
     WCHNET_SendData( send_buff, strlen(send_buff), POP_CHECK_USER ,p_pop3->Socket);
 }
 
-/*******************************************************************************
-* Function Name  : WCHNET_POP3Pass
-* Description    : ÃÜÂë  
-* Input          : None
-* Output         : None
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      WCHNET_POP3Pass
+ *
+ * @brief   Authentication password.
+ *
+ * @return  none
+ */
 void WCHNET_POP3Pass( void )
 {
     memset( send_buff, '\0', sizeof(send_buff) );
@@ -640,13 +662,13 @@ void WCHNET_POP3Pass( void )
     WCHNET_SendData(  send_buff, strlen(send_buff), POP_CHECK_PASS,p_pop3->Socket );
 }
 
-/*******************************************************************************
-* Function Name  : WCHNET_POP3Stat
-* Description    : »ØËÍÓÊÏäÍ³¼Æ×ÊÁÏ  
-* Input          : None
-* Output         : None
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      WCHNET_POP3Stat
+ *
+ * @brief   Get mailbox statistics.
+ *
+ * @return  none
+ */
 void WCHNET_POP3Stat( void )
 {
     memset( send_buff, '\0', sizeof(send_buff) );
@@ -657,18 +679,18 @@ void WCHNET_POP3Stat( void )
     WCHNET_SendData( send_buff, strlen(send_buff), POP_CHECK_STAT,p_pop3->Socket );
 }
 
-/*******************************************************************************
-* Function Name  : WCHNET_POP3List
-* Description    : ´¦Àíserver·µ»ØÖ¸¶¨ÓÊ¼þµÄ´óÐ¡ 
-* Input          : None
-* Output         : None
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      WCHNET_POP3List
+ *
+ * @brief   Get email list information.
+ *
+ * @return  none
+ */
 void WCHNET_POP3List( void )
 {
-#if    0            /* Èç¹ûÐèÖ¸¶¨Ä³·âÓÊ¼þÔòÖÃ1 */
+#if    0            /* ï¿½ï¿½ï¿½ï¿½ï¿½Ö¸ï¿½ï¿½Ä³ï¿½ï¿½ï¿½Ê¼ï¿½ï¿½ï¿½ï¿½ï¿½1 */
     char num;
-    num = '1';    /* ¸ù¾ÝÐèÒªÐÞ¸ÄÓÊ¼þºÅ */
+    num = '1';    /* ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Òªï¿½Þ¸ï¿½ï¿½Ê¼ï¿½ï¿½ï¿½ */
     memset( send_buff, '\0', sizeof(send_buff) );
     sprintf( send_buff, "%s %c\r\n", POP3_CLIENT_CMD[4],num );
 #else
@@ -681,13 +703,15 @@ void WCHNET_POP3List( void )
     WCHNET_SendData( send_buff, strlen(send_buff), POP_CHECK_LIST,p_pop3->Socket);
 }
 
-/*******************************************************************************
-* Function Name  : WCHNET_POP3Retr
-* Description    : ´¦ÀíserverÓÊ¼þµÄÈ«²¿ÎÄ±¾ 
-* Input          : num -ÓÊ¼þºÅ
-* Output         : None
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      WCHNET_POP3Retr
+ *
+ * @brief   deal the full text of an email
+ *
+ * @param   num - mail number.
+ *
+ * @return  none
+ */
 #ifdef    POP_RTER 
 void WCHNET_POP3Retr( u8 num )
 {
@@ -700,13 +724,16 @@ void WCHNET_POP3Retr( u8 num )
 }
 #endif
 
-/*******************************************************************************
-* Function Name  : WCHNET_POP3Dele
-* Description    : ´¦Àíserver±ê¼ÇÉ¾³ý 
-* Input          : num -ÓÊ¼þºÅ
-* Output         : None
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      WCHNET_POP3Dele
+ *
+ * @brief   Mark to delete, only when the QUIT
+ *          command is executed is actually deleted.
+ *
+ * @param   num - mail number.
+ *
+ * @return  none
+ */
 #ifdef    POP_DELE
 void WCHNET_POP3Dele( u8 num )
 {
@@ -719,13 +746,13 @@ void WCHNET_POP3Dele( u8 num )
 }
 #endif
 
-/*******************************************************************************
-* Function Name  : WCHNET_POP3Rset
-* Description    : ´¦Àíserver³·ÏúÉ¾³ý
-* Input          : num -ÓÊ¼þºÅ
-* Output         : None
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      WCHNET_POP3Rset
+ *
+ * @brief   Undo delete.
+ *
+ * @return  none
+ */
 #ifdef    POP_RSET
 void WCHNET_POP3Rset( void )
 {
@@ -738,33 +765,37 @@ void WCHNET_POP3Rset( void )
 }
 #endif
 
-/*******************************************************************************
-* Function Name  : WCHNET_POP3Top
-* Description    : ·µ»ØnºÅÓÊ¼þµÄÇ°mÐÐÄÚÈÝ
-* Input          : num -ÓÊ¼þºÅ
-                   m   -ÐÐÊý
-* Output         : None
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      WCHNET_POP3Top
+ *
+ * @brief   Returns the first 'm' lines of mail number 'num'.
+ *
+ * @param   num - mail number.
+ *          m - rows.
+ *
+ * @return  none
+ */
 #ifdef    POP_TOP
 void WCHNET_POP3Top( char num ,char m  )
 {
     memset( send_buff, '\0', sizeof(send_buff) );
-    sprintf( send_buff, "%s %c %c\r\n", POP3_CLIENT_CMD[10],num,m);
+    sprintf( send_buff, "%s %c %c\r\n", POP3_CLIENT_CMD[10], num, m);
 #if DIALOG
     printf("TOP :%s\n", send_buff);
 #endif
-    WCHNET_SendData( send_buff, strlen(send_buff), POP_CHECK_TOP,p_pop3->Socket );
+    WCHNET_SendData( send_buff, strlen(send_buff), POP_CHECK_TOP, p_pop3->Socket );
 }
 #endif
 
-/*******************************************************************************
-* Function Name  : WCHNET_POP3Uidl
-* Description    : ´¦Àíserver·µ»ØÓÃÓÚ¸ÃÖ¸¶¨ÓÊ¼þµÄÎ¨Ò»±êÊ¶
-* Input          : num -ÓÊ¼þºÅ
-* Output         : None
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      WCHNET_POP3Uidl
+ *
+ * @brief   Returns the unique identifier for the specified message.
+ *
+ * @param   num - mail number.
+ *
+ * @return  none
+ */
 #ifdef    POP_UIDL
 void WCHNET_POP3Uidl( char num )
 {
@@ -773,37 +804,42 @@ void WCHNET_POP3Uidl( char num )
 #if DIALOG
     printf("UIDL :%s\n", send_buff);
 #endif
-    WCHNET_SendData( send_buff, sizeof(send_buff), POP_CHECK_UIDL,p_pop3->Socket );
+    WCHNET_SendData( send_buff, sizeof(send_buff), POP_CHECK_UIDL, p_pop3->Socket );
 }
 #endif
 
 /******************************************************************************/
 #endif    // receive_mail
-/*******************************************************************************
-* Function Name  : WCHNET_Quit
-* Description    : ÍË³öµÇÂ½
-* Input          : index -ÐèÍË³öµÄsocketid
-* Output         : None
-* Return         : None
-*******************************************************************************/
-void WCHNET_Quit( u8 index )
+
+/*********************************************************************
+ * @fn      WCHNET_Quit
+ *
+ * @brief   sign out.
+ *
+ * @param   id - socket id.
+ *
+ * @return  none
+ */
+void WCHNET_Quit( u8 id )
 {
 #if  DIALOG
-    printf("QUIT(socket=%2d)\n",index);
+    printf("QUIT(socket=%2d)\n", id);
 #endif
     memset( send_buff, '\0', sizeof(send_buff) );
     sprintf( send_buff, "%s\r\n", POP3_CLIENT_CMD[0]);
-    if(index==p_smtp->Socket)    WCHNET_SendData( send_buff, strlen(send_buff),SMTP_CHECK_QUIT,index );
-    if(index==p_pop3->Socket)    WCHNET_SendData( send_buff, strlen(send_buff),POP_CHECK_QUIT,index );
+    if(id == p_smtp->Socket)    WCHNET_SendData( send_buff, strlen(send_buff), SMTP_CHECK_QUIT, id );
+    if(id == p_pop3->Socket)    WCHNET_SendData( send_buff, strlen(send_buff), POP_CHECK_QUIT, id );
 }
 
-/*******************************************************************************
-* Function Name  : WCHNET_MailCmd
-* Description    : ÅÐ¶ÏÃüÁî½øÈë¶ÔÓ¦×Ó³ÌÐò
-* Input          : choiceorder -ÃüÁîÀàÐÍ
-* Output         : None
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      WCHNET_MailCmd
+ *
+ * @brief   Analytical data.
+ *
+ * @param   choiceorder - Command type.
+ *
+ * @return  none
+ */
 void WCHNET_MailCmd( u8 choiceorder )
 {
     u8 i;
@@ -836,7 +872,7 @@ void WCHNET_MailCmd( u8 choiceorder )
             break;
         case SMTP_ERR_CHECK:
             WCHNET_Quit( p_smtp->Socket );
-            CheckType = uncheck;
+            CheckType = UNCHECK;
             i = WCHNET_SocketClose( p_smtp->Socket,TCP_CLOSE_NORMAL );
             mStopIfError(i);
             break;
@@ -844,7 +880,7 @@ void WCHNET_MailCmd( u8 choiceorder )
             WCHNET_Quit( p_smtp->Socket );
             break;
         case SMTP_CLOSE_SOCKET:
-            CheckType = uncheck;
+            CheckType = UNCHECK;
             i = WCHNET_SocketClose( p_smtp->Socket,TCP_CLOSE_NORMAL );
             mStopIfError(i);
 #ifdef    receive_over_reply
@@ -852,7 +888,7 @@ void WCHNET_MailCmd( u8 choiceorder )
 #endif
             break;
         case SMTP_SEND_START:
-            WCHNET_CreatTcpSmtp( );
+            WCHNET_CreateTcpSmtp( );
             break;
 #endif    // send_mail 
 #ifdef receive_mail
@@ -870,7 +906,7 @@ void WCHNET_MailCmd( u8 choiceorder )
             break;
         case POP_ERR_CHECK:
             WCHNET_Quit( p_pop3->Socket );
-            CheckType = uncheck;
+            CheckType = UNCHECK;
             i = WCHNET_SocketClose( p_pop3->Socket,TCP_CLOSE_NORMAL );
             mStopIfError(i);
             break;
@@ -878,7 +914,7 @@ void WCHNET_MailCmd( u8 choiceorder )
             WCHNET_Quit( p_pop3->Socket );
             break;
         case POP_CLOSE_SOCKET:
-            CheckType = uncheck;
+            CheckType = UNCHECK;
             i = WCHNET_SocketClose( p_pop3->Socket,TCP_CLOSE_NORMAL );
             mStopIfError(i);
 #ifdef    send_over_receive
@@ -886,7 +922,7 @@ void WCHNET_MailCmd( u8 choiceorder )
 #endif
             break;
         case POP_RECEIVE_START:
-            WCHNET_CreatTcpPop3( );                                           /* TCPÁ¬½Ó */
+            WCHNET_CreateTcpPop3( );
             break;
 #endif    // receive_mail
         default: 

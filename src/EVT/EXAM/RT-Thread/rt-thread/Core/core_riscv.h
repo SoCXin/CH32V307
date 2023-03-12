@@ -4,8 +4,10 @@
 * Version            : V1.0.0
 * Date               : 2021/06/06
 * Description        : RISC-V Core Peripheral Access Layer Header File for CH32V30x
+*********************************************************************************
 * Copyright (c) 2021 Nanjing Qinheng Microelectronics Co., Ltd.
-* SPDX-License-Identifier: Apache-2.0
+* Attention: This software (modified or not) and binary are used for 
+* microcontroller manufactured by Nanjing Qinheng Microelectronics.
 *******************************************************************************/
 #ifndef __CORE_RISCV_H__
 #define __CORE_RISCV_H__
@@ -60,7 +62,7 @@ typedef int32_t  s32;
 typedef int16_t s16;
 typedef int8_t  s8;
 
-typedef enum {ERROR = 0, SUCCESS = !ERROR} ErrorStatus;
+typedef enum {NoREADY = 0, READY = !NoREADY} ErrorStatus;
 
 typedef enum {DISABLE = 0, ENABLE = !DISABLE} FunctionalState;
 

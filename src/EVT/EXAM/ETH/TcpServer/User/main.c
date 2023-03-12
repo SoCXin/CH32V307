@@ -4,20 +4,22 @@
  * Version            : V1.0.0
  * Date               : 2022/05/31
  * Description        : Main program body.
- * Copyright (c) 2021 Nanjing Qinheng Microelectronics Co., Ltd.
- * SPDX-License-Identifier: Apache-2.0
- *******************************************************************************/
+*********************************************************************************
+* Copyright (c) 2021 Nanjing Qinheng Microelectronics Co., Ltd.
+* Attention: This software (modified or not) and binary are used for 
+* microcontroller manufactured by Nanjing Qinheng Microelectronics.
+*******************************************************************************/
 /*
  *@Note
- TCP Server例程，演示TCP Server连接到客户端后接收数据并回传
+TCP Server example, demonstrating that TCP Server
+receives data and sends back after connecting to a client.
+For details on the selection of engineering chips,
+please refer to the "CH32V30x Evaluation Board Manual" under the CH32V307EVT\EVT\PUB folder.
  */
-
 #include "string.h"
-#include "debug.h"
-#include "WCHNET.h"
 #include "eth_driver.h"
 
-#define KEEPLIVE_ENABLE                1                //Enable keeplive function
+#define KEEPALIVE_ENABLE                1                //Enable keep alive function
 
 u8 MACAddr[6];                                          //MAC address
 u8 IPAddr[4] = { 192, 168, 1, 10 };                     //IP address
@@ -28,7 +30,7 @@ u16 srcport = 1000;                                     //source port
 u8 SocketIdForListen;                                   //Socket for Listening
 u8 socket[WCHNET_MAX_SOCKET_NUM];                       //Save the currently connected socket
 u8 SocketRecvBuf[WCHNET_MAX_SOCKET_NUM][RECE_BUF_LEN];  //socket receive buffer
-
+u8 MyBuf[RECE_BUF_LEN];
 /*********************************************************************
  * @fn      mStopIfError
  *
@@ -103,20 +105,38 @@ void WCHNET_CreateTcpSocketListen(void)
  */
 void WCHNET_DataLoopback(u8 id)
 {
+#if 1
     u8 i;
     u32 len;
-    u32 endAddr = SocketInf[id].RecvStartPoint + SocketInf[id].RecvBufLen;
+    u32 endAddr = SocketInf[id].RecvStartPoint + SocketInf[id].RecvBufLen;       //Receive buffer end address
 
-    if ((SocketInf[id].RecvReadPoint + SocketInf[id].RecvRemLen) > endAddr) {
+    if ((SocketInf[id].RecvReadPoint + SocketInf[id].RecvRemLen) > endAddr) {    //Calculate the length of the received data
         len = endAddr - SocketInf[id].RecvReadPoint;
     }
     else {
         len = SocketInf[id].RecvRemLen;
     }
-    i = WCHNET_SocketSend(id, (u8 *) SocketInf[id].RecvReadPoint, &len);
+    i = WCHNET_SocketSend(id, (u8 *) SocketInf[id].RecvReadPoint, &len);        //send data
     if (i == WCHNET_ERR_SUCCESS) {
-        WCHNET_SocketRecv(id, NULL, &len);
+        WCHNET_SocketRecv(id, NULL, &len);                                      //Clear sent data
     }
+#else
+    u32 len, totallen;
+    u8 *p = MyBuf;
+
+    len = WCHNET_SocketRecvLen(id, NULL);                                //query length
+    printf("Receive Len = %02x\n", len);
+    totallen = len;
+    WCHNET_SocketRecv(id, MyBuf, &len);                                  //Read the data of the receive buffer into MyBuf
+    while(1){
+        len = totallen;
+        WCHNET_SocketSend(id, p, &len);                                  //Send the data
+        totallen -= len;                                                 //Subtract the sent length from the total length
+        p += len;                                                        //offset buffer pointer
+        if(totallen)continue;                                            //If the data is not sent, continue to send
+        break;                                                           //After sending, exit
+    }
+#endif
 }
 
 /*********************************************************************
@@ -139,7 +159,7 @@ void WCHNET_HandleSockInt(u8 socketid, u8 intstat)
     }
     if (intstat & SINT_STAT_CONNECT)                              //connect successfully
     {
-#if KEEPLIVE_ENABLE
+#if KEEPALIVE_ENABLE
         WCHNET_SocketSetKeepLive(socketid, ENABLE);
 #endif
         WCHNET_ModifyRecvBuf(socketid, (u32) SocketRecvBuf[socketid],
@@ -186,7 +206,7 @@ void WCHNET_HandleGlobalInt(void)
 {
     u8 intstat;
     u16 i;
-    u8 socketinit;
+    u8 socketint;
 
     intstat = WCHNET_GetGlobalInt();                              //get global interrupt flag
     if (intstat & GINT_STAT_UNREACH)                              //Unreachable interrupt
@@ -205,9 +225,9 @@ void WCHNET_HandleGlobalInt(void)
     }
     if (intstat & GINT_STAT_SOCKET) {                             //socket related interrupt
         for (i = 0; i < WCHNET_MAX_SOCKET_NUM; i++) {
-            socketinit = WCHNET_GetSocketInt(i);
-            if (socketinit)
-                WCHNET_HandleSockInt(i, socketinit);
+            socketint = WCHNET_GetSocketInt(i);
+            if (socketint)
+                WCHNET_HandleSockInt(i, socketint);
         }
     }
 }
@@ -222,25 +242,27 @@ void WCHNET_HandleGlobalInt(void)
 int main(void)
 {
     u8 i;
+    SystemCoreClockUpdate();
     Delay_Init();
     USART_Printf_Init(115200);                                    //USART initialize
-    printf("TcpServer Test\r\n");
+    printf("TcpServer Test\r\n");  	
     printf("SystemClk:%d\r\n", SystemCoreClock);
+    printf( "ChipID:%08x\r\n", DBGMCU_GetCHIPID() );
     printf("net version:%x\n", WCHNET_GetVer());
     if ( WCHNET_LIB_VER != WCHNET_GetVer()) {
         printf("version error.\n");
     }
     WCHNET_GetMacAddr(MACAddr);                                   //get the chip MAC address
     printf("mac addr:");
-    for (int i = 0; i < 6; i++)
-        printf("%x ", MACAddr[i]);
+    for(i = 0; i < 6; i++) 
+        printf("%x ",MACAddr[i]);
     printf("\n");
     TIM2_Init();
     i = ETH_LibInit(IPAddr, GWIPAddr, IPMask, MACAddr);           //Ethernet library initialize
     mStopIfError(i);
     if (i == WCHNET_ERR_SUCCESS)
         printf("WCHNET_LibInit Success\r\n");
-#if KEEPLIVE_ENABLE                                               //Configure keeplive parameters
+#if KEEPALIVE_ENABLE                                               //Configure keep alive parameters
     {
         struct _KEEP_CFG cfg;
 
