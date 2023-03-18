@@ -6,7 +6,7 @@
 * Description        : Main program body.
 *********************************************************************************
 * Copyright (c) 2021 Nanjing Qinheng Microelectronics Co., Ltd.
-* Attention: This software (modified or not) and binary are used for 
+* Attention: This software (modified or not) and binary are used for
 * microcontroller manufactured by Nanjing Qinheng Microelectronics.
 *******************************************************************************/
 /*
@@ -22,10 +22,10 @@ please refer to the "CH32V30x Evaluation Board Manual" under the CH32V307EVT\EVT
 #include "MQTTPacket.h"
 
 u8 MACAddr[6];                                     //MAC address
-u8 IPAddr[4]   = {192,168,1,10};                   //IP address
+u8 IPAddr[4]   = {192,168,1,5};                    //IP address
 u8 GWIPAddr[4] = {192,168,1,1};                    //Gateway IP address
 u8 IPMask[4]   = {255,255,255,0};                  //subnet mask
-u8 DESIP[4]    = {0};                              //MQTT server IP address,!!need to be modified manually
+u8 DESIP[4]    = {124,221,183,170};                //MQTT server IP address,!!need to be modified manually
 
 u8 SocketId;                                       //socket id
 u8 SocketRecvBuf[RECE_BUF_LEN];                    //socket receive buffer
@@ -33,8 +33,8 @@ u8 MyBuf[RECE_BUF_LEN];
 u16 desport = 1883;                                //MQTT server port
 u16 srcport = 4200;                                //source port
 
-char *username  = "user1";                         //Device name, unique for each device, available "/" for classification
-char *password  = "user1";                         //Server login password
+char *username  = "ch32";                         //Device name, unique for each device, available "/" for classification
+char *password  = "123456";                         //Server login password
 char *sub_topic = "topic/1";                       //subscribed session name
 char *pub_topic = "topic/1";                       //Published session name
 int pub_qos = 0;                                   //Publish quality of service
@@ -409,8 +409,9 @@ int main(void)
     u8 i;
     SystemCoreClockUpdate();
     Delay_Init();
+    /* USART1 TX-->PA9   RX-->PA10 */
     USART_Printf_Init(115200);                                               //USART initialize
-    printf("MQTT\r\n");   	
+
     printf("SystemClk:%d\r\n",SystemCoreClock);
     printf( "ChipID:%08x\r\n", DBGMCU_GetCHIPID() );
     printf("net version:%x\n",WCHNET_GetVer());
@@ -418,16 +419,16 @@ int main(void)
         printf("version error.\n");
     }
     WCHNET_GetMacAddr(MACAddr);                                              //get the chip MAC address
-    printf("mac addr:");
-    for(i = 0; i < 6; i++) 
+    printf("mac:");
+    for(i = 0; i < 6; i++)
         printf("%x ",MACAddr[i]);
     printf("\n");
     TIM2_Init();
     i = ETH_LibInit(IPAddr,GWIPAddr,IPMask,MACAddr);                         //Ethernet library initialize
     mStopIfError(i);
-    if(i == WCHNET_ERR_SUCCESS) printf("WCHNET_LibInit Success\r\n");
+    if(i == WCHNET_ERR_SUCCESS) printf("WCH NET Lib Init Success\r\n");
     Transport_Open();                                                        //open the TCP connection.
-
+    printf("MQTT\r\n");
     while(1)
     {
         /*Ethernet library main task function,
@@ -444,5 +445,6 @@ int main(void)
             if(con_flag) MQTT_Publish(pub_topic, pub_qos, payload);
 //            if(con_flag) MQTT_Pingreq();                                   //heartbeat packet
         }
+        // printf("WCH\r\n");
     }
 }
