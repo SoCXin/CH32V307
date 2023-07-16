@@ -21,7 +21,7 @@
         "url": "https://github.com/SoCXin/CH32V307.git"
     },
     "series":["CH32V307","CH32V305","CH32V303"],
-    "package":["LQFP64M","LQFP100"],
+    "package":["LQFP64M","QFN68","LQFP100"],
     "peripheral": ["TIM","ADC","USB","UART","SPI","LDO","PWM"],
     "PWR": {
         "VDD": [2800,5000],
@@ -44,7 +44,7 @@
         "RISC-V",
         "WCH",
         "CH32V307",
-        "DAC","SDIO","CAN","I2C","RTC","SPI",
+        "DVP","USB","DAC","SDIO","CAN","I2C","RTC","SPI",
         "3.6V","1.8V"
     ]
 }

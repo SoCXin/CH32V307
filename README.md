@@ -1,7 +1,7 @@
 ﻿# [CH32V307](https://doc.soc.xin/CH32V307)
 
 * [WCH](http://www.wch.cn/)：[RISC-V4C](https://github.com/SoCXin/RISC-V)
-* [L2R3](https://github.com/SoCXin/Level)：144 MHz , [￥14.63](https://item.szlcsc.com/3443981.html)
+* [L2R3](https://github.com/SoCXin/Level)：144 MHz , [LQFP-64 ￥14.63](https://item.szlcsc.com/3443981.html)
 
 ## [简介](https://github.com/SoCXin/CH32V307/wiki)
 
@@ -11,8 +11,8 @@
 
 ### 关键特性
 
-* 144MHz RISC-V4C Core（青稞）
-* 64KB SRAM，256KB Flash
+* 144MHz RISC-V4C Core (RV32IMAC)
+* 64KB SRAM + 256KB Flash (最大支持128KB SRAM)
 * USB2.0全速OTG接口
 * USB2.0高速主机/设备接口（480Mbps 内置PHY）
 * 3个USART接口和5个UART接口
@@ -35,6 +35,8 @@
 
 ## [选型建议](https://github.com/SoCXin)
 
-[CH32V307](https://github.com/SoCXin/CH32V307) 封装规格较大，外设资源较多，适用于复杂应用。
+[CH32V307](https://github.com/SoCXin/CH32V307) 外设较多，适用于多路通信。
 
-去掉以太网等外设的版本[CH32V305RBT6](https://item.szlcsc.com/5860927.html)价格更低。
+相较而言，去掉以太网、降低UART数量的版本[CH32V305RBT6](https://item.szlcsc.com/5860927.html)具有价格优势。
+
+[应用优化系列](https://www.wch.cn/products/productsCenter/mcuInterface?categoryId=75)
