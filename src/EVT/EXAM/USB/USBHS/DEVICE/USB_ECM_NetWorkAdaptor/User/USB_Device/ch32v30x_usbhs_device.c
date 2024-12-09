@@ -2,7 +2,7 @@
 * File Name          : ch32v30x_usbhs_device.c
 * Author             : WCH
 * Version            : V1.0.0
-* Date               : 2022/08/20
+* Date               : 2023/11/20
 * Description        : This file provides all the USBHS firmware functions.
 *********************************************************************************
 * Copyright (c) 2021 Nanjing Qinheng Microelectronics Co., Ltd.
@@ -13,7 +13,21 @@
 
 /******************************************************************************/
 /* Variable Definition */
-const uint8_t    *pUSBHS_Descr;
+/* test mode */
+volatile uint8_t  USBHS_Test_Flag;
+__attribute__ ((aligned(4))) uint8_t IFTest_Buf[ 53 ] =
+{
+    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+    0xAA, 0xAA, 0xAA, 0xAA, 0xAA, 0xAA, 0xAA, 0xAA,
+    0xEE, 0xEE, 0xEE, 0xEE, 0xEE, 0xEE, 0xEE, 0xEE,
+    0xFE,//26
+    0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,//37
+    0x7F, 0xBF, 0xDF, 0xEF, 0xF7, 0xFB, 0xFD,//44
+    0xFC, 0x7E, 0xBF, 0xDF, 0xEF, 0xF7, 0xFB, 0xFD, 0x7E//53
+};
+
+/* Global */
+const    uint8_t  *pUSBHS_Descr;
 
 /* Setup Request */
 volatile uint8_t  USBHS_SetupReqCode;
@@ -43,6 +57,53 @@ volatile uint8_t  USBHS_Endp_Busy[ DEF_UEP_NUM ];
 /******************************************************************************/
 /* Interrupt Service Routine Declaration*/
 void USBHS_IRQHandler(void) __attribute__((interrupt("WCH-Interrupt-fast")));
+
+/*********************************************************************
+ * @fn      USB_TestMode_Deal
+ *
+ * @brief   Eye Diagram Test Function Processing.
+ *
+ * @return  none
+ *
+ */
+void USB_TestMode_Deal( void )
+{
+    /* start test */
+    USBHS_Test_Flag &= ~0x80;
+    if( USBHS_SetupReqIndex == 0x0100 )
+    {
+        /* Test_J */
+        USBHSD->SUSPEND &= ~TEST_MASK;
+        USBHSD->SUSPEND |= TEST_J;
+    }
+    else if( USBHS_SetupReqIndex == 0x0200 )
+    {
+        /* Test_K */
+        USBHSD->SUSPEND &= ~TEST_MASK;
+        USBHSD->SUSPEND |= TEST_K;
+    }
+    else if( USBHS_SetupReqIndex == 0x0300 )
+    {
+        /* Test_SE0_NAK */
+        USBHSD->SUSPEND &= ~TEST_MASK;
+        USBHSD->SUSPEND |= TEST_SE0;
+    }
+    else if( USBHS_SetupReqIndex == 0x0400 )
+    {
+        /* Test_Packet */
+        USBHSD->SUSPEND &= ~TEST_MASK;
+        USBHSD->SUSPEND |= TEST_PACKET;
+
+        USBHSD->CONTROL |= USBHS_UC_HOST_MODE;
+        USBHSH->HOST_EP_CONFIG = USBHS_UH_EP_TX_EN | USBHS_UH_EP_RX_EN;
+        USBHSH->HOST_EP_TYPE |= 0xff;
+
+        USBHSH->HOST_TX_DMA = (uint32_t)(&IFTest_Buf[ 0 ]);
+        USBHSH->HOST_TX_LEN = 53;
+        USBHSH->HOST_EP_PID = ( USB_PID_SETUP << 4 );
+        USBHSH->INT_FG = USBHS_UIF_TRANSFER;
+    }
+}
 
 /*********************************************************************
  * @fn      USBHS_RCC_Init
@@ -143,13 +204,13 @@ void USBHS_Device_Init( FunctionalState sta )
 }
 
 /*********************************************************************
- * @fn      ECM_Status_USB_UpLoad
+ * @fn      USBHS_EP1_UpLoad
  *
- * @brief   ecm status usb endp1 upload
+ * @brief   usb endp1 upload via dma
  *
  * @return  none
  */
-uint8_t ECM_Status_USB_UpLoad( uint16_t len, uint32_t dma_adr )
+uint8_t USBHS_EP1_UpLoad( uint16_t len, uint32_t dma_adr )
 {
     if( (USBHS_Endp_Busy[ DEF_UEP1 ] & DEF_UEP_BUSY) == RESET )
     {
@@ -166,13 +227,13 @@ uint8_t ECM_Status_USB_UpLoad( uint16_t len, uint32_t dma_adr )
 }
 
 /*********************************************************************
- * @fn      ETH2USB_USB_UpLoad
+ * @fn      USBHS_EP2_UpLoad
  *
- * @brief   eth data usb endp2 upload
+ * @brief   usb endp2 upload via dma
  *
  * @return  none
  */
-uint8_t ETH2USB_USB_UpLoad( uint16_t len, uint32_t dma_adr )
+uint8_t USBHS_EP2_UpLoad( uint16_t len, uint32_t dma_adr )
 {
     if( (USBHS_Endp_Busy[ DEF_UEP2 ] & DEF_UEP_BUSY) == RESET )
     {
@@ -214,12 +275,12 @@ void USBHS_IRQHandler( void )
                     /* end-point 3 data out interrupt */
                     case USBHS_UIS_TOKEN_OUT | DEF_UEP3:
                         len = (uint16_t)(USBHSD->RX_LEN);
-                        if( len >= DEF_USB_EP3_HS_SIZE )
+                        if( len >= USBHS_DevMaxPackLen )
                         {
                             /* full pack */
                             USBHS_Endp3_RxLen += len;
                             /* Move USB DMA Address */
-                            USBHSD->UEP3_RX_DMA += DEF_USB_EP3_HS_SIZE;
+                            USBHSD->UEP3_RX_DMA += USBHS_DevMaxPackLen;
                         }
                         else
                         {
@@ -276,7 +337,12 @@ void USBHS_IRQHandler( void )
                              }
                          }
 
-                            break;
+                         /* test mode */
+                         if( USBHS_Test_Flag & 0x80 )
+                         {
+                             USB_TestMode_Deal( );
+                         }
+                        break;
 
                     default:
                         errflag = 0xFF;
@@ -335,44 +401,6 @@ void USBHS_IRQHandler( void )
                         USBHSD->UEP2_TX_CTRL ^= USBHS_UEP_T_TOG_DATA1;
                         USBHSD->UEP2_TX_CTRL = (USBHSD->UEP2_TX_CTRL & ~USBHS_UEP_T_RES_MASK) | USBHS_UEP_T_RES_NAK;
                         USBHS_Endp_Busy[ DEF_UEP2 ] &= ~DEF_UEP_BUSY;
-#if 0
-                        if( E2U_Trance_Manage.StopFlag )
-                        {
-                            e2u_deal_ptr = E2U_Trance_Manage.DealPtr;
-                            if( E2U_PackLen[ e2u_deal_ptr ] >= DEF_USB_EP3_HS_SIZE )
-                            {
-                                ret = ETH2USB_USB_UpLoad( DEF_USB_EP3_HS_SIZE, E2U_PackAdr[ e2u_deal_ptr ] );
-                                if( ret == 0 )
-                                {
-                                    E2U_PackLen[ e2u_deal_ptr ] -= DEF_USB_EP3_HS_SIZE;
-                                }
-                            }
-                            else
-                            {
-                                ret = ETH2USB_USB_UpLoad( E2U_PackLen[ e2u_deal_ptr ], E2U_PackAdr[ e2u_deal_ptr ] );
-                                if( ret == 0 )
-                                {
-                                    /* last pack (size <=512) */
-                                    DMARxDealTabs[ e2u_deal_ptr ]->Status |= ETH_DMARxDesc_OWN;
-                                    E2U_PackLen[ e2u_deal_ptr ] = 0;
-                                    E2U_PackAdr[ e2u_deal_ptr ] = 0;
-                                    E2U_Trance_Manage.StopFlag = 0;
-                                    NVIC_DisableIRQ( ETH_IRQn );
-                                    E2U_Trance_Manage.RemainPack--;
-                                    E2U_Trance_Manage.DealPtr++;
-                                    if( E2U_Trance_Manage.DealPtr >= DEF_E2U_MAXBLOCKS )
-                                    {
-                                        E2U_Trance_Manage.DealPtr = 0;
-                                    }
-                                    NVIC_EnableIRQ( ETH_IRQn );
-                                }
-                            }
-                        }
-                        else
-                        {
-                            USBHSD->UEP2_TX_CTRL = (USBHSD->UEP2_TX_CTRL & ~USBHS_UEP_T_RES_MASK) | USBHS_UEP_T_RES_NAK;
-                        }
-#endif
                         break;
 
                     default :
@@ -406,46 +434,16 @@ void USBHS_IRQHandler( void )
         if ( ( USBHS_SetupReqType & USB_REQ_TYP_MASK ) != USB_REQ_TYP_STANDARD )
         {
             /* usb non-standard request processing */
-            /* NCM��ECM������ */
+            /* NCM&ECM Request */
             switch( USBHS_SetupReqCode )
             {
-                /******************����ΪECMģʽ�������*************************** */
+                /*********************ECM*************************/
                 case DEF_ECM_SET_ETHPACKETFILTER:
-                    /* 0x43: ���������˽�����̫�����Ĺ����� */
+                    /* 0x43 */
                     errflag = 0x00;
-                    ECM_Change_MAC_Filter( USBHS_SetupReqValue&0x1F );
-                    break;
-#if 0
-                case DEF_ECM_SENDENCAPCMD:
-                    /* 0x00: ���ڷ���һ������Э����֧�ֵ����� */
-                    errflag = 0xFF;
+                    ECM_Change_MAC_Filter( (uint8_t)(USBHS_SetupReqValue&0x1F) );
                     break;
 
-                case DEF_ECM_GET_ENCAPRESPONSE:
-                    /* 0x01: ��������Կ���Э����֧�ֵĻ�Ӧ */
-                    errflag = 0xFF;
-                    break;
-
-                case DEF_ECM_SET_ETHMULFILTERS:
-                    /* 0x40: ���������鲥 */
-                    errflag = 0xFF;
-                    break;
-
-                case DEF_ECM_SET_ETHPOWER:
-                    /* 0x41: ���������Դ����ģʽ */
-                    errflag = 0xFF;
-                    break;
-
-                case DEF_ECM_GET_ETHPOWER:
-                    /* 0x42: ��ȡ�����Դ����ģʽ */
-                    errflag = 0xFF;
-                    break;
-
-                case DEF_ECM_GET_ETHSTATISTIC:
-                    /* 0x44: ��ȡ�����豸��ͳ����Ϣ���������Ͱ����������հ����������մ���������� */
-                    errflag = 0xFF;
-                    break;
-#endif
                 default:
                     errflag = 0xFF;
                     break;
@@ -684,6 +682,18 @@ void USBHS_IRQHandler( void )
                                 errflag = 0xFF;
                             }
                         }
+                        else if( (uint8_t)(USBHS_SetupReqValue&0xFF) == 0x02 )
+                        {
+                            /* test mode deal */
+                            if( ( USBHS_SetupReqIndex == 0x0100 ) ||
+                                ( USBHS_SetupReqIndex == 0x0200 ) ||
+                                ( USBHS_SetupReqIndex == 0x0300 ) ||
+                                ( USBHS_SetupReqIndex == 0x0400 ) )
+                            {
+                                /* Set the flag and wait for the status to be uploaded before proceeding with the actual operation */
+                                USBHS_Test_Flag |= 0x80;
+                            }
+                        }
                         else
                         {
                             errflag = 0xFF;
@@ -830,11 +840,14 @@ void USBHS_IRQHandler( void )
 
         USBHSD->DEV_AD = 0;
         USBHS_Device_Endp_Init( );
+        PhyInit_Flag = 0;
+        ETH_DeInit( );
         USBHSD->INT_FG = USBHS_UIF_BUS_RST;
     }
     else if( intflag & USBHS_UIF_SUSPEND )
     {
         USBHSD->INT_FG = USBHS_UIF_SUSPEND;
+        Delay_Us(10);
         /* usb suspend interrupt processing */
         if ( USBHSD->MIS_ST & USBHS_UMS_SUSPEND  )
         {
@@ -857,13 +870,13 @@ void USBHS_IRQHandler( void )
 }
 
 /*********************************************************************
- * @fn      USBHD_Send_Resume
+ * @fn      USBHS_Send_Resume
  *
- * @brief   USBHD device sends wake-up signal to host
+ * @brief   USBHS device sends wake-up signal to host
  *
  * @return  none
  */
-void USBHD_Send_Resume(void)
+void USBHS_Send_Resume(void)
 {
 
 }

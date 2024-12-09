@@ -1,16 +1,17 @@
 
-Nanjing Qinheng Microelectronics Co., Ltd. 2021.06
+Nanjing Qinheng Microelectronics Co., Ltd. 2024.10
 
-http://wch-ic.com
+https://wch-ic.com
 
 
 Directory
   |
   |-- CH32V30x: RISC-V MCU
-  |      |-- EVT: CH32V30xEVT Evaluation Board and CH32V30x related software routines
+  |      |-- EVT: CH32V30xEVT Evaluation Board and CH32V30x CH32V317 related software routines
   |      |      |-- PUB: 
   |      |      |      |-- CH32V30xEVT Evaluation Board Manual.pdf: CH32V30xEVT evaluation board introduction and project creation description
   |      |      |      |-- CH32V30xSCH.pdf: Schematic of CH32V307EVT evaluation board
+  |      |      |      |--  SCHPCB: Schematic and PCB of CH32V30xEVT evaluation board
   |      |      |-- EXAM: 
   |      |      |      |-- SRC  
   |      |      |      |      |-- Core: kernal system header file
@@ -19,7 +20,7 @@ Directory
   |      |      |      |      |-- Peripheral: basic peripheral driver source file and header file
   |      |      |      |      |-- Startup: startup file. For different devices selected by users, the following 2 startup files are provided, and the matched device definition is selected in the ch32v30x.h file.
   |      |      |      |      |      |-- startup_ch32v30x_D8.S: applied to the CH32V303
-  |      |      |      |      |      |-- startup_ch32v30x_D8C.S: applied to the CH32V307 and the CH32V305  
+  |      |      |      |      |      |-- startup_ch32v30x_D8C.S: applied to the CH32V307 CH32V317 and the CH32V305  
   |      |      |      |-- ADC
   |      |      |      |      |-- ADC_DMA: ADC DMA sampling routines
   |      |      |      |      |-- AnalogWatchdog: analog watchdog routine
@@ -33,12 +34,19 @@ Directory
   |      |      |      |      |-- DualADC_SlowInterleaved: dual ADC slow interleaved sampling routine  
   |      |      |      |      |-- ExtLines_Trigger: external lines trigger ADC conversion routine
   |      |      |      |      |-- Internal_Temperature: internal temperature sensor routine 
-  |      |      |      |-- BKP: BKP routine
+  |      |      |      |      |-- TIM_Trigger:TIM trigger ADC conversion routine 
+  |      |      |      |      |-- Temperature_External_channel:Temperature-External channel Injection alternating inversion routine 
+  |      |      |      |-- APPLICATION
+  |      |      |      |      |-- WS2812_LED
+  |      |      |      |      |      |-- WS2812_LED：SPI\PWM Operates WS2812_LED routine 
+  |      |      |      |-- BKP
+  |      |      |      |      |-- BKP：BKP routine 
   |      |      |      |-- CAN
   |      |      |      |      |-- Networking: CAN routine: normal mode, standard frame and expanded frame data transceiver
   |      |      |      |      |-- TestMode: test mode, including silent mode, loopback mode and loopback silent mode
   |      |      |      |      |-- Time-triggered: time triggered communication mode   
-  |      |      |      |-- CRC: CRC routine
+  |      |      |      |-- CRC
+  |      |      |      |      |-- CRC_Calculation：CRC routine
   |      |      |      |-- DAC 
   |      |      |      |      |-- DAC_DMA: DAC DMA conversion routines
   |      |      |      |      |-- DAC_Exit_9_Trig: external trigger DAC conversion routine
@@ -72,22 +80,30 @@ Directory
   |      |      |      |      |-- UdpServer: demonstration routine that Udp Server receives data and returns data
   |      |      |      |      |-- ETH_Filter_Multicast:demonstrate filtering and multicast sending functions
   |      |      |      |      |-- WebServer: Web Server routine, to demonstrate the configuration of WCHNET device functions through Web browser. As the WCHNET devices have built-in web server, the network parameter configuration and password management of WCHNET can be implemented on the web page.   
-  |      |      |      |-- EXTI: external interrupt line routine
-  |      |      |      |-- FLASH: FLASH erase/read/write, and fast programming
-  |      |      |      |-- FPU: FPU hardware floating point operation routine
-  |      |      |      |-- FreeRTOS: FreeRTOS migration routine 
+  |      |      |      |-- EXTI
+  |      |      |      |      |-- EXTI0:External Interrupt Routine
+  |      |      |      |-- FLASH
+  |      |      |      |      |-- FLASH_Program:FLASH erase/read/write, and fast programming 
+  |      |      |      |-- FPU
+  |      |      |      |      |-- FPU：FPU hardware floating point operation routine
+  |      |      |      |-- FreeRTOS
+  |      |      |      |      |-- FreeRTOS_Core:FreeRTOS migration routines
   |      |      |      |-- FSMC  
   |      |      |      |      |-- LCD: FSMC routine to operate TFTLCD
   |      |      |      |      |-- NANDFLASH: FSMC routine to operate NANDFLASH 
   |      |      |      |      |-- SRAM: FSMC routine to operate NOR_ SRAM 
-  |      |      |      |-- GPIO: GPIO routine
-  |      |      |      |-- HarmonyOS:HarmonyOS migration routine  
+  |      |      |      |      |-- NORFLASH: FSMC routine to operate NORFLASH 
+  |      |      |      |-- GPIO
+  |      |      |      |      |-- GPIO_Toggle:GPIO routines 
+  |      |      |      |-- HarmonyOS
+  |      |      |      |      |-- LiteOS_m：HarmonyOS migration routine
   |      |      |      |-- I2C
   |      |      |      |      |-- I2C_7bit_Mode: 7-bit address mode, master/slave mode, transceiver routine
   |      |      |      |      |-- I2C_10bit_Mode: 10 bit address mode, master/slave mode transceiver routine
   |      |      |      |      |-- I2C_DMA: I2C DMA, master/slave mode transceiver routine
   |      |      |      |      |-- I2C_EEPROM: I2C interface routine to operate EEPROM peripheral 
   |      |      |      |      |-- I2C_PEC: PEC error check, master/slave mode transceiver routine
+  |      |      |      |      |-- I2C_7bit_Interrupt_Mode：Use interrupt to receive and send routine 
   |      |      |      |-- I2S 
   |      |      |      |      |-- HostRx_SlaveTx: I2S master receiver slave transmitter routine
   |      |      |      |      |-- I2S_DMA: I2S master transmitter slave receiver DMA routine
@@ -97,22 +113,40 @@ Directory
   |      |      |      |-- INT
   |      |      |      |      |-- Interrupt_Nest: interrupt nested routine
   |      |      |      |      |-- Interrupt_VTF: VTF IRQ interrupt routine   
-  |      |      |      |-- IWDG: independent watchdog routine
-  |      |      |      |-- OPA: OPA4 as voltage follower output routine
+  |      |      |      |-- IWDG
+  |      |      |      |      |-- IWDG:Independent Watchdog routine 
+  |      |      |      |-- OPA
+  |      |      |      |      |-- OPA_Voltage_Follower：OPA4 as voltage follower output routine 
   |      |      |      |-- PWR
   |      |      |      |      |-- Sleep_Mode: low power, sleep mode routine
   |      |      |      |      |-- Standby_Mode: low power, standby mode routine
   |      |      |      |      |-- Stop_Mode: low power, stop mode routine
   |      |      |      |      |-- Standby_RAM_LV_Mode: when LV is enabled in standby mode, RAM 2k and 30K low-power data holding routines
   |      |      |      |      |-- Standby_RAM_Mode:when LV is not enabled in standby mode, RAM 2k and 30K low-power data holding routines
+  |      |      |      |      |-- Standby_RAM_Application：When MCU in standby mode, RAM 2k and 30K low-power data holding application routine
+  |      |      |      |      |-- PVD_Wakeup：STOP mode PVD wakeup MCU Routine
+  |      |      |      |      |-- PVD_VoltageJudger：PVD voltage Judger Routine
+  |      |      |      |      |-- CH32V317_LP_Mode：CH32V317 low power Routine
+  |      |      |      |-- PMP
+  |      |      |      |      |-- PMP：Physical memory protection Routine
   |      |      |      |-- RCC
   |      |      |      |      |-- Get_CLK:Get system-HCLK-AHB1-AHB2 clock routine  
   |      |      |      |      |-- MCO: MCO pin clock output routine
   |      |      |      |      |-- HSI_PLL_Source:HSI or HSI/2 as PLL input clock routine  
-  |      |      |      |-- RNG: Random number generator routine   
-  |      |      |      |-- RTC: calendar routine
-  |      |      |      |-- RT-Thread:RT thread migration routine 
-  |      |      |      |-- SDIO:SDIO routine to operate SD card
+  |      |      |      |      |-- HSE_CLK:HSE frequency check routine 
+  |      |      |      |      |-- HSI_Calibration：HSI calibrate routine
+  |      |      |      |      |-- LSI_Calibration：LSI calibrate routine
+  |      |      |      |-- RNG   
+  |      |      |      |      |-- RNG：：Random number generator routine   
+  |      |      |      |-- RTC
+  |      |      |      |      |-- RTC_Calendar:Calendar Routines  
+  |      |      |      |      |-- RTC_Calibration：RTC calibrate Routines 
+  |      |      |      |-- RT-Thread
+  |      |      |      |      |-- RT_Thread_Core:RT-Thread migration routine  
+  |      |      |      |-- SDIO
+  |      |      |      |      |-- SDIO_SD：SDIO routine to operate SD card
+  |      |      |      |      |-- SDIO_EMMC：SDIO routine to operate eMMC card
+  |      |      |      |      |-- SDIO_Mode：SDIO Host/Slave mode transceiver routine
   |      |      |      |-- SPI
   |      |      |      |      |-- 1Lines_half-duplex: single wire half duplex mode, master/slave mode, data transceiver
   |      |      |      |      |-- 2Lines_FullDuplex: two-wire full duplex mode, master/slave mode, data transceiver
@@ -120,7 +154,13 @@ Directory
   |      |      |      |      |-- SPI_CRC: CRC error check and master/slave mode transceiver routine
   |      |      |      |      |-- SPI_DMA: SPI uses DMA, master/slave mode transceiver routine
   |      |      |      |      |-- SPI_FLASH: SPI interface operation flash peripheral routine
-  |      |      |      |-- TencentOS: TencentOS migration routine     
+  |      |      |      |      |-- SPI_LCD:SPI interface operation FLASH  and LCD peripheral routines
+  |      |      |      |-- SDI_Printf
+  |      |      |      |      |-- SDI_Printf：debug interface SDI, virtual serial port. 
+  |      |      |      |-- SYSTICK 
+  |      |      |      |      |-- SYSTICK_Interrupt：Systick timer routine    
+  |      |      |      |-- TencentOS 
+  |      |      |      |      |-- TencentOS：TencentOS migration routine
   |      |      |      |-- TIM
   |      |      |      |      |-- Clock_Select: clock source selection routine
   |      |      |      |      |-- ComplementaryOutput_DeadTime: complementary output and deadband insertion mode routines
@@ -132,7 +172,10 @@ Directory
   |      |      |      |      |-- Synchro_ExtTrigger:slave mode routine, including reset mode, gating mode and trigger mode
   |      |      |      |      |-- Synchro_Timer:timer synchronization mode
   |      |      |      |      |-- TIM_DMA: timer DMA routines
-  |      |      |      |-- TOUCHKEY:touchkey detection routine
+  |      |      |      |      |-- Encode:Timer encoder mode routines
+  |      |      |      |      |-- TIM_INT:Timer interput mode routines
+  |      |      |      |-- TOUCHKEY
+  |      |      |      |      |-- TKey:TouchKey Detection Routine 
   |      |      |      |-- USART
   |      |      |      |      |-- USART_DMA: USART DMA, master/slave mode transceiver routine
   |      |      |      |      |-- USART_HalfDuplex: single wire half duplex mode, master/slave mode transceiver routine
@@ -142,6 +185,7 @@ Directory
   |      |      |      |      |-- USART_Polling: polling transceiver mode, master/slave transceiver routine
   |      |      |      |      |-- USART_Printf: USART Print debugging routine
   |      |      |      |      |-- USART_SynchronousMode: synchronous mode, master/slave mode, transceiver routine
+  |      |      |      |      |-- USART_Idle_Recv：USART use DMA receiving indeterminate length data routines
   |      |      |      |-- USB
   |      |      |      |      |-- USBFS
   |      |      |      |      |      |-- DEVICE
@@ -167,6 +211,8 @@ Directory
   |      |      |      |      |      |      |-- MSC_U-Disk: Smulates a simple USB flash drive, optionally using on-chip Flash or external SPI-Flash
   |      |      |      |      |      |      |-- MSC_CD-ROM: Simulate CDROM, need external SPI-Flash
   |      |      |      |      |      |      |--USB_ECM-NetWorkAdaptor: USB ECM routines
+  |      |      |      |      |      |      |--USB_RNDIS-NetWorkAdaptor: USB RNDIS routines
+  |      |      |      |      |      |      |--USB_NCM-NetWorkAdaptor: USB NCM routines
   |      |      |      |      |      |      |-- SimulateCDC:Simulate a CDC serial port and use serial port 2 to send and receive.
   |      |      |      |      |      |      |-- SimulateCDC-HID:Simulate a CDC serial port, use serial port 2 to send and receive, HID interrupt endpoints to send and receive data to reverse and upload.  
   |      |      |      |      |      |-- HOST_IAP
@@ -176,6 +222,8 @@ Directory
   |      |      |      |      |      |-- HOST_MTP_FileSystem:Enumeration process of a USB host to a device that supports MTP and PTP protocols, supports MTP and PTP protocols, and reads its files
   |      |      |      |      |      |-- Host_Udisk:USB host operation USB disk routine 
   |      |      |      |      |      |-- Udisk_Lib:U disk file system library file   
-  |      |      |      |-- VoiceRcgExam: individual term voice recognition routine 
-  |      |      |      |-- WWDG: window watchdog routine
+  |      |      |      |-- VoiceRcgExam 
+  |      |      |      |      |-- VoiceRcgExam：individual term voice recognition routine   
+  |      |      |      |-- WWDG
+  |      |      |      |      |-- WWDG:Window Watchdog Routine
 

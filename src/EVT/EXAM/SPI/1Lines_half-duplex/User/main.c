@@ -2,7 +2,7 @@
 * File Name          : main.c
 * Author             : WCH
 * Version            : V1.0.0
-* Date               : 2021/06/06
+* Date               : 2024/06/01
 * Description        : Main program body.
 *********************************************************************************
 * Copyright (c) 2021 Nanjing Qinheng Microelectronics Co., Ltd.
@@ -12,17 +12,17 @@
 
 /*
  *@Note
- single wire half duplex mode, master/slave mode, data transceiver:
- Master:SPI1_SCK(PA5)\SPI1_MOSI(PA7).
- Slave:SPI1_SCK(PA5)\SPI1_MISO(PA6).
- 
- This routine demonstrates that Master sends and Slave receives.
- Note: The two boards download the Master and Slave programs respectively,
- and power on at the same time.
-     Hardware connection:PA5-- PA5
-               PA7 --PA6
- 
-*/
+ *single wire half duplex mode, master/slave mode, data transceiver:
+ *Master:SPI1_SCK(PA5)\SPI1_MOSI(PA7).
+ *Slave:SPI1_SCK(PA5)\SPI1_MISO(PA6).
+ *
+ *This routine demonstrates that Master sends and Slave receives.
+ *Note: The two boards download the Master and Slave programs respectively,
+ *and power on at the same time.
+ *    Hardware connection:PA5-- PA5
+ *              PA7 --PA6
+ *
+ */
 
 #include "debug.h"
 
@@ -117,7 +117,7 @@ int main(void)
 {
 	u8 i;
 
-	NVIC_PriorityGroupConfig(NVIC_PriorityGroup_4);
+	NVIC_PriorityGroupConfig(NVIC_PriorityGroup_2);
 	SystemCoreClockUpdate();
 	Delay_Init();
 	USART_Printf_Init(115200);	

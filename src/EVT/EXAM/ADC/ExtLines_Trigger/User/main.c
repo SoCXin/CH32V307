@@ -12,12 +12,12 @@
 
 /*
  *@Note
-External lines trigger ADC conversion routine:
- ADC channel 2 (PA2) - injection group channel, external trigger pin (PA15) high level triggers EXTI line 15 event,
- In this mode, an ADC conversion is triggered by an event on EXTI line 15, and a JEOC interrupt is generated after
- the conversion is completed.
-
-*/
+ *External lines trigger ADC conversion routine:
+ *ADC channel 2 (PA2) - injection group channel, external trigger pin (PA15) high level triggers EXTI line 15 event,
+ *In this mode, an ADC conversion is triggered by an event on EXTI line 15, and a JEOC interrupt is generated after
+ *the conversion is completed.
+ *
+ */
 
 #include "debug.h"
 
@@ -115,7 +115,7 @@ void EXTI_Event_Init(void)
  */
 u16 Get_ConversionVal(s16 val)
 {
-	if((val+Calibrattion_Val)<0) return 0;
+	if((val+Calibrattion_Val)<0|| val==0) return 0;
 	if((Calibrattion_Val+val)>4095||val==4095) return 4095;
 	return (val+Calibrattion_Val);
 }

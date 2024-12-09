@@ -12,12 +12,12 @@
 
 /*
  *@Note
- low power, sleep mode routine:
- EXTI_Line0(PA0)
- This routine demonstrates WFI enters sleep mode, PA0 pin input low level triggers external interrupt
- EXTI_Line0 to exit sleep mode,Program execution continues after wake-up.
-
-*/
+ *low power, sleep mode routine:
+ *EXTI_Line0(PA0)
+ *This routine demonstrates WFI enters sleep mode, PA0 pin input low level triggers external interrupt
+ *EXTI_Line0 to exit sleep mode,Program execution continues after wake-up.
+ *
+ */
 
 #include "debug.h"
 
@@ -83,6 +83,10 @@ int main(void)
     EXTI0_INT_INIT();
 
     printf("\r\n ********** \r\n");
+    if(((RCC->CFGR0 & RCC_SWS)==0x04)||((RCC->CFGR0 & RCC_PLLSRC) == RCC_PLLSRC))
+    {
+        RCC_HSICmd(DISABLE);
+    }
     __WFI();
     printf("\r\n ########## \r\n");
 

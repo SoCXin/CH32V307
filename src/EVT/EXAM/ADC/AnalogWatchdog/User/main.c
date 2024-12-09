@@ -2,7 +2,7 @@
 * File Name          : main.c
 * Author             : WCH
 * Version            : V1.0.0
-* Date               : 2021/06/06
+* Date               : 2024/03/05
 * Description        : Main program body.
 *********************************************************************************
 * Copyright (c) 2021 Nanjing Qinheng Microelectronics Co., Ltd.
@@ -12,11 +12,11 @@
 
 /*
  *@Note
- Analog watchdog routine:
- ADC channel 1 (PA1), detect that the ADC conversion data on the rule group channel is outside 2000 - 3500 and trigger the simulation
- Watchdog interrupt.
-
-*/
+ *Analog watchdog routine:
+ *ADC channel 1 (PA1), detect that the ADC conversion data on the rule group channel is outside 2000 - 3500 and trigger the simulation
+ *Watchdog interrupt.
+ *
+ */
 
 #include "debug.h"
 
@@ -125,7 +125,7 @@ int main(void)
 {
 	u16 ADC_val;
 
-	NVIC_PriorityGroupConfig(NVIC_PriorityGroup_4);
+	NVIC_PriorityGroupConfig(NVIC_PriorityGroup_2);
 	SystemCoreClockUpdate();
 	Delay_Init();
 	USART_Printf_Init(115200);	

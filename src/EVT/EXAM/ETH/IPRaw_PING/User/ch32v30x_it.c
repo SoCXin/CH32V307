@@ -9,7 +9,6 @@
 * Attention: This software (modified or not) and binary are used for 
 * microcontroller manufactured by Nanjing Qinheng Microelectronics.
 *******************************************************************************/
-#include <wchnet.h>
 #include "eth_driver.h"
 #include "ch32v30x_it.h"
 
@@ -28,6 +27,9 @@ extern u32 timeCnt;
  */
 void NMI_Handler(void)
 {
+  while (1)
+  {
+  }
 }
 
 /*********************************************************************
@@ -44,6 +46,7 @@ void HardFault_Handler(void)
     printf("mepc  :%08x\r\n", __get_MEPC());
     printf("mcause:%08x\r\n", __get_MCAUSE());
     printf("mtval :%08x\r\n", __get_MTVAL());
+    NVIC_SystemReset();
     while(1);
 }
 
@@ -56,7 +59,7 @@ void HardFault_Handler(void)
  */
 void EXTI9_5_IRQHandler(void)
 {
-    // ETH_PHYLink( );
+    ETH_PHYLink( );
     EXTI_ClearITPendingBit(EXTI_Line7);     /* Clear Flag */
 }
 

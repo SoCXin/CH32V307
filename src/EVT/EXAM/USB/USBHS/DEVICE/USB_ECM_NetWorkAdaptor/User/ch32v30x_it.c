@@ -14,6 +14,7 @@
 #include "eth_driver.h"
 #include "ch32v30x_it.h"
 
+
 void NMI_Handler(void) __attribute__((interrupt("WCH-Interrupt-fast")));
 void HardFault_Handler(void) __attribute__((interrupt("WCH-Interrupt-fast")));
 void ETH_IRQHandler(void) __attribute__((interrupt("WCH-Interrupt-fast")));
@@ -29,6 +30,9 @@ void EXTI9_5_IRQHandler(void) __attribute__((interrupt()));
  */
 void NMI_Handler(void)
 {
+  while (1)
+  {
+  }
 }
 
 /*********************************************************************
@@ -41,10 +45,10 @@ void NMI_Handler(void)
 void HardFault_Handler(void)
 {
     printf("HardFault_Handler\r\n");
-
     printf("mepc  :%08x\r\n", __get_MEPC());
     printf("mcause:%08x\r\n", __get_MCAUSE());
     printf("mtval :%08x\r\n", __get_MTVAL());
+    NVIC_SystemReset();
     while(1);
 }
 
@@ -69,7 +73,7 @@ void EXTI9_5_IRQHandler(void)
  */
 void ETH_IRQHandler(void)
 {
-    ETH_Isr( );
+    WCHNET_ETHIsr( );
 }
 
 /*********************************************************************
@@ -81,13 +85,9 @@ void ETH_IRQHandler(void)
  */
 void TIM2_IRQHandler(void)
 {
-    /* Query AutoNego Status */
-    ETH_Query_AtuoNego( );
-    /* Query Phy Status */
-    PHY_QueryPhySta( );
     /* Load Eth Status */
-    ECM_Load_Status( ETH_NETWork_Status );
+    ECM_Load_Status( );
 
-    TIM_ClearITPendingBit(TIM2, TIM_IT_Update  );
+    TIM_ClearITPendingBit( TIM2, TIM_IT_Update );
 }
 

@@ -2,7 +2,7 @@
 * File Name          : ch32v30x_usbhs_device.c
 * Author             : WCH
 * Version            : V1.0.0
-* Date               : 2022/08/20
+* Date               : 2023/11/20
 * Description        : This file provides all the USBHS firmware functions.
 *********************************************************************************
 * Copyright (c) 2021 Nanjing Qinheng Microelectronics Co., Ltd.
@@ -13,7 +13,21 @@
 
 /******************************************************************************/
 /* Variable Definition */
-const uint8_t    *pUSBHS_Descr;
+/* test mode */
+volatile uint8_t  USBHS_Test_Flag;
+__attribute__ ((aligned(4))) uint8_t IFTest_Buf[ 53 ] =
+{
+    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+    0xAA, 0xAA, 0xAA, 0xAA, 0xAA, 0xAA, 0xAA, 0xAA,
+    0xEE, 0xEE, 0xEE, 0xEE, 0xEE, 0xEE, 0xEE, 0xEE,
+    0xFE,//26
+    0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,//37
+    0x7F, 0xBF, 0xDF, 0xEF, 0xF7, 0xFB, 0xFD,//44
+    0xFC, 0x7E, 0xBF, 0xDF, 0xEF, 0xF7, 0xFB, 0xFD, 0x7E//53
+};
+
+/* Global */
+const    uint8_t  *pUSBHS_Descr;
 
 /* Setup Request */
 volatile uint8_t  USBHS_SetupReqCode;
@@ -49,6 +63,53 @@ __attribute__ ((aligned(4))) uint8_t Data_Buffer[DEF_RING_BUFFER_SIZE];
 void USBHS_IRQHandler(void) __attribute__((interrupt("WCH-Interrupt-fast")));
 
 /*********************************************************************
+ * @fn      USB_TestMode_Deal
+ *
+ * @brief   Eye Diagram Test Function Processing.
+ *
+ * @return  none
+ *
+ */
+void USB_TestMode_Deal( void )
+{
+    /* start test */
+    USBHS_Test_Flag &= ~0x80;
+    if( USBHS_SetupReqIndex == 0x0100 )
+    {
+        /* Test_J */
+        USBHSD->SUSPEND &= ~TEST_MASK;
+        USBHSD->SUSPEND |= TEST_J;
+    }
+    else if( USBHS_SetupReqIndex == 0x0200 )
+    {
+        /* Test_K */
+        USBHSD->SUSPEND &= ~TEST_MASK;
+        USBHSD->SUSPEND |= TEST_K;
+    }
+    else if( USBHS_SetupReqIndex == 0x0300 )
+    {
+        /* Test_SE0_NAK */
+        USBHSD->SUSPEND &= ~TEST_MASK;
+        USBHSD->SUSPEND |= TEST_SE0;
+    }
+    else if( USBHS_SetupReqIndex == 0x0400 )
+    {
+        /* Test_Packet */
+        USBHSD->SUSPEND &= ~TEST_MASK;
+        USBHSD->SUSPEND |= TEST_PACKET;
+
+        USBHSD->CONTROL |= USBHS_UC_HOST_MODE;
+        USBHSH->HOST_EP_CONFIG = USBHS_UH_EP_TX_EN | USBHS_UH_EP_RX_EN;
+        USBHSH->HOST_EP_TYPE |= 0xff;
+
+        USBHSH->HOST_TX_DMA = (uint32_t)(&IFTest_Buf[ 0 ]);
+        USBHSH->HOST_TX_LEN = 53;
+        USBHSH->HOST_EP_PID = ( USB_PID_SETUP << 4 );
+        USBHSH->INT_FG = USBHS_UIF_TRANSFER;
+    }
+}
+
+/*********************************************************************
  * @fn      USBHS_RCC_Init
  *
  * @brief   Initializes the clock for USB2.0 High speed device.
@@ -74,7 +135,6 @@ void USBHS_RCC_Init( void )
  */
 void USBHS_Device_Endp_Init ( void )
 {
-    uint8_t i;
 
     USBHSD->ENDP_CONFIG = USBHS_UEP1_T_EN | USBHS_UEP4_T_EN | USBHS_UEP6_T_EN |
                           USBHS_UEP1_R_EN | USBHS_UEP3_R_EN | USBHS_UEP5_R_EN;
@@ -114,7 +174,7 @@ void USBHS_Device_Endp_Init ( void )
     USBHSD->UEP6_TX_CTRL = USBHS_UEP_T_RES_NAK;
 
     /* Clear End-points Busy Status */
-    for( i=0; i<DEF_UEP_NUM; i++ )
+    for(uint8_t i=0; i<DEF_UEP_NUM; i++ )
     {
         USBHS_Endp_Busy[ i ] = 0;
     }
@@ -153,7 +213,7 @@ void USBHS_Device_Init ( FunctionalState sta )
 /*********************************************************************
  * @fn      USBHS_Endp_DataUp
  *
- * @brief   usbhd-hs device data upload
+ * @brief   usbhs device data upload
  *          input: endp  - end-point numbers
  *                 *pubf - data buffer
  *                 len   - load data length
@@ -184,7 +244,7 @@ uint8_t USBHS_Endp_DataUp( uint8_t endp, uint8_t *pbuf, uint16_t len, uint8_t mo
                         endp_tx_ctrl = USBHSD_UEP_TXCTRL( endp );
                         if( mod == DEF_UEP_DMA_LOAD )
                         {
-                            if( endp_tx_ctrl & USBHS_UEP_T_TOG_DATA1 )
+                            if( (endp_tx_ctrl & USBHS_UEP_T_TOG_DATA1) == 0 )
                             {
                                 /* use UEPn_TX_DMA */
                                 USBHSD_UEP_TXDMA( endp ) = (uint32_t)pbuf;
@@ -197,7 +257,7 @@ uint8_t USBHS_Endp_DataUp( uint8_t endp, uint8_t *pbuf, uint16_t len, uint8_t mo
                         }
                         else if( mod == DEF_UEP_CPY_LOAD )
                         {
-                            if( endp_tx_ctrl & USBHS_UEP_T_TOG_DATA1 )
+                            if( (endp_tx_ctrl & USBHS_UEP_T_TOG_DATA1) == 0 )
                             {
                                 /* use UEPn_TX_DMA */
                                 memcpy( USBHSD_UEP_TXBUF(endp), pbuf, len );
@@ -223,12 +283,11 @@ uint8_t USBHS_Endp_DataUp( uint8_t endp, uint8_t *pbuf, uint16_t len, uint8_t mo
                     /* end-point buffer mode is single buffer */
                     if( mod == DEF_UEP_DMA_LOAD )
                     {
-
+                        
                         USBHSD_UEP_TXDMA( endp ) = (uint32_t)pbuf;
                     }
                     else if( mod == DEF_UEP_CPY_LOAD )
                     {
-                        /* if end-point buffer mode is double buffer */
                         memcpy( USBHSD_UEP_TXBUF(endp), pbuf, len );
                     }
                     else
@@ -236,12 +295,11 @@ uint8_t USBHS_Endp_DataUp( uint8_t endp, uint8_t *pbuf, uint16_t len, uint8_t mo
                         return 1;
                     }
                 }
-
+                /* Set end-point busy */
+                USBHS_Endp_Busy[ endp ] |= DEF_UEP_BUSY;
                 /* end-point n response tx ack */
                 USBHSD_UEP_TLEN( endp ) = len;
                 USBHSD_UEP_TXCTRL( endp ) = (USBHSD_UEP_TXCTRL( endp ) &= ~USBHS_UEP_T_RES_MASK) | USBHS_UEP_T_RES_ACK;
-                /* Set end-point busy */
-                USBHS_Endp_Busy[ endp ] |= DEF_UEP_BUSY;
             }
             else
             {
@@ -316,6 +374,12 @@ void USBHS_IRQHandler( void )
                                     USBHSD->UEP0_TX_LEN = 0;
                                     break;
                             }
+                        }
+
+                        /* test mode */
+                        if( USBHS_Test_Flag & 0x80 )
+                        {
+                            USB_TestMode_Deal( );
                         }
                         break;
 
@@ -636,7 +700,7 @@ void USBHS_IRQHandler( void )
                             {
                                 case (DEF_UEP1 | DEF_UEP_OUT):
                                     /* Set End-point 1 OUT ACK */
-                                    USBHSD->UEP1_RX_CTRL = USBHS_UEP_R_RES_NAK;
+                                    USBHSD->UEP1_RX_CTRL = USBHS_UEP_R_RES_ACK;
                                     break;
 
                                 case (DEF_UEP1 | DEF_UEP_IN):
@@ -646,7 +710,7 @@ void USBHS_IRQHandler( void )
 
                                 case (DEF_UEP3 | DEF_UEP_OUT):
                                     /* Set End-point 3 OUT ACK */
-                                    USBHSD->UEP3_RX_CTRL = USBHS_UEP_R_RES_NAK;
+                                    USBHSD->UEP3_RX_CTRL = USBHS_UEP_R_RES_ACK;
                                     break;
 
                                 case (DEF_UEP4 | DEF_UEP_IN):
@@ -656,7 +720,7 @@ void USBHS_IRQHandler( void )
 
                                 case (DEF_UEP5 | DEF_UEP_OUT):
                                     /* Set End-point 5 OUT ACK */
-                                    USBHSD->UEP5_RX_CTRL = USBHS_UEP_R_RES_NAK;
+                                    USBHSD->UEP5_RX_CTRL = USBHS_UEP_R_RES_ACK;
                                     break;
 
                                 case (DEF_UEP6 | DEF_UEP_IN):
@@ -696,6 +760,18 @@ void USBHS_IRQHandler( void )
                             else
                             {
                                 errflag = 0xFF;
+                            }
+                        }
+                        else if( (uint8_t)(USBHS_SetupReqValue&0xFF) == 0x02 )
+                        {
+                            /* test mode deal */
+                            if( ( USBHS_SetupReqIndex == 0x0100 ) ||
+                                ( USBHS_SetupReqIndex == 0x0200 ) ||
+                                ( USBHS_SetupReqIndex == 0x0300 ) ||
+                                ( USBHS_SetupReqIndex == 0x0400 ) )
+                            {
+                                /* Set the flag and wait for the status to be uploaded before proceeding with the actual operation */
+                                USBHS_Test_Flag |= 0x80;
                             }
                         }
                         else
@@ -885,6 +961,7 @@ void USBHS_IRQHandler( void )
     else if( intflag & USBHS_UIF_SUSPEND )
     {
         USBHSD->INT_FG = USBHS_UIF_SUSPEND;
+        Delay_Us(10);
         /* usb suspend interrupt processing */
         if ( USBHSD->MIS_ST & USBHS_UMS_SUSPEND  )
         {
@@ -907,13 +984,13 @@ void USBHS_IRQHandler( void )
 }
 
 /*********************************************************************
- * @fn      USBHD_Send_Resume
+ * @fn      USBHS_Send_Resume
  *
- * @brief   USBHD device sends wake-up signal to host
+ * @brief   USBHS device sends wake-up signal to host
  *
  * @return  none
  */
-void USBHD_Send_Resume(void)
+void USBHS_Send_Resume(void)
 {
 
 }

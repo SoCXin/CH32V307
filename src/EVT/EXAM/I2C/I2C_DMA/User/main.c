@@ -2,7 +2,7 @@
 * File Name          : main.c
 * Author             : WCH
 * Version            : V1.0.0
-* Date               : 2021/06/06
+* Date               : 2024/03/05
 * Description        : Main program body.
 *********************************************************************************
 * Copyright (c) 2021 Nanjing Qinheng Microelectronics Co., Ltd.
@@ -79,11 +79,6 @@ void IIC_Init(u32 bound, u16 address)
     I2C_DMACmd(I2C1, ENABLE);
 
     I2C_Cmd(I2C1, ENABLE);
-
-#if(I2C_MODE == HOST_MODE)
-    I2C_AcknowledgeConfig(I2C1, ENABLE);
-
-#endif
 }
 
 /*********************************************************************
@@ -169,7 +164,7 @@ int main(void)
 {
     uint8_t i ,t;
 	uint8_t j ;
-    NVIC_PriorityGroupConfig( NVIC_PriorityGroup_4 );
+    NVIC_PriorityGroupConfig( NVIC_PriorityGroup_2 );
     SystemCoreClockUpdate();
     Delay_Init();
     USART_Printf_Init(460800);	
@@ -194,7 +189,7 @@ int main(void)
 
     while( !I2C_CheckEvent( I2C1, I2C_EVENT_MASTER_BYTE_TRANSMITTED ) );
     I2C_GenerateSTOP( I2C1, ENABLE );
-	Delay_Ms(1000);
+	Delay_Ms(300);
 			
 	} 
 
@@ -209,7 +204,10 @@ int main(void)
     DMA_Cmd( DMA1_Channel7, ENABLE );
     
     while( ( !DMA_GetFlagStatus( DMA1_FLAG_TC7 ) ) );
-		
+
+    while(I2C_GetFlagStatus(I2C1, I2C_FLAG_STOPF) == RESET);
+    I2C1->CTLR1 &= I2C1->CTLR1;
+
     printf( "RxData:\r\n" );
 
 	for( i = 0; i < 6; i++ )

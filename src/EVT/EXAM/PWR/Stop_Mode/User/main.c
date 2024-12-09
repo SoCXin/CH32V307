@@ -12,12 +12,12 @@
 
 /*
  *@Note
-low power, stop mode routine:
- EXTI_Line0(PA0)
- This routine demonstrates WFI enters sleep mode, PA0 pin input low level triggers external
-  interrupt EXTI_Line0 exits stop mode,Program execution continues after wake-up.
-
-*/
+ *low power, stop mode routine:
+ *EXTI_Line0(PA0)
+ *This routine demonstrates WFI enters sleep mode, PA0 pin input low level triggers external
+ *interrupt EXTI_Line0 exits stop mode,Program execution continues after wake-up.
+ *
+ */
 
 #include "debug.h"
 
@@ -81,6 +81,7 @@ int main(void)
     printf("Stop Mode Test\r\n");
     EXTI0_INT_INIT();
 
+    RCC_APB1PeriphClockCmd(RCC_APB1Periph_PWR, ENABLE);
     printf("\r\n ********** \r\n");
     PWR_EnterSTOPMode(PWR_Regulator_LowPower, PWR_STOPEntry_WFI);
     printf("\r\n ########## \r\n");

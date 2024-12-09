@@ -1,181 +1,229 @@
 
-å—äº¬æ²æ’å¾®ç”µå­è‚¡ä»½æœ‰é™å…¬å¸ 2021.06
-æœ€æ–°èµ„æ–™è¯·åˆ°æˆ‘ä»¬çš„ç½‘ç«™ä¸ŠæŸ¥è¯¢
-http://wch.cn
+ÄÏ¾©ÇßºãÎ¢µç×Ó¹É·ÝÓÐÏÞ¹«Ë¾ 2024.07
+×îÐÂ×ÊÁÏÇëµ½ÎÒÃÇµÄÍøÕ¾ÉÏ²éÑ¯
+https://wch.cn
 
 
-æ–‡ä»¶ç›®å½•
+ÎÄ¼þÄ¿Â¼
   |
-  |-- CH32V30xï¼šRISC-Vå†…æ ¸å¾®æŽ§åˆ¶å™¨
-  |      |-- EVT: CH32V30xè¯„ä¼°æ¿å’ŒCH32V30xç›¸å…³ä¾‹ç¨‹
+  |-- CH32V30x£ºRISC-VÄÚºËÎ¢¿ØÖÆÆ÷
+  |      |-- EVT: CH32V30x ÆÀ¹À°åºÍCH32V30x CH32V317Ïà¹ØÀý³Ì
   |      |      |-- PUB: 
-  |      |      |      |-- CH32V30xè¯„ä¼°æ¿è¯´æ˜Žä¹¦.pdfï¼šCH32V30xè¯„ä¼°æ¿è¯´æ˜ŽåŠå·¥ç¨‹åˆ›å»ºè¯´æ˜Ž
-  |      |      |      |-- CH32V30xSCH.pdfï¼šCH32V30xè¯„ä¼°æ¿åŽŸç†å›¾
+  |      |      |      |-- CH32V30xÆÀ¹À°åËµÃ÷Êé.pdf£ºCH32V30xÆÀ¹À°åËµÃ÷¼°¹¤³Ì´´½¨ËµÃ÷
+  |      |      |      |-- CH32V30xSCH.pdf£ºCH32V30xÆÀ¹À°åÔ­ÀíÍ¼
+  |      |      |      |-- SCHPCB: CH32V30xÆÀ¹À°åÔ­ÀíÍ¼ºÍPCBÔ­ÎÄ¼þ
   |      |      |-- EXAM: 
   |      |      |      |-- SRC  
-  |      |      |      |      |-- Coreï¼šå†…æ ¸ç³»ç»Ÿå¤´æ–‡ä»¶
-  |      |      |      |      |-- Debugï¼šå»¶æ—¶å‡½æ•°ã€ä¸²å£è°ƒè¯•æºæ–‡ä»¶åŠå¤´æ–‡ä»¶
-  |      |      |      |      |-- Ldï¼šldæ–‡ä»¶  
-  |      |      |      |      |-- Peripheralï¼šåŸºæœ¬å¤–è®¾é©±åŠ¨æºæ–‡ä»¶åŠå¤´æ–‡ä»¶
-  |      |      |      |      |-- Startupï¼šå¯åŠ¨æ–‡ä»¶ã€‚é’ˆå¯¹ç”¨æˆ·ä½¿ç”¨èŠ¯ç‰‡åž‹å·åŒ…å«ä¸‹åˆ—ç›¸åº”çš„å¯åŠ¨æ–‡ä»¶ï¼ŒåŒæ—¶åœ¨ch32v30x.hæ–‡ä»¶ä¸­é€‰æ‹©åŒ¹é…èŠ¯ç‰‡åž‹å·å®šä¹‰
-  |      |      |      |      |      |-- startup_ch32v30x_D8.Sï¼šé€‚ç”¨äºŽCH32V303ç³»åˆ—
-  |      |      |      |      |      |-- startup_ch32v30x_D8C.Sï¼šé€‚ç”¨äºŽCH32V307-CH32V305ç³»åˆ—  
+  |      |      |      |      |-- Core£ºÄÚºËÏµÍ³Í·ÎÄ¼þ
+  |      |      |      |      |-- Debug£ºÑÓÊ±º¯Êý¡¢´®¿Úµ÷ÊÔÔ´ÎÄ¼þ¼°Í·ÎÄ¼þ
+  |      |      |      |      |-- Ld£ºldÎÄ¼þ  
+  |      |      |      |      |-- Peripheral£º»ù±¾ÍâÉèÇý¶¯Ô´ÎÄ¼þ¼°Í·ÎÄ¼þ
+  |      |      |      |      |-- Startup£ºÆô¶¯ÎÄ¼þ¡£Õë¶ÔÓÃ»§Ê¹ÓÃÐ¾Æ¬ÐÍºÅ°üº¬ÏÂÁÐÏàÓ¦µÄÆô¶¯ÎÄ¼þ£¬Í¬Ê±ÔÚch32v30x.hÎÄ¼þÖÐÑ¡ÔñÆ¥ÅäÐ¾Æ¬ÐÍºÅ¶¨Òå
+  |      |      |      |      |      |-- startup_ch32v30x_D8.S£ºÊÊÓÃÓÚCH32V303ÏµÁÐ
+  |      |      |      |      |      |-- startup_ch32v30x_D8C.S£ºÊÊÓÃÓÚCH32V307-CH32V305-CH32V317ÏµÁÐ  
   |      |      |      |-- ADC
-  |      |      |      |      |-- ADC_DMAï¼šADCä½¿ç”¨DMAé‡‡æ ·ä¾‹ç¨‹
-  |      |      |      |      |-- AnalogWatchdogï¼šæ¨¡æ‹Ÿçœ‹é—¨ç‹—ä¾‹ç¨‹
-  |      |      |      |      |-- Auto_Injectionï¼šè‡ªåŠ¨æ³¨å…¥æ¨¡å¼ä¾‹ç¨‹
-  |      |      |      |      |-- Discontinuous_modeï¼šé—´æ–­æ¨¡å¼ä¾‹ç¨‹
-  |      |      |      |      |-- DualADC_AlternateTriggerï¼šåŒADCäº¤æ›¿è§¦å‘é‡‡æ ·ä¾‹ç¨‹  
-  |      |      |      |      |-- DualADC_Combined_RegInjectionSimulï¼šåŒADCæ··åˆåŒæ­¥è§„åˆ™+æ³¨å…¥é‡‡æ ·ä¾‹ç¨‹
-  |      |      |      |      |-- DualADC_FastInterleavedï¼šåŒADCå¿«é€Ÿäº¤å‰é‡‡æ ·ä¾‹ç¨‹
-  |      |      |      |      |-- DualADC_InjectionSimulï¼šåŒADCåŒæ­¥æ³¨å…¥é‡‡æ ·ä¾‹ç¨‹
-  |      |      |      |      |-- DualADC_RegSimulï¼šåŒADCåŒæ­¥è§„åˆ™é‡‡æ ·ä¾‹ç¨‹
-  |      |      |      |      |-- DualADC_SlowInterleavedï¼šåŒADCæ…¢é€Ÿäº¤å‰é‡‡æ ·ä¾‹ç¨‹  
-  |      |      |      |      |-- ExtLines_Triggerï¼šå¤–éƒ¨è§¦å‘ADCè½¬æ¢ä¾‹ç¨‹
-  |      |      |      |      |-- Internal_Temperatureï¼šå†…éƒ¨æ¸©åº¦ä¼ æ„Ÿå™¨ä¾‹ç¨‹  
-  |      |      |      |-- BKPï¼šBKPä¾‹ç¨‹
+  |      |      |      |      |-- ADC_DMA£ºADCÊ¹ÓÃDMA²ÉÑùÀý³Ì
+  |      |      |      |      |-- AnalogWatchdog£ºÄ£Äâ¿´ÃÅ¹·Àý³Ì
+  |      |      |      |      |-- Auto_Injection£º×Ô¶¯×¢ÈëÄ£Ê½Àý³Ì
+  |      |      |      |      |-- Discontinuous_mode£º¼ä¶ÏÄ£Ê½Àý³Ì
+  |      |      |      |      |-- DualADC_AlternateTrigger£ºË«ADC½»Ìæ´¥·¢²ÉÑùÀý³Ì  
+  |      |      |      |      |-- DualADC_Combined_RegInjectionSimul£ºË«ADC»ìºÏÍ¬²½¹æÔò+×¢Èë²ÉÑùÀý³Ì
+  |      |      |      |      |-- DualADC_FastInterleaved£ºË«ADC¿ìËÙ½»²æ²ÉÑùÀý³Ì
+  |      |      |      |      |-- DualADC_InjectionSimul£ºË«ADCÍ¬²½×¢Èë²ÉÑùÀý³Ì
+  |      |      |      |      |-- DualADC_RegSimul£ºË«ADCÍ¬²½¹æÔò²ÉÑùÀý³Ì
+  |      |      |      |      |-- DualADC_SlowInterleaved£ºË«ADCÂýËÙ½»²æ²ÉÑùÀý³Ì  
+  |      |      |      |      |-- ExtLines_Trigger£ºÍâ²¿´¥·¢ADC×ª»»Àý³Ì
+  |      |      |      |      |-- Internal_Temperature£ºÄÚ²¿ÎÂ¶È´«¸ÐÆ÷Àý³Ì 
+  |      |      |      |      |-- Temperature_External_channel£ºÎÂ¶È´«¸ÐÆ÷_Íâ²¿Í¨µÀ½»Ìæ×¢ÈëÀý³Ì
+  |      |      |      |      |-- TIM_trigger£º¶¨Ê±Æ÷´¥·¢ADC×ª»»Àý³Ì 
+  |      |      |      |-- APPLICATION
+  |      |      |      |      |-- WS2812_LED
+  |      |      |      |      |      |-- WS2812_LED£ºÍ¨¹ýSPI\PWM²Ù×÷WS2812Àý³Ì 
+  |      |      |      |-- BKP
+  |      |      |      |      |-- BKP£ºBKPÀý³Ì 
   |      |      |      |-- CAN
-  |      |      |      |      |-- Networkingï¼šCANä¾‹ç¨‹ï¼šæ­£å¸¸æ¨¡å¼ï¼Œæ ‡å‡†å¸§å’Œæ‰©å±•å¸§æ•°æ®æ”¶å‘
-  |      |      |      |      |-- TestModeï¼šæµ‹è¯•æ¨¡å¼ï¼ŒåŒ…æ‹¬é™é»˜æ¨¡å¼ã€å›žçŽ¯æ¨¡å¼ã€å›žçŽ¯é™é»˜æ¨¡å¼
-  |      |      |      |      |-- Time-triggeredï¼šæ—¶é—´è§¦å‘é€šä¿¡æ¨¡å¼   
-  |      |      |      |-- CRCï¼šCRCä¾‹ç¨‹
+  |      |      |      |      |-- Networking£ºCANÀý³Ì£ºÕý³£Ä£Ê½£¬±ê×¼Ö¡ºÍÀ©Õ¹Ö¡Êý¾ÝÊÕ·¢
+  |      |      |      |      |-- TestMode£º²âÊÔÄ£Ê½£¬°üÀ¨¾²Ä¬Ä£Ê½¡¢»Ø»·Ä£Ê½¡¢»Ø»·¾²Ä¬Ä£Ê½
+  |      |      |      |      |-- Time-triggered£ºÊ±¼ä´¥·¢Í¨ÐÅÄ£Ê½   
+  |      |      |      |-- CRC
+  |      |      |      |      |-- CRC_Calculation£ºCRCÀý³Ì 
   |      |      |      |-- DAC 
-  |      |      |      |      |-- DAC_DMAï¼šDACä½¿ç”¨DMAè½¬æ¢ä¾‹ç¨‹
-  |      |      |      |      |-- DAC_Exit_9_Trigï¼šå¤–éƒ¨è§¦å‘DACè½¬æ¢ä¾‹ç¨‹
-  |      |      |      |      |-- DAC_Noise_Generationï¼šå™ªå£°æ³¢å½¢è¾“å‡ºä¾‹ç¨‹
-  |      |      |      |      |-- DAC_Normal_OUTï¼šæ­£å¸¸è¾“å‡ºä¾‹ç¨‹
-  |      |      |      |      |-- DAC_Timer_Trigï¼šå®šæ—¶å™¨è§¦å‘DACè½¬æ¢ä¾‹ç¨‹
-  |      |      |      |      |-- DAC_Triangle_Generationï¼šä¸‰è§’æ³¢å½¢è¾“å‡ºä¾‹ç¨‹
-  |      |      |      |      |-- DualDAC_SineWaveï¼šåŒDACè¾“å‡ºæ­£å¼¦æ³¢ä¾‹ç¨‹
-  |      |      |      |      |-- DualDAC_Triangleï¼šåŒDACè¾“å‡ºä¸‰è§’æ³¢ä¾‹ç¨‹  
+  |      |      |      |      |-- DAC_DMA£ºDACÊ¹ÓÃDMA×ª»»Àý³Ì
+  |      |      |      |      |-- DAC_Exit_9_Trig£ºÍâ²¿´¥·¢DAC×ª»»Àý³Ì
+  |      |      |      |      |-- DAC_Noise_Generation£ºÔëÉù²¨ÐÎÊä³öÀý³Ì
+  |      |      |      |      |-- DAC_Normal_OUT£ºÕý³£Êä³öÀý³Ì
+  |      |      |      |      |-- DAC_Timer_Trig£º¶¨Ê±Æ÷´¥·¢DAC×ª»»Àý³Ì
+  |      |      |      |      |-- DAC_Triangle_Generation£ºÈý½Ç²¨ÐÎÊä³öÀý³Ì
+  |      |      |      |      |-- DualDAC_SineWave£ºË«DACÊä³öÕýÏÒ²¨Àý³Ì
+  |      |      |      |      |-- DualDAC_Triangle£ºË«DACÊä³öÈý½Ç²¨Àý³Ì  
   |      |      |      |-- DMA
-  |      |      |      |      |-- DMA_MEM2MEMï¼šå‚¨å­˜å™¨åˆ°å‚¨å­˜å™¨æ¨¡å¼ä¾‹ç¨‹
-  |      |      |      |      |-- DMA_MEM2PERIPï¼šå‚¨å­˜å™¨åˆ°å¤–è®¾æ¨¡å¼ã€å¤–è®¾åˆ°å‚¨å­˜å™¨æ¨¡å¼ä¾‹ç¨‹è§å„å¤–è®¾å­ä¾‹ç¨‹
-  |      |      |      |-- DVP â€”â€”ä»…é€‚ç”¨äºŽCH32V30x_D8C
-  |      |      |      |      |-- DVP_TFTLCDï¼šDVPæ“ä½œOV2640æ‘„åƒå¤´è§†é¢‘æ¨¡å¼åœ¨LCDæ˜¾ç¤ºå›¾åƒä¾‹ç¨‹
-  |      |      |      |      |-- DVP_UARTï¼šDVPæ“ä½œOV2640æ‘„åƒå¤´JPEGæ¨¡å¼ä¾‹ç¨‹
-  |      |      |      |-- ETH â€”â€”ä»…é€‚ç”¨äºŽCH32V30x_D8C
-  |      |      |      |      |-- 1_Tool_Docï¼šä¾‹ç¨‹ç›¸å…³æ–‡æ¡£åŠé…ç½®è½¯ä»¶
-  |      |      |      |      |-- 8_UART_Serverï¼š8ä¸²å£ç½‘ç»œæœåŠ¡å™¨æ¼”ç¤ºä¾‹ç¨‹   
-  |      |      |      |      |-- DHCPï¼šæ¼”ç¤ºDHCPè‡ªåŠ¨èŽ·å–IPï¼Œå¹¶å»ºç«‹TCPè¿žæŽ¥è¿›è¡Œæ•°æ®å›žä¼ 
-  |      |      |      |      |-- DNSï¼šDHCPè‡ªåŠ¨èŽ·å–ipåŽï¼Œå†è¯·æ±‚åŸŸåè§£æžæ¼”ç¤ºä¾‹ç¨‹  
-  |      |      |      |      |-- ETH_CFGï¼šETH_CFGä¾‹ç¨‹ï¼Œåˆ›å»ºä¸€ä¸ªUDP Serverç”¨äºŽä¸Žä¸Šä½æœºé€šä¿¡ï¼Œä»¥é…ç½®WCHNETåŠŸèƒ½ï¼ŒåŒ…æ‹¬å„é¡¹å‚æ•°ä»¥åŠåˆ›å»ºä¸€ä¸ªæ–°çš„é€šä¿¡
-  |      |      |      |      |-- ETH_IAPï¼šæ¼”ç¤ºé€šè¿‡TCPæ•°æ®ä¼ è¾“ï¼Œè¿›è¡ŒIAP
-  |      |      |      |      |-- ETH_UARTï¼šæ¼”ç¤ºä»¥å¤ªç½‘ä¸ŽUARTçš„æ•°æ®é€ä¼ ã€‚é»˜è®¤ä½¿ç”¨1000000æ³¢ç‰¹çŽ‡ï¼ˆå¯åœ¨bsp_uart.hä¸­æ›´æ”¹ï¼‰è¿›è¡Œä¸²å£æ•°æ®ä¼ è¾“
-  |      |      |      |      |-- IPRaw_PINGï¼šæ¼”ç¤ºPINGåŠŸèƒ½
-  |      |      |      |      |-- Mailï¼šæ¼”ç¤ºSMTPä»¥åŠPOP3çš„é‚®ä»¶æ”¶å‘ 
-  |      |      |      |      |-- MQTTï¼šæ¼”ç¤ºåŸºäºŽTCP/IPçš„MQTTåè®®é€šè®¯   
-  |      |      |      |      |-- NetLibï¼šç½‘ç»œåè®®æ ˆåº“ 
-  |      |      |      |      |-- TcpClientï¼šæ¼”ç¤ºTcp clientè¿žæŽ¥æœåŠ¡å™¨åŽæŽ¥æ”¶æ•°æ®å†å›žä¼ 
-  |      |      |      |      |-- TcpServerï¼šæ¼”ç¤ºTcp Serverè¿žæŽ¥åˆ°å®¢æˆ·ç«¯åŽæŽ¥æ”¶æ•°æ®å¹¶å›žä¼ 
-  |      |      |      |      |-- UdpClientï¼šæ¼”ç¤ºUdp ClientæŽ¥æ”¶æ•°æ®å¹¶å›žä¼ 
-  |      |      |      |      |-- UdpServerï¼šæ¼”ç¤ºUdp ServeræŽ¥æ”¶æ•°æ®å¹¶å›žä¼ 
-  |      |      |      |      |-- ETH_Filter_Multicastï¼šæ¼”ç¤ºè¿‡æ»¤å’Œç»„æ’­å‘é€åŠŸèƒ½
-  |      |      |      |      |-- WebServerï¼š æ¼”ç¤ºé€šè¿‡Webæµè§ˆå™¨é…ç½®WCHNETèŠ¯ç‰‡çš„åŠŸèƒ½ï¼ŒWCHNETèŠ¯ç‰‡å†…ç½®webæœåŠ¡å™¨ ï¼Œé€šè¿‡ç½‘é¡µå¯ä»¥å®žçŽ°WCHNETçš„ç½‘ç»œå‚æ•°é…ç½®ï¼Œä»¥åŠå¯†ç ç®¡ç†  
-  |      |      |      |-- EXTIï¼šå¤–éƒ¨ä¸­æ–­çº¿ä¾‹ç¨‹
-  |      |      |      |-- FLASHï¼šFLASHçš„æ“¦/è¯»/å†™ï¼Œä»¥åŠå¿«é€Ÿç¼–ç¨‹
-  |      |      |      |-- FPUï¼šFPUç¡¬ä»¶æµ®ç‚¹è¿ç®—ä¾‹ç¨‹
-  |      |      |      |-- FreeRTOSï¼šFreeRTOSç§»æ¤ä¾‹ç¨‹  
+  |      |      |      |      |-- DMA_MEM2MEM£º´¢´æÆ÷µ½´¢´æÆ÷Ä£Ê½Àý³Ì
+  |      |      |      |      |-- DMA_MEM2PERIP£º´¢´æÆ÷µ½ÍâÉèÄ£Ê½¡¢ÍâÉèµ½´¢´æÆ÷Ä£Ê½Àý³Ì¼û¸÷ÍâÉè×ÓÀý³Ì
+  |      |      |      |-- DVP ¡ª¡ª½öÊÊÓÃÓÚCH32V30x_D8C
+  |      |      |      |      |-- DVP_TFTLCD£ºDVP²Ù×÷OV2640ÉãÏñÍ·ÊÓÆµÄ£Ê½ÔÚLCDÏÔÊ¾Í¼ÏñÀý³Ì
+  |      |      |      |      |-- DVP_UART£ºDVP²Ù×÷OV2640ÉãÏñÍ·JPEGÄ£Ê½Àý³Ì
+  |      |      |      |-- ETH ¡ª¡ª½öÊÊÓÃÓÚCH32V30x_D8C
+  |      |      |      |      |-- 1_Tool_Doc£ºÀý³ÌÏà¹ØÎÄµµ¼°ÅäÖÃÈí¼þ
+  |      |      |      |      |-- 8_UART_Server£º8´®¿ÚÍøÂç·þÎñÆ÷ÑÝÊ¾Àý³Ì   
+  |      |      |      |      |-- DHCP£ºÑÝÊ¾DHCP×Ô¶¯»ñÈ¡IP£¬²¢½¨Á¢TCPÁ¬½Ó½øÐÐÊý¾Ý»Ø´«
+  |      |      |      |      |-- DNS£ºDHCP×Ô¶¯»ñÈ¡ipºó£¬ÔÙÇëÇóÓòÃû½âÎöÑÝÊ¾Àý³Ì  
+  |      |      |      |      |-- ETH_CFG£ºETH_CFGÀý³Ì£¬´´½¨Ò»¸öUDP ServerÓÃÓÚÓëÉÏÎ»»úÍ¨ÐÅ£¬ÒÔÅäÖÃWCHNET¹¦ÄÜ£¬°üÀ¨¸÷Ïî²ÎÊýÒÔ¼°´´½¨Ò»¸öÐÂµÄÍ¨ÐÅ
+  |      |      |      |      |-- ETH_IAP£ºÑÝÊ¾Í¨¹ýTCPÊý¾Ý´«Êä£¬½øÐÐIAP
+  |      |      |      |      |-- ETH_UART£ºÑÝÊ¾ÒÔÌ«ÍøÓëUARTµÄÊý¾ÝÍ¸´«¡£Ä¬ÈÏÊ¹ÓÃ1000000²¨ÌØÂÊ£¨¿ÉÔÚbsp_uart.hÖÐ¸ü¸Ä£©½øÐÐ´®¿ÚÊý¾Ý´«Êä
+  |      |      |      |      |-- IPRaw_PING£ºÑÝÊ¾PING¹¦ÄÜ
+  |      |      |      |      |-- Mail£ºÑÝÊ¾SMTPÒÔ¼°POP3µÄÓÊ¼þÊÕ·¢ 
+  |      |      |      |      |-- MQTT£ºÑÝÊ¾»ùÓÚTCP/IPµÄMQTTÐ­ÒéÍ¨Ñ¶   
+  |      |      |      |      |-- NetLib£ºÍøÂçÐ­ÒéÕ»¿â 
+  |      |      |      |      |-- TcpClient£ºÑÝÊ¾Tcp clientÁ¬½Ó·þÎñÆ÷ºó½ÓÊÕÊý¾ÝÔÙ»Ø´«
+  |      |      |      |      |-- TcpServer£ºÑÝÊ¾Tcp ServerÁ¬½Óµ½¿Í»§¶Ëºó½ÓÊÕÊý¾Ý²¢»Ø´«
+  |      |      |      |      |-- UdpClient£ºÑÝÊ¾Udp Client½ÓÊÕÊý¾Ý²¢»Ø´«
+  |      |      |      |      |-- UdpServer£ºÑÝÊ¾Udp Server½ÓÊÕÊý¾Ý²¢»Ø´«
+  |      |      |      |      |-- ETH_Filter_Multicast£ºÑÝÊ¾¹ýÂËºÍ×é²¥·¢ËÍ¹¦ÄÜ
+  |      |      |      |      |-- WebServer£º ÑÝÊ¾Í¨¹ýWebä¯ÀÀÆ÷ÅäÖÃWCHNETÐ¾Æ¬µÄ¹¦ÄÜ£¬WCHNETÐ¾Æ¬ÄÚÖÃweb·þÎñÆ÷ £¬Í¨¹ýÍøÒ³¿ÉÒÔÊµÏÖWCHNETµÄÍøÂç²ÎÊýÅäÖÃ£¬ÒÔ¼°ÃÜÂë¹ÜÀí  
+  |      |      |      |-- EXTI
+  |      |      |      |      |-- EXTI0£ºÍâ²¿ÖÐ¶ÏÏßÀý³Ì 
+  |      |      |      |-- FLASH
+  |      |      |      |      |-- FLASH_Program£ºFLASHµÄ²Á/¶Á/Ð´£¬ÒÔ¼°¿ìËÙ±à³Ì
+  |      |      |      |-- FPU
+  |      |      |      |      |-- FPU£ºFPUÓ²¼þ¸¡µãÔËËãÀý³Ì
+  |      |      |      |-- FreeRTOS£ºFreeRTOSÒÆÖ²Àý³Ì
+  |      |      |      |      |-- FreeRTOS_Core£ºÒÆÖ²FreeRTOSÀý³Ì
   |      |      |      |-- FSMC  
-  |      |      |      |      |-- LCDï¼šFSMCæ“ä½œTFTLCDä¾‹ç¨‹
-  |      |      |      |      |-- NANDFLASHï¼šFSMCæ“ä½œNANDFLASHä¾‹ç¨‹
-  |      |      |      |      |-- SRAMï¼šFSMCæ“ä½œNOR_SRAMä¾‹ç¨‹  
-  |      |      |      |-- GPIOï¼šGPIOä¾‹ç¨‹
-  |      |      |      |-- HarmonyOSï¼šHarmonyOSç§»æ¤ä¾‹ç¨‹  
+  |      |      |      |      |-- LCD£ºFSMC²Ù×÷TFTLCDÀý³Ì
+  |      |      |      |      |-- NANDFLASH£ºFSMC²Ù×÷NANDFLASHÀý³Ì
+  |      |      |      |      |-- SRAM£ºFSMC²Ù×÷NOR_SRAMÀý³Ì  
+  |      |      |      |      |-- NORFLASH£ºFSMC²Ù×÷NORFLASHÀý³Ì
+  |      |      |      |-- GPIO
+  |      |      |      |      |-- GPIO_Toggle£ºGPIOÀý³Ì 
+  |      |      |      |-- HarmonyOS
+  |      |      |      |      |-- LiteOS_m£ºHarmonyOSÒÆÖ²Àý³Ì
   |      |      |      |-- I2C
-  |      |      |      |      |-- I2C_7bit_Modeï¼š7ä½åœ°å€æ¨¡å¼ï¼ŒMaster/Slave æ¨¡å¼æ”¶å‘ä¾‹ç¨‹
-  |      |      |      |      |-- I2C_10bit_Modeï¼š10ä½åœ°å€æ¨¡å¼ï¼ŒMaster/Slave æ¨¡å¼æ”¶å‘ä¾‹ç¨‹
-  |      |      |      |      |-- I2C_DMAï¼šI2Cä½¿ç”¨DMAï¼ŒMaster/Slave æ¨¡å¼æ”¶å‘ä¾‹ç¨‹
-  |      |      |      |      |-- I2C_EEPROMï¼šI2CæŽ¥å£æ“ä½œEEPROMå¤–è®¾ä¾‹ç¨‹
-  |      |      |      |      |-- I2C_PECï¼šä½¿ç”¨PECé”™è¯¯æ ¡éªŒï¼ŒMaster/Slave æ¨¡å¼æ”¶å‘ä¾‹ç¨‹
+  |      |      |      |      |-- I2C_7bit_Mode£º7Î»µØÖ·Ä£Ê½£¬Master/Slave Ä£Ê½ÊÕ·¢Àý³Ì
+  |      |      |      |      |-- I2C_10bit_Mode£º10Î»µØÖ·Ä£Ê½£¬Master/Slave Ä£Ê½ÊÕ·¢Àý³Ì
+  |      |      |      |      |-- I2C_DMA£ºI2CÊ¹ÓÃDMA£¬Master/Slave Ä£Ê½ÊÕ·¢Àý³Ì
+  |      |      |      |      |-- I2C_EEPROM£ºI2C½Ó¿Ú²Ù×÷EEPROMÍâÉèÀý³Ì
+  |      |      |      |      |-- I2C_PEC£ºÊ¹ÓÃPEC´íÎóÐ£Ñé£¬Master/Slave Ä£Ê½ÊÕ·¢Àý³Ì
+  |      |      |      |      |-- I2C_7bit_Interrupt_Mode£ºÊ¹ÓÃÖÐ¶Ï½øÐÐÊÕ·¢Àý³Ì 
   |      |      |      |-- I2S 
-  |      |      |      |      |-- HostRx_SlaveTxï¼šI2Sä¸»æ”¶ä»Žå‘ä¾‹ç¨‹
-  |      |      |      |      |-- I2S_DMAï¼šI2Sä¸»å‘ä»Žæ”¶DMAä¾‹ç¨‹
-  |      |      |      |      |-- I2S_Interuptï¼šI2Sä¸»å‘ä»Žæ”¶ä¸­æ–­ä¾‹ç¨‹
-  |      |      |      |-- IAPï¼šIAPå‡çº§ä¾‹ç¨‹-å†…ç½®Hexè½¬Binå·¥å…·å’ŒIAPå‡çº§å·¥å…·  
-  |      |      |      |      |-- USB+UARTï¼šUSB+UART IAPä¾‹ç¨‹    
+  |      |      |      |      |-- HostRx_SlaveTx£ºI2SÖ÷ÊÕ´Ó·¢Àý³Ì
+  |      |      |      |      |-- I2S_DMA£ºI2SÖ÷·¢´ÓÊÕDMAÀý³Ì
+  |      |      |      |      |-- I2S_Interupt£ºI2SÖ÷·¢´ÓÊÕÖÐ¶ÏÀý³Ì
+  |      |      |      |-- IAP£ºIAPÉý¼¶Àý³Ì-ÄÚÖÃHex×ªBin¹¤¾ßºÍIAPÉý¼¶¹¤¾ß  
+  |      |      |      |      |-- USB+UART£ºUSB+UART IAPÀý³Ì    
   |      |      |      |-- INT
-  |      |      |      |      |-- Interrupt_Nestï¼šä¸­æ–­åµŒå¥—ä¾‹ç¨‹
-  |      |      |      |      |-- Interrupt_VTFï¼šä½¿ç”¨VTF IRQä¸­æ–­ä¾‹ç¨‹  
-  |      |      |      |-- IWDGï¼šç‹¬ç«‹çœ‹é—¨ç‹—ä¾‹ç¨‹
-  |      |      |      |-- OPAï¼šOPA4ä½œç”µåŽ‹è·Ÿéšå™¨è¾“å‡ºä¾‹ç¨‹
+  |      |      |      |      |-- Interrupt_Nest£ºÖÐ¶ÏÇ¶Ì×Àý³Ì
+  |      |      |      |      |-- Interrupt_VTF£ºÊ¹ÓÃVTF IRQÖÐ¶ÏÀý³Ì  
+  |      |      |      |-- IWDG
+  |      |      |      |      |-- IWDG£º¶ÀÁ¢¿´ÃÅ¹·Àý³Ì 
+  |      |      |      |-- OPA
+  |      |      |      |      |-- OPA_Voltage_Follower£ºOPA4×÷µçÑ¹¸úËæÆ÷Êä³öÀý³Ì 
   |      |      |      |-- PWR
-  |      |      |      |      |-- Sleep_Modeï¼šä½ŽåŠŸè€—ï¼Œç¡çœ æ¨¡å¼ä¾‹ç¨‹
-  |      |      |      |      |-- Standby_Modeï¼šä½ŽåŠŸè€—ï¼Œå¾…æœºæ¨¡å¼ä¾‹ç¨‹
-  |      |      |      |      |-- Stop_Modeï¼šä½ŽåŠŸè€—ï¼Œåœæœºæ¨¡å¼ä¾‹ç¨‹
-  |      |      |      |      |-- Standby_RAM_LV_Modeï¼šå¾…æœºæ¨¡å¼å¼€å¯LVæ—¶ï¼ŒRAM 2Kã€30Kä½ŽåŠŸè€—æ•°æ®ä¿æŒä¾‹ç¨‹
-  |      |      |      |      |-- Standby_RAM_Modeï¼šå¾…æœºæ¨¡å¼ä¸å¼€å¯LVæ—¶ï¼ŒRAM 2Kã€30Kä½ŽåŠŸè€—æ•°æ®ä¿æŒä¾‹ç¨‹
+  |      |      |      |      |-- Sleep_Mode£ºµÍ¹¦ºÄ£¬Ë¯ÃßÄ£Ê½Àý³Ì
+  |      |      |      |      |-- Standby_Mode£ºµÍ¹¦ºÄ£¬´ý»úÄ£Ê½Àý³Ì
+  |      |      |      |      |-- Stop_Mode£ºµÍ¹¦ºÄ£¬Í£»úÄ£Ê½Àý³Ì
+  |      |      |      |      |-- Standby_RAM_LV_Mode£º´ý»úÄ£Ê½¿ªÆôLVÊ±£¬RAM 2K¡¢30KµÍ¹¦ºÄÊý¾Ý±£³ÖÀý³Ì
+  |      |      |      |      |-- Standby_RAM_Mode£º´ý»úÄ£Ê½²»¿ªÆôLVÊ±£¬RAM 2K¡¢30KµÍ¹¦ºÄÊý¾Ý±£³ÖÀý³Ì
+  |      |      |      |      |-- Standby_RAM_Application£º´ý»úÄ£Ê½£¬RAM 2K¡¢30KµÍ¹¦ºÄÊý¾Ý±£³ÖÓ¦ÓÃÀý³Ì
+  |      |      |      |      |-- PVD_Wakeup£ºSTOPÄ£Ê½PVDÖÐ¶Ï»½ÐÑÀý³Ì
+  |      |      |      |      |-- PVD_VoltageJudger£ºPVDµçÑ¹ÅÐ¶¨Àý³Ì
+  |      |      |      |      |-- CH32V317_LP_Mode£ºCH32V317µÍ¹¦ºÄÀý³Ì
+  |      |      |      |-- PMP
+  |      |      |      |      |-- PMP£ºÎïÀíÄÚ´æ±£»¤Àý³Ì
   |      |      |      |-- RCC
-  |      |      |      |      |-- Get_CLKï¼šèŽ·å–system-HCLK-AHB1-AHB2æ—¶é’Ÿä¾‹ç¨‹  
-  |      |      |      |      |-- MCOï¼šMCOå¼•è„šæ—¶é’Ÿè¾“å‡ºä¾‹ç¨‹
-  |      |      |      |      |-- HSI_PLL_Sourceï¼šHSIæˆ–HSI/2ä½œä¸ºPLLè¾“å…¥æ—¶é’Ÿä¾‹ç¨‹  
-  |      |      |      |-- RNGï¼šéšæœºæ•°å‘ç”Ÿå™¨ä¾‹ç¨‹   
-  |      |      |      |-- RTCï¼šæ—¥åŽ†ä¾‹ç¨‹
-  |      |      |      |-- RT-Threadï¼šRT-Threadç§»æ¤ä¾‹ç¨‹   
-  |      |      |      |-- SDIOï¼šSDIOæ“ä½œSDå¡ä¾‹ç¨‹
+  |      |      |      |      |-- Get_CLK£º»ñÈ¡system-HCLK-AHB1-AHB2Ê±ÖÓÀý³Ì  
+  |      |      |      |      |-- MCO£ºMCOÒý½ÅÊ±ÖÓÊä³öÀý³Ì
+  |      |      |      |      |-- HSI_PLL_Source£ºHSI»òHSI/2×÷ÎªPLLÊäÈëÊ±ÖÓÀý³Ì  
+  |      |      |      |      |-- HSE_CLK£º¼ì²éHSEÆµÂÊÀý³Ì
+  |      |      |      |      |-- HSI_Calibration£ºHSIÐ£×¼Àý³Ì  
+  |      |      |      |      |-- LSI_Calibration£ºLSIÐ£×¼Àý³Ì  
+  |      |      |      |-- RNG   
+  |      |      |      |      |-- RNG£ºËæ»úÊý·¢ÉúÆ÷Àý³Ì  
+  |      |      |      |-- RT-Thread 
+  |      |      |      |      |-- RT_Thread_Core£ºRT-ThreadÒÆÖ²Àý³Ì  
+  |      |      |      |-- RTC
+  |      |      |      |      |-- RTC_Calendar£ºÈÕÀúÀý³Ì
+  |      |      |      |      |-- RTC_Calibration£ºRTCÐ£×¼Àý³Ì  
+  |      |      |      |-- SDIO
+  |      |      |      |      |-- SDIO_SD£ºSDIO²Ù×÷SD¿¨Àý³Ì
+  |      |      |      |      |-- SDIO_EMMC£ºSDIO²Ù×÷eMMC¿¨Àý³Ì
+  |      |      |      |      |-- SDIO_Mode£ºSDIO Ö÷»ú/´Ó»ú Ä£Ê½ÊÕ·¢Àý³Ì
   |      |      |      |-- SPI
-  |      |      |      |      |-- 1Lines_half-duplexï¼šå•çº¿åŠåŒå·¥æ¨¡å¼ï¼ŒMaster/Slave æ¨¡å¼æ•°æ®æ”¶å‘
-  |      |      |      |      |-- 2Lines_FullDuplexï¼šåŒçº¿å…¨åŒå·¥æ¨¡å¼ï¼ŒMaster/Slave æ¨¡å¼æ•°æ®æ”¶å‘
-  |      |      |      |      |-- FullDuplex_HardNSSï¼šç¡¬ä»¶NSSæ¨¡å¼ï¼ŒMaster/Slave æ¨¡å¼æ•°æ®æ”¶å‘
-  |      |      |      |      |-- SPI_CRCï¼šä½¿ç”¨CRCé”™è¯¯æ ¡éªŒï¼ŒMaster/Slave æ¨¡å¼æ”¶å‘ä¾‹ç¨‹
-  |      |      |      |      |-- SPI_DMAï¼šSPIä½¿ç”¨DMAï¼ŒMaster/Slave æ¨¡å¼æ”¶å‘ä¾‹ç¨‹
-  |      |      |      |      |-- SPI_FLASHï¼šSPIæŽ¥å£æ“ä½œFLASHå¤–è®¾ä¾‹ç¨‹
-  |      |      |      |-- TencentOSï¼šTencentOSç§»æ¤ä¾‹ç¨‹     
+  |      |      |      |      |-- 1Lines_half-duplex£ºµ¥Ïß°ëË«¹¤Ä£Ê½£¬Master/Slave Ä£Ê½Êý¾ÝÊÕ·¢
+  |      |      |      |      |-- 2Lines_FullDuplex£ºË«ÏßÈ«Ë«¹¤Ä£Ê½£¬Master/Slave Ä£Ê½Êý¾ÝÊÕ·¢
+  |      |      |      |      |-- FullDuplex_HardNSS£ºÓ²¼þNSSÄ£Ê½£¬Master/Slave Ä£Ê½Êý¾ÝÊÕ·¢
+  |      |      |      |      |-- SPI_CRC£ºÊ¹ÓÃCRC´íÎóÐ£Ñé£¬Master/Slave Ä£Ê½ÊÕ·¢Àý³Ì
+  |      |      |      |      |-- SPI_DMA£ºSPIÊ¹ÓÃDMA£¬Master/Slave Ä£Ê½ÊÕ·¢Àý³Ì
+  |      |      |      |      |-- SPI_FLASH£ºSPI½Ó¿Ú²Ù×÷FLASHÍâÉèÀý³Ì
+  |      |      |      |      |-- SPI_LCD£ºSPI½Ó¿Ú²Ù×÷FLASHºÍLCDÀý³Ì
+  |      |      |      |-- SYSTICK 
+  |      |      |      |      |-- SYSTICK_Interrupt£ºµÎ´ð¶¨Ê±Æ÷Àý³Ì
+  |      |      |      |-- SDI_Printf
+  |      |      |      |      |-- SDI_Printf£ºµ÷ÊÔ½Ó¿ÚSDIÐéÄâ´®¿Ú 
+  |      |      |      |-- TencentOS 
+  |      |      |      |      |-- TencentOS£ºTencentOSÒÆÖ²Àý³Ì 
   |      |      |      |-- TIM
-  |      |      |      |      |-- Clock_Selectï¼šæ—¶é’Ÿæºé€‰æ‹©ä¾‹ç¨‹
-  |      |      |      |      |-- ComplementaryOutput_DeadTimeï¼šäº’è¡¥è¾“å‡ºå’Œæ­»åŒºæ’å…¥æ¨¡å¼ä¾‹ç¨‹
-  |      |      |      |      |-- ExtTrigger_Start_Two_Timerï¼šå¤–éƒ¨è§¦å‘åŒæ­¥å¯åŠ¨ä¸¤ä¸ªå®šæ—¶å™¨ä¾‹ç¨‹
-  |      |      |      |      |-- Input_Captureï¼šè¾“å…¥æ•èŽ·ä¾‹ç¨‹
-  |      |      |      |      |-- One_Pulseï¼šå•è„‰å†²è¾“å‡ºä¾‹ç¨‹
-  |      |      |      |      |-- Output_Compare_Modeï¼šè¾“å‡ºæ¯”è¾ƒæ¨¡å¼ä¾‹ç¨‹
-  |      |      |      |      |-- PWM_Outputï¼šPWMè¾“å‡ºä¾‹ç¨‹
-  |      |      |      |      |-- Synchro_ExtTriggerï¼šä»Žæ¨¡å¼ä¾‹ç¨‹ï¼ŒåŒ…æ‹¬å¤ä½æ¨¡å¼ã€é—¨æŽ§æ¨¡å¼ã€è§¦å‘æ¨¡å¼
-  |      |      |      |      |-- Synchro_Timerï¼šå®šæ—¶å™¨åŒæ­¥æ¨¡å¼
-  |      |      |      |      |-- TIM_DMAï¼šå®šæ—¶å™¨ä½¿ç”¨DMAä¾‹ç¨‹
-  |      |      |      |-- TOUCHKEYï¼šTouchKeyæ£€æµ‹ä¾‹ç¨‹ 
+  |      |      |      |      |-- Clock_Select£ºÊ±ÖÓÔ´Ñ¡ÔñÀý³Ì
+  |      |      |      |      |-- ComplementaryOutput_DeadTime£º»¥²¹Êä³öºÍËÀÇø²åÈëÄ£Ê½Àý³Ì
+  |      |      |      |      |-- ExtTrigger_Start_Two_Timer£ºÍâ²¿´¥·¢Í¬²½Æô¶¯Á½¸ö¶¨Ê±Æ÷Àý³Ì
+  |      |      |      |      |-- Input_Capture£ºÊäÈë²¶»ñÀý³Ì
+  |      |      |      |      |-- One_Pulse£ºµ¥Âö³åÊä³öÀý³Ì
+  |      |      |      |      |-- Output_Compare_Mode£ºÊä³ö±È½ÏÄ£Ê½Àý³Ì
+  |      |      |      |      |-- PWM_Output£ºPWMÊä³öÀý³Ì
+  |      |      |      |      |-- Synchro_ExtTrigger£º´ÓÄ£Ê½Àý³Ì£¬°üÀ¨¸´Î»Ä£Ê½¡¢ÃÅ¿ØÄ£Ê½¡¢´¥·¢Ä£Ê½
+  |      |      |      |      |-- Synchro_Timer£º¶¨Ê±Æ÷Í¬²½Ä£Ê½
+  |      |      |      |      |-- TIM_DMA£º¶¨Ê±Æ÷Ê¹ÓÃDMAÀý³Ì
+  |      |      |      |      |-- Encoder£º¶¨Ê±Æ÷±àÂëÆ÷Àý³Ì
+  |      |      |      |      |-- TIM_INT£º¶¨Ê±Æ÷ÖÐ¶ÏÀý³Ì
+  |      |      |      |-- TOUCHKEY
+  |      |      |      |      |-- TKey£ºTouchKey¼ì²âÀý³Ì  
   |      |      |      |-- USART
-  |      |      |      |      |-- USART_DMAï¼šUSARTä½¿ç”¨DMAï¼ŒMaster/Slave æ¨¡å¼æ”¶å‘ä¾‹ç¨‹
-  |      |      |      |      |-- USART_HalfDuplexï¼šå•çº¿åŠåŒå·¥æ¨¡å¼ï¼ŒMaster/Slave æ¨¡å¼æ”¶å‘ä¾‹ç¨‹
-  |      |      |      |      |-- USART_HardwareFlowControlï¼šç¡¬ä»¶æµæŽ§åˆ¶æ¨¡å¼ï¼ŒMaster/Slave æ¨¡å¼æ”¶å‘ä¾‹ç¨‹
-  |      |      |      |      |-- USART_Interruptï¼šUSARTä¸­æ–­ä¾‹ç¨‹ï¼ŒMaster/Slave æ¨¡å¼æ”¶å‘ä¾‹ç¨‹
-  |      |      |      |      |-- USART_MultiProcessorCommunicationï¼šå¤šå¤„ç†å™¨é€šä¿¡æ¨¡å¼ä¾‹ç¨‹
-  |      |      |      |      |-- USART_Pollingï¼šè½®è¯¢æ”¶å‘æ¨¡å¼ï¼ŒMaster/Slave æ¨¡å¼æ”¶å‘ä¾‹ç¨‹
-  |      |      |      |      |-- USART_Printfï¼šä¸²å£æ‰“å°è°ƒè¯•ä¾‹ç¨‹
-  |      |      |      |      |-- USART_SynchronousModeï¼šåŒæ­¥æ¨¡å¼ï¼ŒMaster/Slave æ¨¡å¼æ”¶å‘ä¾‹ç¨‹
+  |      |      |      |      |-- USART_DMA£ºUSARTÊ¹ÓÃDMA£¬Master/Slave Ä£Ê½ÊÕ·¢Àý³Ì
+  |      |      |      |      |-- USART_HalfDuplex£ºµ¥Ïß°ëË«¹¤Ä£Ê½£¬Master/Slave Ä£Ê½ÊÕ·¢Àý³Ì
+  |      |      |      |      |-- USART_HardwareFlowControl£ºÓ²¼þÁ÷¿ØÖÆÄ£Ê½£¬Master/Slave Ä£Ê½ÊÕ·¢Àý³Ì
+  |      |      |      |      |-- USART_Interrupt£ºUSARTÖÐ¶ÏÀý³Ì£¬Master/Slave Ä£Ê½ÊÕ·¢Àý³Ì
+  |      |      |      |      |-- USART_MultiProcessorCommunication£º¶à´¦ÀíÆ÷Í¨ÐÅÄ£Ê½Àý³Ì
+  |      |      |      |      |-- USART_Polling£ºÂÖÑ¯ÊÕ·¢Ä£Ê½£¬Master/Slave Ä£Ê½ÊÕ·¢Àý³Ì
+  |      |      |      |      |-- USART_Printf£º´®¿Ú´òÓ¡µ÷ÊÔÀý³Ì
+  |      |      |      |      |-- USART_SynchronousMode£ºÍ¬²½Ä£Ê½£¬Master/Slave Ä£Ê½ÊÕ·¢Àý³Ì
+  |      |      |      |      |-- USART_Idle_Recv£º´®¿ÚÊ¹ÓÃDMA½øÐÐ²»¶¨³¤½ÓÊÕÀý³Ì
   |      |      |      |-- USB
   |      |      |      |      |-- USBFS
   |      |      |      |      |      |-- DEVICE
-  |      |      |      |      |      |      |-- CH372ï¼šæ¨¡æ‹Ÿè‡ªå®šä¹‰USBè®¾å¤‡ï¼ˆCH372è®¾å¤‡ï¼‰ï¼Œç«¯ç‚¹1ï¼Œ3ä¸‹ä¼ ï¼Œ2ï¼Œ4ä¸Šä¼ ï¼Œç«¯ç‚¹1ä¸‹ä¼ çš„æ•°æ®ä»Žç«¯ç‚¹3ä¸Šä¼ ï¼Œä¸å–åï¼Œç«¯ç‚¹2ä¸‹ä¼ çš„æ•°æ®ä»Žç«¯ç‚¹4ä¸Šä¼ ï¼Œå–åã€‚
-  |      |      |      |      |      |      |-- Compatibility_HIDï¼šæ¨¡æ‹ŸHIDè®¾å¤‡ï¼Œæ•°æ®é€šè¿‡ä¸²å£ä¸Šä¸‹ä¼ ã€‚
-  |      |      |      |      |      |      |-- CompositeKMï¼šæ¨¡æ‹Ÿé”®ç›˜å’Œé¼ æ ‡ï¼Œä½¿ç”¨IOæ¨¡æ‹ŸæŒ‰é”®ï¼ŒåŒæ—¶æ¨¡æ‹Ÿæ•°æ®å¯ä»¥é€šè¿‡ä¸²å£2ä¸Šä¼ ã€‚
-  |      |      |      |      |      |      |-- MSC_U-Disk: æ¨¡æ‹Ÿç®€å•Uç›˜ï¼Œå¯é€‰ä½¿ç”¨ç‰‡å†…Flashæˆ–å¤–éƒ¨SPI-Flash
-  |      |      |      |      |      |      |-- MSC_CD-ROM: æ¨¡æ‹ŸCDROMï¼Œéœ€è¦å¤–æŒ‚SPI-Flash
-  |      |      |      |      |      |      |-- SimulateCDCï¼šæ¨¡æ‹Ÿä¸€ä¸ªCDCä¸²å£ï¼Œä½¿ç”¨ä¸²å£2æ”¶å‘ã€‚
-  |      |      |      |      |      |      |-- SimulateCDC-HIDï¼šæ¨¡æ‹Ÿä¸€ä¸ªCDCä¸²å£ï¼Œä½¿ç”¨ä¸²å£2æ”¶å‘,HIDä¸­æ–­ç«¯ç‚¹ä¸‹å‘æ•°æ®å–åä¸Šä¼ ã€‚  
+  |      |      |      |      |      |      |-- CH372£ºÄ£Äâ×Ô¶¨ÒåUSBÉè±¸£¨CH372Éè±¸£©£¬¶Ëµã1£¬3ÏÂ´«£¬2£¬4ÉÏ´«£¬¶Ëµã1ÏÂ´«µÄÊý¾Ý´Ó¶Ëµã3ÉÏ´«£¬²»È¡·´£¬¶Ëµã2ÏÂ´«µÄÊý¾Ý´Ó¶Ëµã4ÉÏ´«£¬È¡·´¡£
+  |      |      |      |      |      |      |-- Compatibility_HID£ºÄ£ÄâHIDÉè±¸£¬Êý¾ÝÍ¨¹ý´®¿ÚÉÏÏÂ´«¡£
+  |      |      |      |      |      |      |-- CompositeKM£ºÄ£Äâ¼üÅÌºÍÊó±ê£¬Ê¹ÓÃIOÄ£Äâ°´¼ü£¬Í¬Ê±Ä£ÄâÊý¾Ý¿ÉÒÔÍ¨¹ý´®¿Ú2ÉÏ´«¡£
+  |      |      |      |      |      |      |-- MSC_U-Disk: Ä£Äâ¼òµ¥UÅÌ£¬¿ÉÑ¡Ê¹ÓÃÆ¬ÄÚFlash»òÍâ²¿SPI-Flash
+  |      |      |      |      |      |      |-- MSC_CD-ROM: Ä£ÄâCDROM£¬ÐèÒªÍâ¹ÒSPI-Flash
+  |      |      |      |      |      |      |-- SimulateCDC£ºÄ£ÄâÒ»¸öCDC´®¿Ú£¬Ê¹ÓÃ´®¿Ú2ÊÕ·¢¡£
+  |      |      |      |      |      |      |-- SimulateCDC-HID£ºÄ£ÄâÒ»¸öCDC´®¿Ú£¬Ê¹ÓÃ´®¿Ú2ÊÕ·¢,HIDÖÐ¶Ï¶ËµãÏÂ·¢Êý¾ÝÈ¡·´ÉÏ´«¡£  
   |      |      |      |      |      |-- HOST_IAP
-  |      |      |      |      |      |      |-- APP: ä¸ŽHOST_IAPé…å¥—ä½¿ç”¨çš„APPï¼Œå·¥ç¨‹ä¿®æ”¹äº†ç¨‹åºèµ·å§‹ä½ç½®ï¼Œç¼–è¯‘åŽéœ€è‡ªè¡Œå°†æ–‡ä»¶è½¬åŒ–ä¸ºbinæ–‡ä»¶å¹¶é‡å‘½åä¸ºAPP.bin
-  |      |      |      |      |      |      |-- HOST_IAP:  åŸºäºŽUç›˜è¯»å–æ–‡ä»¶ä¾‹ç¨‹æ•´ç†çš„ä¸»æœºUç›˜IAPä¾‹ç¨‹ï¼Œä»ŽUç›˜å†…è¯»å–åç§°ä½APP.binçš„æ–‡ä»¶ï¼Œå†™å…¥å†…éƒ¨flashï¼Œæ ¡éªŒåŽè‡ªåŠ¨è·³è½¬ã€‚
-  |      |      |      |      |      |-- HOST_KM: ä¸»æœºæ“ä½œé”®é¼ ï¼ŒèŽ·å–é”®é¼ ä¸Šä¼ çš„ç«¯ç‚¹çš„æ•°æ®å¹¶æ‰“å°ï¼Œæ”¯æŒUå£ä¸‹1çº§hub
-  |      |      |      |      |      |-- HOST_MTP_FileSystemï¼šæžšä¸¾è¿‡ç¨‹çš„USBä¸»æœºåˆ°ä¸€ä¸ªæ”¯æŒMTPå’ŒPTPåè®®çš„è®¾å¤‡ï¼Œæ”¯æŒMTPå’ŒPTPåè®®ï¼Œå¹¶è¯»å–å…¶æ–‡ä»¶
-  |      |      |      |      |      |-- Host_Udiskï¼šUSBä¸»æœºæ“ä½œUç›˜ä¾‹ç¨‹
-  |      |      |      |      |      |-- Udisk_Libï¼šUç›˜æ–‡ä»¶ç³»ç»Ÿåº“æ–‡ä»¶   
+  |      |      |      |      |      |      |-- APP: ÓëHOST_IAPÅäÌ×Ê¹ÓÃµÄAPP£¬¹¤³ÌÐÞ¸ÄÁË³ÌÐòÆðÊ¼Î»ÖÃ£¬±àÒëºóÐè×ÔÐÐ½«ÎÄ¼þ×ª»¯ÎªbinÎÄ¼þ²¢ÖØÃüÃûÎªAPP.bin
+  |      |      |      |      |      |      |-- HOST_IAP:  »ùÓÚUÅÌ¶ÁÈ¡ÎÄ¼þÀý³ÌÕûÀíµÄÖ÷»úUÅÌIAPÀý³Ì£¬´ÓUÅÌÄÚ¶ÁÈ¡Ãû³ÆÎ»APP.binµÄÎÄ¼þ£¬Ð´ÈëÄÚ²¿flash£¬Ð£Ñéºó×Ô¶¯Ìø×ª¡£
+  |      |      |      |      |      |-- HOST_KM: Ö÷»ú²Ù×÷¼üÊó£¬»ñÈ¡¼üÊóÉÏ´«µÄ¶ËµãµÄÊý¾Ý²¢´òÓ¡£¬Ö§³ÖU¿ÚÏÂ1¼¶hub
+  |      |      |      |      |      |-- HOST_MTP_FileSystem£ºÃ¶¾Ù¹ý³ÌµÄUSBÖ÷»úµ½Ò»¸öÖ§³ÖMTPºÍPTPÐ­ÒéµÄÉè±¸£¬Ö§³ÖMTPºÍPTPÐ­Òé£¬²¢¶ÁÈ¡ÆäÎÄ¼þ
+  |      |      |      |      |      |-- Host_Udisk£ºUSBÖ÷»ú²Ù×÷UÅÌÀý³Ì
+  |      |      |      |      |      |-- Udisk_Lib£ºUÅÌÎÄ¼þÏµÍ³¿âÎÄ¼þ   
   |      |      |      |      |-- USBHS 
   |      |      |      |      |      |-- DEVICE
-  |      |      |      |      |      |      |-- CH372ï¼šæ¨¡æ‹Ÿè‡ªå®šä¹‰USBè®¾å¤‡ï¼ˆCH372è®¾å¤‡ï¼‰ï¼Œç«¯ç‚¹1ï¼Œ3ä¸‹ä¼ ï¼Œ2ï¼Œ4ä¸Šä¼ ï¼Œç«¯ç‚¹1ä¸‹ä¼ çš„æ•°æ®ä»Žç«¯ç‚¹3ä¸Šä¼ ï¼Œä¸å–åï¼Œç«¯ç‚¹2ä¸‹ä¼ çš„æ•°æ®ä»Žç«¯ç‚¹4ä¸Šä¼ ï¼Œå–åã€‚
-  |      |      |      |      |      |      |-- Compatibility_HIDï¼šæ¨¡æ‹ŸHIDè®¾å¤‡ï¼Œæ•°æ®é€šè¿‡ä¸²å£ä¸Šä¸‹ä¼ ã€‚
-  |      |      |      |      |      |      |-- CompositeKMï¼šæ¨¡æ‹Ÿé”®ç›˜å’Œé¼ æ ‡ï¼Œä½¿ç”¨IOæ¨¡æ‹ŸæŒ‰é”®ï¼ŒåŒæ—¶æ¨¡æ‹Ÿæ•°æ®å¯ä»¥é€šè¿‡ä¸²å£2ä¸Šä¼ ã€‚
-  |      |      |      |      |      |      |-- MSC_U-Disk: æ¨¡æ‹Ÿç®€å•Uç›˜ï¼Œå¯é€‰ä½¿ç”¨ç‰‡å†…Flashæˆ–å¤–éƒ¨SPI-Flash
-  |      |      |      |      |      |      |-- MSC_CD-ROM: æ¨¡æ‹ŸCDROMï¼Œéœ€è¦å¤–æŒ‚SPI-Flash
-  |      |      |      |      |      |      |-- USB_ECM-NetWorkAdaptor: USB ECMç½‘å¡ä¾‹ç¨‹
-  |      |      |      |      |      |      |-- SimulateCDCï¼šæ¨¡æ‹Ÿä¸€ä¸ªCDCä¸²å£ï¼Œä½¿ç”¨ä¸²å£2æ”¶å‘ã€‚
-  |      |      |      |      |      |      |-- SimulateCDC-HIDï¼šæ¨¡æ‹Ÿä¸€ä¸ªCDCä¸²å£ï¼Œä½¿ç”¨ä¸²å£2æ”¶å‘,HIDä¸­æ–­ç«¯ç‚¹ä¸‹å‘æ•°æ®å–åä¸Šä¼ ã€‚  
+  |      |      |      |      |      |      |-- CH372£ºÄ£Äâ×Ô¶¨ÒåUSBÉè±¸£¨CH372Éè±¸£©£¬¶Ëµã1£¬3ÏÂ´«£¬2£¬4ÉÏ´«£¬¶Ëµã1ÏÂ´«µÄÊý¾Ý´Ó¶Ëµã3ÉÏ´«£¬²»È¡·´£¬¶Ëµã2ÏÂ´«µÄÊý¾Ý´Ó¶Ëµã4ÉÏ´«£¬È¡·´¡£
+  |      |      |      |      |      |      |-- Compatibility_HID£ºÄ£ÄâHIDÉè±¸£¬Êý¾ÝÍ¨¹ý´®¿ÚÉÏÏÂ´«¡£
+  |      |      |      |      |      |      |-- CompositeKM£ºÄ£Äâ¼üÅÌºÍÊó±ê£¬Ê¹ÓÃIOÄ£Äâ°´¼ü£¬Í¬Ê±Ä£ÄâÊý¾Ý¿ÉÒÔÍ¨¹ý´®¿Ú2ÉÏ´«¡£
+  |      |      |      |      |      |      |-- MSC_U-Disk: Ä£Äâ¼òµ¥UÅÌ£¬¿ÉÑ¡Ê¹ÓÃÆ¬ÄÚFlash»òÍâ²¿SPI-Flash
+  |      |      |      |      |      |      |-- MSC_CD-ROM: Ä£ÄâCDROM£¬ÐèÒªÍâ¹ÒSPI-Flash
+  |      |      |      |      |      |      |-- USB_ECM-NetWorkAdaptor: USB ECMÍø¿¨Àý³Ì
+  |      |      |      |      |      |      |-- USB_NCM-NetWorkAdaptor: USB NCMÍøÂçÊÊÅäÆ÷Àý³Ì
+  |      |      |      |      |      |      |-- USB_RNDIS-NetWorkAdaptor: USB RNDISÍøÂçÊÊÅäÆ÷Àý³Ì
+  |      |      |      |      |      |      |-- SimulateCDC£ºÄ£ÄâÒ»¸öCDC´®¿Ú£¬Ê¹ÓÃ´®¿Ú2ÊÕ·¢¡£
+  |      |      |      |      |      |      |-- SimulateCDC-HID£ºÄ£ÄâÒ»¸öCDC´®¿Ú£¬Ê¹ÓÃ´®¿Ú2ÊÕ·¢,HIDÖÐ¶Ï¶ËµãÏÂ·¢Êý¾ÝÈ¡·´ÉÏ´«¡£  
   |      |      |      |      |      |-- HOST_IAP
-  |      |      |      |      |      |      |-- APP: ä¸ŽHOST_IAPé…å¥—ä½¿ç”¨çš„APPï¼Œå·¥ç¨‹ä¿®æ”¹äº†ç¨‹åºèµ·å§‹ä½ç½®ï¼Œç¼–è¯‘åŽéœ€è‡ªè¡Œå°†æ–‡ä»¶è½¬åŒ–ä¸ºbinæ–‡ä»¶å¹¶é‡å‘½åä¸ºAPP.bin
-  |      |      |      |      |      |      |-- HOST_IAP:  åŸºäºŽUç›˜è¯»å–æ–‡ä»¶ä¾‹ç¨‹æ•´ç†çš„ä¸»æœºUç›˜IAPä¾‹ç¨‹ï¼Œä»ŽUç›˜å†…è¯»å–åç§°ä½APP.binçš„æ–‡ä»¶ï¼Œå†™å…¥å†…éƒ¨flashï¼Œæ ¡éªŒåŽè‡ªåŠ¨è·³è½¬ã€‚
-  |      |      |      |      |      |-- HOST_KM: ä¸»æœºæ“ä½œé”®é¼ ï¼ŒèŽ·å–é”®é¼ ä¸Šä¼ çš„ç«¯ç‚¹çš„æ•°æ®å¹¶æ‰“å°ï¼Œæ”¯æŒUå£ä¸‹1çº§hub
-  |      |      |      |      |      |-- HOST_MTP_FileSystemï¼šæžšä¸¾è¿‡ç¨‹çš„USBä¸»æœºåˆ°ä¸€ä¸ªæ”¯æŒMTPå’ŒPTPåè®®çš„è®¾å¤‡ï¼Œæ”¯æŒMTPå’ŒPTPåè®®ï¼Œå¹¶è¯»å–å…¶æ–‡ä»¶
-  |      |      |      |      |      |-- Host_Udiskï¼šUSBä¸»æœºæ“ä½œUç›˜ä¾‹ç¨‹
-  |      |      |      |      |      |-- Udisk_Libï¼šUç›˜æ–‡ä»¶ç³»ç»Ÿåº“æ–‡ä»¶
-  |      |      |      |-- VoiceRcgExamï¼šç‹¬ç«‹è¯è¯­éŸ³è¯†åˆ«ä¾‹ç¨‹ 
-  |      |      |      |-- WWDGï¼šçª—å£çœ‹é—¨ç‹—ä¾‹ç¨‹
+  |      |      |      |      |      |      |-- APP: ÓëHOST_IAPÅäÌ×Ê¹ÓÃµÄAPP£¬¹¤³ÌÐÞ¸ÄÁË³ÌÐòÆðÊ¼Î»ÖÃ£¬±àÒëºóÐè×ÔÐÐ½«ÎÄ¼þ×ª»¯ÎªbinÎÄ¼þ²¢ÖØÃüÃûÎªAPP.bin
+  |      |      |      |      |      |      |-- HOST_IAP:  »ùÓÚUÅÌ¶ÁÈ¡ÎÄ¼þÀý³ÌÕûÀíµÄÖ÷»úUÅÌIAPÀý³Ì£¬´ÓUÅÌÄÚ¶ÁÈ¡Ãû³ÆÎ»APP.binµÄÎÄ¼þ£¬Ð´ÈëÄÚ²¿flash£¬Ð£Ñéºó×Ô¶¯Ìø×ª¡£
+  |      |      |      |      |      |-- HOST_KM: Ö÷»ú²Ù×÷¼üÊó£¬»ñÈ¡¼üÊóÉÏ´«µÄ¶ËµãµÄÊý¾Ý²¢´òÓ¡£¬Ö§³ÖU¿ÚÏÂ1¼¶hub
+  |      |      |      |      |      |-- HOST_MTP_FileSystem£ºÃ¶¾Ù¹ý³ÌµÄUSBÖ÷»úµ½Ò»¸öÖ§³ÖMTPºÍPTPÐ­ÒéµÄÉè±¸£¬Ö§³ÖMTPºÍPTPÐ­Òé£¬²¢¶ÁÈ¡ÆäÎÄ¼þ
+  |      |      |      |      |      |-- Host_Udisk£ºUSBÖ÷»ú²Ù×÷UÅÌÀý³Ì
+  |      |      |      |      |      |-- Udisk_Lib£ºUÅÌÎÄ¼þÏµÍ³¿âÎÄ¼þ
+  |      |      |      |-- VoiceRcgExam 
+  |      |      |      |      |-- VoiceRcgExam£º¶ÀÁ¢´ÊÓïÒôÊ¶±ðÀý³Ì  
+  |      |      |      |-- WWDG£º´°¿Ú¿´ÃÅ¹·Àý³Ì
+  |      |      |      |      |-- WWDG£º´°¿Ú¿´ÃÅ¹·Àý³Ì  
 

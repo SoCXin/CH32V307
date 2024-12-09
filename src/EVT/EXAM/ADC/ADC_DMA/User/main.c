@@ -12,11 +12,11 @@
 
 /*
  *@Note 
- ADC DMA sampling routines:
- ADC channel 1 (PA1), the rule group channel obtains ADC
- conversion data for 1024 consecutive times through DMA.
- 
-*/
+ *ADC DMA sampling routines:
+ *ADC channel 1 (PA1), the rule group channel obtains ADC
+ *conversion data for 1024 consecutive times through DMA.
+ *
+ */
 
 #include "debug.h"
 
@@ -150,7 +150,7 @@ void DMA_Tx_Init( DMA_Channel_TypeDef* DMA_CHx, u32 ppadr, u32 memadr, u16 bufsi
  */
 u16 Get_ConversionVal(s16 val)
 {
-	if((val+Calibrattion_Val)<0) return 0;
+	if((val+Calibrattion_Val)<0|| val==0) return 0;
 	if((Calibrattion_Val+val)>4095||val==4095) return 4095;
 	return (val+Calibrattion_Val);
 }

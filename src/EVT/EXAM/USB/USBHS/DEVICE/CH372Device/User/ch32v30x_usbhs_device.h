@@ -2,8 +2,8 @@
 * File Name          : ch32v30x_usbhs_device.h
 * Author             : WCH
 * Version            : V1.0.0
-* Date               : 2022/08/20
-* Description        : USB2.0高速设备操作相关头文件
+* Date               : 2023/11/20
+* Description        : USB2.0 High speed device operation related header files
 * Copyright (c) 2021 Nanjing Qinheng Microelectronics Co., Ltd.
 * Attention: This software (modified or not) and binary are used for 
 * microcontroller manufactured by Nanjing Qinheng Microelectronics.
@@ -69,12 +69,18 @@ extern "C" {
 #define USBHSD_UEP_TXBUF( N )         ( (uint8_t *)(*((volatile uint32_t *)( USBHSD_UEP_TXDMA_BASE + ( N - 1 ) * 0x04 ) ) ) + 0x20000000 )
 #define USBHSD_UEP_TLEN( N )          ( *((volatile uint16_t *)( USBHSD_UEP_TXLEN_BASE + ( N - 1 ) * 0x04 ) ) )
 
-// USB SPEED TYPE
+/* USB SPEED TYPE */
 #define USBHS_SPEED_TYPE_MASK         ((uint8_t)(0x03))
 #define USBHS_SPEED_LOW               ((uint8_t)(0x02))
 #define USBHS_SPEED_FULL              ((uint8_t)(0x00))
 #define USBHS_SPEED_HIGH              ((uint8_t)(0x01))
 
+/* Test mode */
+#define TEST_MASK       0x03
+#define TEST_SE0        0x00
+#define TEST_PACKET     0x01
+#define TEST_J          0x02
+#define TEST_K          0x03
 /******************************************************************************/
 /* Variable Declaration */
 
@@ -92,7 +98,7 @@ typedef struct __attribute__((packed)) _RING_BUFF_COMM
     volatile uint8_t  RemainPack;
     volatile uint8_t  StopFlag;
     volatile uint16_t PackLen[DEF_Ring_Buffer_Max_Blks];
-} RING_BUFF_COMM, pRING_BUFF_COMM;
+} RING_BUFF_COMM, *pRING_BUFF_COMM;
 
 /* Ringbuffer variables */
 extern RING_BUFF_COMM  RingBuffer_Comm;
@@ -132,7 +138,7 @@ extern void USBHS_Device_Init ( FunctionalState sta );
 extern void USBHS_Device_SetAddress( uint32_t address );
 extern void USBHS_IRQHandler( void );
 extern void USBHS_Sleep_WakeUp_Cfg( void );
-extern void USBHD_Sleep_Wakeup_Operate( void );
+extern void MCU_Sleep_Wakeup_Operate( void );
 extern uint8_t USBHS_Endp_DataUp( uint8_t endp, uint8_t *pbuf, uint16_t len, uint8_t mod );
 
 #ifdef __cplusplus

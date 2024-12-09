@@ -2,7 +2,7 @@
 * File Name          : ch32v30x_it.c
 * Author             : WCH
 * Version            : V1.0.0
-* Date               : 2021/06/06
+* Date               : 2024/03/05
 * Description        : Main Interrupt Service Routines.
 *********************************************************************************
 * Copyright (c) 2021 Nanjing Qinheng Microelectronics Co., Ltd.
@@ -24,6 +24,9 @@ void ADC1_2_IRQHandler(void) __attribute__((interrupt("WCH-Interrupt-fast")));
  */
 void NMI_Handler(void)
 {
+  while (1)
+  {
+  }
 }
 
 /*********************************************************************
@@ -35,6 +38,7 @@ void NMI_Handler(void)
  */
 void HardFault_Handler(void)
 {
+  NVIC_SystemReset();
   while (1)
   {
   }
@@ -50,7 +54,7 @@ void HardFault_Handler(void)
 void ADC1_2_IRQHandler(void)
 {
 	if(ADC_GetITStatus( ADC1, ADC_IT_AWD)){
-#if 0
+#if 1
 		printf( "Enter AnalogWatchdog Interrupt\r\n" );
 #endif
 	}

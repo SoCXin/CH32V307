@@ -2,7 +2,7 @@
 * File Name          : main.c
 * Author             : WCH
 * Version            : V1.0.0
-* Date               : 2021/06/06
+* Date               : 2024/05/22
 * Description        : Main program body.
 *********************************************************************************
 * Copyright (c) 2021 Nanjing Qinheng Microelectronics Co., Ltd.
@@ -71,24 +71,11 @@ const u8 TEXT_Buf[] = {"CH32F103 SPI FLASH W25Qxx"};
  */
 u8 SPI1_ReadWriteByte(u8 TxData)
 {
-    u8 i = 0;
-
-    while(SPI_I2S_GetFlagStatus(SPI1, SPI_I2S_FLAG_TXE) == RESET)
-    {
-        i++;
-        if(i > 200)
-            return 0;
-    }
+    while(SPI_I2S_GetFlagStatus(SPI1, SPI_I2S_FLAG_TXE) == RESET);
 
     SPI_I2S_SendData(SPI1, TxData);
-    i = 0;
 
-    while(SPI_I2S_GetFlagStatus(SPI1, SPI_I2S_FLAG_RXNE) == RESET)
-    {
-        i++;
-        if(i > 200)
-            return 0;
-    }
+    while(SPI_I2S_GetFlagStatus(SPI1, SPI_I2S_FLAG_RXNE) == RESET);
 
     return SPI_I2S_ReceiveData(SPI1);
 }
